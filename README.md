@@ -15,6 +15,7 @@ Software for a simulated Mars rover that autonomously explores a cave, detects a
 
 - [`docs/RESPONSIBILITIES.md`](docs/RESPONSIBILITIES.md) — who owns what
 - [`docs/PLAN.md`](docs/PLAN.md) — rules, gates, schedule, scope cuts
+- [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md) — who needs what from whom, and by when
 - [`docs/team_project_2026.md`](docs/team_project_2026.md) — the task specification
 - [`docs/rubrics.md`](docs/rubrics.md) — how it is marked
 
@@ -31,7 +32,7 @@ Software for a simulated Mars rover that autonomously explores a cave, detects a
 ```
 .
 ├── README.md
-├── docs/                         Spec, rubric, plan, responsibilities
+├── docs/                         Spec, rubric, plan, responsibilities, dependencies
 ├── cave_explorer/                ROS 2 package (template from Canvas)
 │   ├── cave_explorer/
 │   │   ├── cave_explorer.py      Main node — SHARED, change by pull request only

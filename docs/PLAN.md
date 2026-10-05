@@ -1,6 +1,6 @@
 # Team Plan — 49274 Team Project: Exploring a Martian Cave
 
-Source documents: [`team_project_2026.md`](team_project_2026.md) (task spec), [`rubrics.md`](rubrics.md) (marking), [`RESPONSIBILITIES.md`](RESPONSIBILITIES.md) (who owns what).
+Source documents: [`team_project_2026.md`](team_project_2026.md) (task spec), [`rubrics.md`](rubrics.md) (marking), [`RESPONSIBILITIES.md`](RESPONSIBILITIES.md) (who owns what), [`DEPENDENCIES.md`](DEPENDENCIES.md) (hand-overs between members and their dates).
 
 - **Team:** Andrew Than, Christina Li, Karan Sharma
 - **Live demo:** Mon 19 Oct 2026, 9:30am (25% of subject)
