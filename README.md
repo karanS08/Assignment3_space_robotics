@@ -11,11 +11,34 @@ Software for a simulated Mars rover that autonomously explores a cave, detects a
 | **Mon 19 Oct, 9:30am** | **Live demonstration** |
 | **Fri 23 Oct, 6:00pm** | **Team submission** (official deadline 11:59pm) |
 
-## Read first
+## Start here — Andrew and Christina
 
-- [`docs/RESPONSIBILITIES.md`](docs/RESPONSIBILITIES.md) — who owns what
-- [`docs/PLAN.md`](docs/PLAN.md) — rules, gates, schedule, scope cuts
-- [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md) — who needs what from whom, and by when
+Do these in order. Steps 1–4 are due **Tue 6 Oct, 9:00pm** (Gate 0).
+
+1. **Read the three team documents** (about 20 minutes):
+   - [`docs/RESPONSIBILITIES.md`](docs/RESPONSIBILITIES.md) — find your name: your tasks, your branch, your folder, your report section.
+   - [`docs/PLAN.md`](docs/PLAN.md) — the rules (section 2), your column in the gates table (section 4), and what gets cut if a gate is missed (section 5).
+   - [`docs/DEPENDENCIES.md`](docs/DEPENDENCIES.md) — the "By person" section: what you **owe** teammates and what you **are owed**, with dates.
+2. **Object now or accept.** The plan, gates and hand-over dates are a proposal from Karan. If a date or a task is not workable for you, say so in the team chat **before Gate 0**. After that they are treated as agreed and binding.
+3. **Get the project running:** follow [Setup](#setup) and [Running](#running) below until all three launch files work on your machine.
+4. **Check in:** switch to your branch, add your student number to `report/sections/members.md`, and push.
+   ```bash
+   git checkout perception   # Christina: planning
+   ```
+5. **Put your dates in your calendar:** every gate from your column in `PLAN.md`, and every "owes" date from `DEPENDENCIES.md`.
+6. **Start your first gate** (due Thu 8 Oct):
+   - **Andrew:** image saver working; at least 30 images each for 4 artefact types, plus negatives.
+   - **Christina:** frontiers shown in RViz and the robot driving to one; the run-mode hook in `main_loop` (hand-over D3).
+
+### Every day
+
+- Post your status by **9:00pm**: finished, next, blocked.
+- Check `DEPENDENCIES.md` for anything you owe in the next two days. If you will be late, tell the receiver by **12:00pm** on the due date.
+- Not received something you are owed? Use the stand-in listed for it and keep working — do not wait.
+- Review open pull requests within 24 hours.
+
+### Reference
+
 - [`docs/team_project_2026.md`](docs/team_project_2026.md) — the task specification
 - [`docs/rubrics.md`](docs/rubrics.md) — how it is marked
 
