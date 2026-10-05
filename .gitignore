@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+
+# ROS 2 / colcon
+build/
+install/
+log/
+
+# Editors
+.vscode/
+.idea/
+
+# Dataset images, model weights and videos are shared outside git
+dataset/**
+!dataset/README.md
+models/**
+!models/README.md
+*.pt
+*.pth
+*.onnx
+*.mp4
+*.mkv
+*.bag
+*.db3
+
+# Tooling output
+graphify-out/
