@@ -5,38 +5,19 @@ SLAM resolution, runs the analysis and saves a picture.
 
 Usage: python3 scripts/geometry_offline_check.py [full|partial] [output.png]
 """
-import math
-import os
-import re
 import sys
 import time
 
 import cv2
 import numpy as np
 
-PACKAGE = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'cave_explorer')
-sys.path.insert(0, PACKAGE)
+from offline_cave_map import load_cave_grid
+
 from cave_explorer.advanced import cave_geometry as cg
 
 RES = 0.3
-sdf = open(os.path.join(PACKAGE, 'worlds', 'mars_cave.sdf')).read()
-walls = []
-for m in re.finditer(r'<model name="wall_\d+">\s*<pose>([^<]+)</pose>.*?<size>([^<]+)</size>', sdf, re.S):
-    px, py, _, _, _, yaw = map(float, m.group(1).split())
-    sx, sy, sz = map(float, m.group(2).split())
-    length = sx if abs(sx - 4) > 1e-6 else sy
-    walls.append((px, py, yaw, length))
-print('walls', len(walls))
-xs = [w[0] for w in walls]; ys = [w[1] for w in walls]
-ox, oy = min(xs) - 6, min(ys) - 6
-W = int((max(xs) + 6 - ox) / RES); H = int((max(ys) + 6 - oy) / RES)
-grid = np.zeros((H, W), np.int8)
-img = np.zeros((H, W), np.uint8)
-for px, py, yaw, L in walls:
-    a = (px - L/2*math.cos(yaw), py - L/2*math.sin(yaw)); b = (px + L/2*math.cos(yaw), py + L/2*math.sin(yaw))
-    pa = (int((a[0]-ox)/RES), int((a[1]-oy)/RES)); pb = (int((b[0]-ox)/RES), int((b[1]-oy)/RES))
-    cv2.line(img, pa, pb, 255, 1)
-grid[img > 0] = 100
+grid, (ox, oy) = load_cave_grid(RES)
+H, W = grid.shape
 mode = sys.argv[1] if len(sys.argv) > 1 else 'full'
 robot = (0.0, 0.0)
 if mode == 'partial':   # only a disc around the robot is known

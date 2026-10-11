@@ -121,6 +121,15 @@ Optional, in a fourth terminal:
 ros2 launch cave_explorer cave_explorer_geometry.launch.py     # Advanced 2: cave geometry analysis
 ```
 
+Advanced 6 (adaptive scientific sampling) replaces the third launch file, because it sends its own navigation goals:
+
+```bash
+ros2 launch cave_explorer cave_explorer_sampling.launch.py strategy:=adaptive num_samples:=30
+ros2 launch cave_explorer cave_explorer_sampling.launch.py strategy:=random num_samples:=30     # baseline
+```
+
+Needs `scikit-learn` and `scipy` (`sudo apt install python3-sklearn python3-scipy`). Each run saves a CSV log to `~/cave_sampling_logs/`.
+
 Gazebo is slow to start: restart only the second and third launch files while testing.
 
 ## Workflow

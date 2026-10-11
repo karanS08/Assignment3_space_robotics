@@ -23,6 +23,10 @@ NOT_APPLICABLE = 9999.0
 DEFAULT_LAT_RANGE = (-37.5, 17.5)
 DEFAULT_LON_RANGE = (212.5, 267.5)
 
+# Extent of the cave world in the map frame [m], which the patch is stretched over
+DEFAULT_X_RANGE = (-5.0, 60.0)
+DEFAULT_Y_RANGE = (-5.0, 50.0)
+
 
 def default_table_path():
     """Path of the installed GRS water table"""
@@ -32,7 +36,7 @@ def default_table_path():
 
 
 class MeasurementField:
-    def __init__(self, table_path, x_range, y_range,
+    def __init__(self, table_path, x_range=DEFAULT_X_RANGE, y_range=DEFAULT_Y_RANGE,
                  lat_range=DEFAULT_LAT_RANGE, lon_range=DEFAULT_LON_RANGE,
                  noise_scale=1.0, seed=None):
         """Map a lat/lon patch of the GRS water map onto the cave extent.

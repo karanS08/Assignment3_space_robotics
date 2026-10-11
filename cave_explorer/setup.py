@@ -36,7 +36,8 @@ setup(
     entry_points={
         'console_scripts': [
             'cave_explorer = cave_explorer.cave_explorer:main',
-            'cave_geometry = cave_explorer.advanced.cave_geometry_node:main'
+            'cave_geometry = cave_explorer.advanced.cave_geometry_node:main',
+            'adaptive_sampling = cave_explorer.advanced.adaptive_sampling_node:main'
         ],
     },
 )
