@@ -2,6 +2,9 @@
 
 import math
 import random
+import os #perception_1 - used to create/manage dataset, contrusct file paths
+import time #perception_1 - used to control timing
+import numpy as np #perception_2 - used for np
 from enum import Enum
 
 import cv2  # OpenCV2
@@ -101,6 +104,13 @@ class CaveExplorer(Node):
         # Initialise CvBridge
         self.cv_bridge_ = CvBridge()
 
+        #Dataset collection of artifacts
+        self.dataset_directory_ = os.path.expanduser("~/artifact_dataset") #perception_1 - create dataset
+        os.makedirs(self.dataset_directory_, exist_ok = True) #perception_1 - creates folder
+        self.last_image_save_time_ = 0.0 #perception_1 - last image save
+        self.save_interval_ = 3.0 #perception_1 - saves images every 3 seconds
+
+
         # Prepare transformation to get robot pose
         self.tf_buffer = Buffer()
         self.tf_listener = TransformListener(self.tf_buffer, self)
@@ -189,6 +199,17 @@ class CaveExplorer(Node):
         # see http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
         image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='passthrough')
 
+        #Perception_1 - Save image for dataset collection
+        current_time = time.time()
+        
+        if current_time - self.last_image_save_time_ > self.save_interval_: #loop every 3 seconds
+        
+            filename = f"image_{int(current_time)}.png" #name of image
+            filepath = os.path.join(self.dataset_directory_, filename) #building path
+            cv2.imwrite(filepath, image) #save image
+            self.last_image_save_time_ = current_time #update time
+            self.get_logger().info(f"Saved dataset image: {filepath}") #notifies terminal
+
         # Create a grayscale version (some simple models use this)
         # image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
 
@@ -199,6 +220,38 @@ class CaveExplorer(Node):
         # The minSize is used to avoid very small detections that are probably noise
         detections = stop_sign_model.detectMultiScale(image, minSize=(20,20))
 
+        #Perception_2
+        image_hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV) #Convert BGR to HSV
+        
+        #Green range
+        lower_green = (50, 100, 100)
+        upper_green = (80, 255, 255)
+
+        green_mask = cv2.inRange(image_hsv, lower_green, upper_green) #Green detector
+        
+        contours, hierarchy = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE) #Find green contours
+        
+        for contour in contours:
+        
+            area = cv2.contourArea(contour)
+        
+            if area > 2000: #Size of countour
+
+                x, y, w, h = cv2.boundingRect(contour) #Create box
+
+                aspect_ratio = h / float(w) #Checks size
+
+                if aspect_ratio > 1.3:
+                    
+                    label = "Alien" #Alien is tall and thin
+                    
+                else:
+                    
+                    label = "Rock" #Rock is short and wide
+        
+                cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 3) #Green rectangle around artifact
+                cv2.putText(image, label, (x, y - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2) #Text for Alien/Rock
+        
         # You can set "artifact_found_" to true to signal to "main_loop" that you have found a artifact
         # You may want to communicate more information
         # Since the "image_callback" and "main_loop" methods can run at the same time you should protect any shared variables
