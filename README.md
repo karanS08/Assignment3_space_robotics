@@ -115,6 +115,12 @@ ros2 launch cave_explorer cave_explorer_navigation.launch.py   # SLAM + Nav2
 ros2 launch cave_explorer cave_explorer_autonomy.launch.py     # our node
 ```
 
+Optional, in a fourth terminal:
+
+```bash
+ros2 launch cave_explorer cave_explorer_geometry.launch.py     # Advanced 2: cave geometry analysis
+```
+
 Gazebo is slow to start: restart only the second and third launch files while testing.
 
 ## Workflow
