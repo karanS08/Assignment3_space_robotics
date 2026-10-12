@@ -758,8 +758,9 @@ Mean distance travelled (40 samples) & 476\,m & 934\,m \\
 \end{figure}
 
 \paragraph{Gazebo runs (real Nav2 and SLAM).}
-Each run takes 30 samples from a fresh simulator start. Adaptive and random runs use the same seeds,
-which set the measurement noise and the random choices. The table is generated from the run logs.
+Each run takes 30 readings after a fresh simulator start, with real navigation and a real SLAM map. Each setting was run
+with four seeds (0 to 3), giving 12 runs in all. A seed fixes the random measurement errors and, for the random strategy,
+the random choices, so the three settings face the same conditions. The tables below are generated from the saved run logs.
 
 \begin{table}[h]
 \centering
@@ -775,9 +776,41 @@ mean distance and wall-clock time for 30 samples, and mean distance at which RMS
   \caption{Gazebo runs: error against samples and against distance travelled.}
 \end{figure}
 
-\todo{Karan: after the batch finishes, write two or three sentences reading the table above (does adaptive
-reach a given error with less travel? does it end with lower error? how much does the travel weight matter?)
-and state the number of seeds.}
+\begin{table}[h]
+\centering
+\caption{Every Gazebo run: final error (RMSE after 30 readings) and distance driven. Lower is better.}
+\small
+\begin{tabular}{@{}cccc@{}}
+\toprule
+\textbf{Seed} & \textbf{Adaptive, weight 0.3} & \textbf{Adaptive, weight 0.1} & \textbf{Random} \\
+\midrule
+0 & 0.233 \;/\; 341\,m & 0.140 \;/\; 754\,m & 0.180 \;/\; 818\,m \\
+1 & 0.189 \;/\; 480\,m & 0.191 \;/\; 586\,m & 0.271 \;/\; 726\,m \\
+2 & 0.201 \;/\; 555\,m & 0.230 \;/\; 576\,m & 0.258 \;/\; 670\,m \\
+3 & 0.290 \;/\; 532\,m & 0.226 \;/\; 582\,m & 0.237 \;/\; 725\,m \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{How to read the results.}
+\begin{itemize}[nosep]
+  \item \textbf{Adaptive drives clearly less.} With travel weight 0.3, every adaptive run drove less than every random run
+        (341 to 555\,m against 670 to 818\,m). On average that is 477\,m against 735\,m, about 35\% less distance, and
+        about 35\% less time (10.5 against 16.1 minutes).
+  \item \textbf{Final accuracy is about the same.} After 30 readings the average error is 0.228 for adaptive (weight 0.3)
+        and 0.237 for random. Seed to seed, the error varies by about 0.04, which is larger than the difference between
+        the two strategies, so these results cannot show that one is more accurate than the other.
+  \item \textbf{Early accuracy is only a hint.} After 10 readings adaptive averages 0.34 and random 0.44, but one adaptive
+        run (seed 3) was as bad as the worst random run at that point (0.54 for both). With four seeds this is not reliable.
+  \item \textbf{Reaching a given error takes the same driving.} The average distance at which the error first dropped to
+        0.30 was 168\,m for adaptive and 172\,m for random. Adaptive's saving comes after that point: it keeps
+        improving without long trips, while random keeps crossing the cave.
+  \item \textbf{A smaller travel weight did not help.} With weight 0.1 the final error was slightly lower (0.197) but within
+        the spread, and the robot drove about 30\% farther (625 against 477\,m). Weight 0.3 is the better choice.
+\end{itemize}
+In short: in these runs the adaptive method gives a survey of about the same quality for about two-thirds of the driving
+and time. It did not give a more accurate one. Four seeds is a small sample, so a smaller difference could still be hiding
+in these numbers.
 
 \todo{Karan: add an RViz screenshot of the GP mean, uncertainty, true field and samples taken during a run.}
 
@@ -787,7 +820,7 @@ and state the number of seeds.}
         it near the start while the GP extrapolates over unseen cave. It is ahead from about 10 samples
         (clearest at 20: 0.293 against 0.366) and uses about half the distance. By 30 and 40 samples the two
         have the same error (0.250 against 0.250, and 0.215 against 0.217). The reliable advantage is
-        therefore reaching a given error sooner and with less driving, not a lower final error.
+        therefore less driving, not a lower final error. The Gazebo runs below point the same way.
   \item The offline study ignores driving time and navigation failures. The Gazebo runs include them.
   \item Measurement noise (0.23 to 0.36\,wt\% inside the block) is large against the field's range (2.3 to 5.0\,wt\%), which
         puts a floor on the achievable error of about 0.2.
@@ -810,7 +843,7 @@ been run together.
 \begin{itemize}[nosep]
   \item \textbf{Advanced 2:} widest area and passages found and displayed on the real SLAM map
         (Figure~\ref{fig:a2slam}).
-  \item \textbf{Advanced 6:} 30-sample adaptive and random runs completed in Gazebo with real navigation; offline
+  \item \textbf{Advanced 6:} 12 runs of 30 readings completed in Gazebo with real navigation (4 seeds, 3 settings); offline
         comparison over 10 runs (Section~\ref{sec:advanced6}).
   \item \textbf{Perception, Planning:} \todo{Andrew and Christina: one or two lines each, with a figure.}
 \end{itemize}
