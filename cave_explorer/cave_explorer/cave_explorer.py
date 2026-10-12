@@ -395,13 +395,19 @@ class CaveExplorer(Node):
             self.localise_box(box, image.shape[1])
 
     def localise_box(self, box, image_width):
-        """Map position of a detected sign from its image column and its measured distance (assumed 3 m if there is no depth)."""
+        """Map position of a detected sign from its image column and its measured distance.
+
+        A sign is only placed once the depth camera can measure it. A sign too far away (over about 10 m) is seen but not yet
+        recorded: guessing a distance made a new "artefact" appear every time the robot drove towards a distant sign.
+        """
         robot = self.get_pose_2d()
         if robot is None:
             return
         focal = (image_width / 2.0) / math.tan(self.camera_horizontal_fov_ / 2.0)
         left = (image_width / 2.0 - (box[0] + box[2] / 2.0)) / focal            # sideways offset per metre of forward distance
-        forward = self.box_range(box) or self.estimated_artifact_distance_
+        forward = self.box_range(box)
+        if forward is None:
+            return
         camera_x = robot.x + 0.5 * math.cos(robot.theta)                          # the camera is 0.5 m ahead of the robot centre
         camera_y = robot.y + 0.5 * math.sin(robot.theta)
         self.localise_artifact(target_xy=(camera_x + forward * math.cos(robot.theta) - forward * left * math.sin(robot.theta),
