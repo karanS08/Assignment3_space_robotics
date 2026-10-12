@@ -364,23 +364,168 @@ Let the rover measure a spatially varying science quantity at its position, buil
 where to sample next, and compare this with a simple baseline. The sampler must not use the true field
 when choosing.
 
-\subsection{The measurement field: real NASA data}
-The field is the water (H$_2$O) concentration, in weight percent, measured from orbit by the Gamma Ray
-Spectrometer on NASA's 2001 Mars Odyssey. It was downloaded from the Planetary Data System Geosciences
-Node (data set \texttt{ODY-M-GRS-5-ELEMENTS-V1.0}, product \texttt{H2O\_SR\_5X5}, observations
-June 2002 to April 2005): a $5^\circ\times5^\circ$ grid of 2592 bins, 1508 with valid data, values 1.6 to
-7.4\,wt\%, each with its own measurement error. A $12\times12$ bin patch around Arsia Mons in the Tharsis
-region (a region with lava-tube skylights; 2.3 to 5.0\,wt\%) is stretched over the cave extent
-($65\times55$\,m) and interpolated between bins. A measurement is the true value at the rover's position plus
-Gaussian noise with the instrument's reported standard deviation for that location.
+\subsection{The science data: real NASA measurements of water in Martian soil}
+\label{sec:nasadata}
 
-\begin{notebox}[State these limits in the report]
-(1) Values and noise are real; the spatial scale is not: a bin is about 300\,km across on Mars and the patch
-spans about 3300\,km, but is compressed onto a cave tens of metres wide. (2) The data are orbital surface
-measurements, not cave measurements; none exist. (3) The label does not say whether longitude is east or
-west; east was assumed after checking that known water-rich regions appear where expected. The brief allows
-``data adapted from an existing source'' that need not match the cave.
-\end{notebox}
+\paragraph{What it is.}
+To make the task realistic, we did not invent a made-up field. We used real measurements taken by NASA's
+\emph{2001 Mars Odyssey} satellite, which has orbited Mars since 2001. One of its instruments, the
+\emph{Gamma Ray Spectrometer}, detects the faint gamma rays that the ground gives off. Water changes this signal,
+so scientists can work out how much water is mixed into the top layer of the soil. The result is a map of
+Mars showing how wet the soil is in each place. We downloaded it from NASA's public Planetary Data System
+(data set \texttt{ODY-M-GRS-5-ELEMENTS-V1.0}, file \texttt{H2O\_SR\_5X5}; measurements made between June 2002
+and April 2005).
+
+\paragraph{How the amount of water is written.}
+The amount is given as a \emph{percentage of the soil's weight}. A value of 4 means that 4\,kg of every 100\,kg of
+soil is water. Over the whole planet the values run from 1.6 to 7.4. In the patch we use they run from 2.3 to 5.0.
+
+\paragraph{What is in the file.}
+NASA split the planet into a grid of squares, each $5^{\circ}$ of latitude by $5^{\circ}$ of longitude
+(about 300\,km on each side). The file has 2592 squares, and each square is one line with five numbers.
+1508 squares have a measurement. The rest, near the poles, are marked with the code 9999.999, meaning ``no data''.
+
+\begin{table}[h]
+\centering
+\caption{What each line of the NASA file contains, with a real example. The example square is the one
+that contains the rover's start position in the simulator.}
+\small
+\begin{tabular}{@{}p{2.7cm}p{6.2cm}p{2.2cm}p{2.3cm}@{}}
+\toprule
+\textbf{Column} & \textbf{Meaning in plain words} & \textbf{Unit} & \textbf{Real example} \\
+\midrule
+Latitude  & How far north (+) or south (--) of the equator the middle of the square is & degrees & $-32.5$ \\[3pt]
+Longitude & How far east of a reference line the middle of the square is & degrees east & 217.5 \\[3pt]
+Concentration & Amount of water in the soil: the measurement itself & \% of soil weight & 3.609 \\[3pt]
+Error ($\sigma$) & How uncertain NASA's measurement is: a typical size of its mistake & \% of soil weight & 0.268 \\[3pt]
+Error with corrections & The same, after allowing for the corrections NASA applied (not used by us) & \% of soil weight & 0.320 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{How the data was put onto the cave map}
+\label{sec:nasaonmap}
+
+The rover explores a cave about $65 \times 55$\,m, so the NASA map had to be fitted onto it. This was done in
+five steps. The same steps are in the software, in \texttt{measurement\_field.py}.
+
+\begin{enumerate}[nosep]
+  \item \textbf{Choose a piece of Mars.} We took a block of $12 \times 12 = 144$ squares around Arsia Mons, a
+        large volcano in the Tharsis region of Mars (latitude $37.5^{\circ}$S to $17.5^{\circ}$N, longitude
+        $212.5^{\circ}$ to $267.5^{\circ}$E). We chose it because every square has a measurement, because the
+        water varies from place to place (so there is something to discover), and because caves with
+        openings in their roofs have been seen from orbit in this region.
+  \item \textbf{Match it to the map.} The cave map uses metres: $x$ runs from $-5$ to $60$ and $y$ from
+        $-5$ to $50$. We stretched the block of Mars over this rectangle in a straight, even way:
+        \begin{equation*}
+          \text{longitude} = 212.5 + \frac{x+5}{65}\times 55, \qquad \text{latitude} = -37.5 + \frac{y+5}{55}\times 55 \;=\; y - 32.5 .
+        \end{equation*}
+        For example, the rover's start $(x,y)=(0,0)$ is placed at $32.5^{\circ}$S, $216.7^{\circ}$E. A position outside
+        the rectangle uses the nearest edge.
+  \item \textbf{Make it smooth.} A square has a single number, but the rover can stand anywhere. Between the
+        middles of neighbouring squares we blend the numbers in a straight line, so the water changes smoothly
+        and has no sudden steps.
+  \item \textbf{Give each place its true value.} Now every position the rover can reach on the map has a
+        \emph{true} water value. This is kept hidden from the part of the program that decides where to go.
+  \item \textbf{Make readings imperfect.} A real instrument is never exact. When the rover takes a reading, the
+        program returns the true value plus a small random error of the size NASA reports for that square (0.23 to
+        0.36 inside our block, 0.27 on average). Two readings at the same place therefore differ slightly.
+\end{enumerate}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.92\linewidth]{advanced6_nasa_field_on_map.png}
+  \caption{From NASA's map to the cave map. (1)~The whole NASA map of water in Martian soil; the red box is the
+  block we used, and the star is Arsia Mons. (2)~The block itself: 144 squares with their values. (3)~The same block
+  stretched over the cave map. Colour is shown only where the rover can drive. Panels 2 and 3 share one colour scale.}
+\end{figure}
+
+\paragraph{The scale is not realistic.}
+One square on Mars is about 300\,km across, and our block is about 3250\,km wide, roughly the distance from Sydney
+to Perth. We squeeze all of that into a cave tens of metres wide, so one metre in the cave stands for about 50 to
+60\,km on Mars. The task does not need the numbers to match a real cave, only a believable field that varies from
+place to place.
+
+\paragraph{Where the data is in the simulator.}
+The water values are not objects that you can see in Gazebo's 3D view. They exist inside the software as a lookup:
+the program is given a position on the map and returns the water value there. They are drawn for people in RViz,
+on the same map the rover is building (Section~\ref{sec:a6example}).
+
+\begin{table}[h]
+\centering
+\caption{How each part of the NASA file is used in the simulator.}
+\small
+\begin{tabular}{@{}p{3.6cm}p{5cm}p{5.4cm}@{}}
+\toprule
+\textbf{In the NASA file} & \textbf{In the simulator} & \textbf{What it is used for} \\
+\midrule
+Latitude and longitude of a square & A place on the cave map, in metres ($x$, $y$) & Says where on the map each value applies \\[3pt]
+Concentration (water \%) & The true water value at that place & What the rover is trying to find out. Hidden when the rover chooses where to go; used afterwards to mark its work \\[3pt]
+Error ($\sigma$) & The size of the random error added to each reading & Makes readings imperfect, like a real instrument \\[3pt]
+``No data'' squares (9999.999) & Not used & The block we chose has none \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What the data looks like in a simulator run}
+\label{sec:a6example}
+
+Figure~\ref{fig:a6run} comes from one real run in Gazebo: the rover took 30 readings with real navigation.
+The first panel shows the 30 places it visited, in order, on top of the true field. The second shows what the rover
+worked out about the whole cave from only those 30 readings. The third shows how unsure it still is. The fourth
+compares each reading with the true value at that spot. The points lie close to the dashed line, so the readings
+are close to the truth. The average mistake was $-0.03$ and the typical size of a mistake was $0.21$, which matches
+the instrument error that NASA lists for this block (0.23 to 0.36). The rover's overall picture of the cave
+(panel~2) was off by 0.23 on average. The brightest part of panel~3, in the top left of the cave, is the area
+the rover has measured least.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.95\linewidth]{advanced6_gazebo_run_maps.png}
+  \caption{One 30-reading run in Gazebo. (1)~True field, with the places the rover measured, in order. (2)~The rover's
+  estimate. (3)~Its remaining uncertainty. (4)~Each reading against the true value. The estimate was re-computed from
+  the readings saved by the run.}
+  \label{fig:a6run}
+\end{figure}
+
+\begin{table}[h]
+\centering
+\caption{The first eight readings of that run. ``Reading'' is what the rover measured; ``True value'' is the NASA value
+at that spot before any error was added.}
+\small
+\begin{tabular}{@{}c p{3.1cm} p{3.4cm} c c c@{}}
+\toprule
+\textbf{No.} & \textbf{Place in the cave map} (x, y) [m] & \textbf{Place on Mars} (latitude, longitude) & \textbf{True value} [\%] & \textbf{Reading} [\%] & \textbf{Difference} \\
+\midrule
+1 & (0.0, 0.0)   & $32.5^{\circ}$S, $216.7^{\circ}$E & 3.60 & 3.63 & $+0.03$ \\
+2 & (9.6, 2.3)   & $30.2^{\circ}$S, $224.9^{\circ}$E & 3.64 & 3.60 & $-0.04$ \\
+3 & (24.0, 0.8)  & $31.7^{\circ}$S, $237.1^{\circ}$E & 2.98 & 3.14 & $+0.16$ \\
+4 & (39.0, 3.7)  & $28.8^{\circ}$S, $249.7^{\circ}$E & 2.78 & 2.80 & $+0.02$ \\
+5 & (43.0, 17.4) & $15.1^{\circ}$S, $253.1^{\circ}$E & 3.07 & 2.94 & $-0.13$ \\
+6 & (28.6, 26.3) & $6.2^{\circ}$S, $240.9^{\circ}$E  & 3.31 & 3.40 & $+0.09$ \\
+7 & (11.8, 25.5) & $7.0^{\circ}$S, $226.7^{\circ}$E  & 3.95 & 4.33 & $+0.38$ \\
+8 & (0.8, 37.1)  & $4.6^{\circ}$N, $217.4^{\circ}$E  & 3.99 & 4.31 & $+0.32$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{What is real and what is not}
+
+\begin{table}[h]
+\centering
+\caption{Which parts of the data are real, which we adapted, and which are not real.}
+\small
+\begin{tabular}{@{}p{2.6cm}p{11.4cm}@{}}
+\toprule
+\textbf{Real} & The water values, where Mars is wetter and drier, and the size of the instrument's error. All of these come from NASA's file. \\[3pt]
+\textbf{Adapted by us} & The choice of block; stretching it over the cave; blending smoothly between squares; adding a random error to each reading (the size of the error is NASA's, the random numbers are generated by the computer). \\[3pt]
+\textbf{Not real} & That the water in a cave would vary like this; the scale (one metre stands for 50--60\,km); and the idea that the rover has a water instrument at all. Also, NASA's file does not say whether longitude counts east or west. We assumed east, after checking that the known wet regions appear in the expected places. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The task description allows this: it asks for a field that ``does not need to realistically match the cave environment''
+as long as it gives a believable, varying quantity to measure.
 
 \subsection{Method}
 \paragraph{Separation of truth.}
@@ -497,7 +642,7 @@ and state the number of seeds.}
         have the same error (0.250 against 0.250, and 0.215 against 0.217). The reliable advantage is
         therefore reaching a given error sooner and with less driving, not a lower final error.
   \item The offline study ignores driving time and navigation failures. The Gazebo runs include them.
-  \item Measurement noise (0.2 to 0.6\,wt\%) is large against the field's range (2.3 to 5.0\,wt\%), which
+  \item Measurement noise (0.23 to 0.36\,wt\% inside the block) is large against the field's range (2.3 to 5.0\,wt\%), which
         puts a floor on the achievable error of about 0.2.
   \item The online error is computed over the cave explored so far, so its region grows during a run.
   \item Possible improvements: choose the travel weight from the remaining sample budget; use the map to
