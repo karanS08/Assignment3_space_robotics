@@ -1,0 +1,17 @@
+
+A module that was compiled using NumPy 1.x cannot be run in
+NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+versions of NumPy, modules must be compiled with NumPy 2.0.
+Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+
+If you are a user of the module, the easiest solution will be to
+downgrade to 'numpy<2' or try to upgrade the affected module.
+We expect that some modules will need time to support NumPy 2.
+
+Traceback (most recent call last):  File "/home/karan/Development/Space_robotics/Assignment3-report/scripts/sim/../run_recorder.py", line 17, in <module>
+    from cv_bridge import CvBridge
+  File "/opt/ros/humble/local/lib/python3.10/dist-packages/cv_bridge/__init__.py", line 6, in <module>
+    from cv_bridge.boost.cv_bridge_boost import cvtColorForDisplay, getCvType
+AttributeError: _ARRAY_API not found
+stopped early: ExternalShutdownException
+saved 84 rows and 46 detection pictures to /home/karan/space_robotics_sim/runs/robust
