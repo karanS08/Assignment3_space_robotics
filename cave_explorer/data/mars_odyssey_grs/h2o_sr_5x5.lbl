@@ -1,0 +1,118 @@
+PDS_VERSION_ID                 = PDS3
+
+/* File Characteristics */
+RECORD_TYPE                    = FIXED_LENGTH
+RECORD_BYTES                   = 71
+FILE_RECORDS                   = 2592
+
+/* Pointers To Data Objects */
+^TABLE                         = "H2O_SR_5X5.TAB"
+
+/* Identification Data Elements */
+DATA_SET_NAME                  = "ODY MARS GAMMA RAY SPECTROMETER
+                                  5 ELEMENT CONCENTRATION V1.0"
+DATA_SET_ID                    = "ODY-M-GRS-5-ELEMENTS-V1.0"
+PRODUCT_ID                     = "H2O_SR_5X5"
+PRODUCT_TYPE                   = "ELEMENT CONCENTRATIONS"
+PRODUCT_VERSION_ID             = "2.0"
+
+/* Descriptive Data Elements */
+INSTRUMENT_HOST_NAME           = "2001 MARS ODYSSEY"
+INSTRUMENT_NAME                = "GAMMA RAY SPECTROMETER"
+SPACECRAFT_ID                  = ODY
+TARGET_NAME                    = MARS
+MISSION_PHASE_NAME             = MAPPING
+START_TIME                     = 2002-06-04T00:00:00 
+STOP_TIME                      = 2005-04-03T00:00:00 
+SPACECRAFT_CLOCK_START_COUNT   = "N/A" 
+SPACECRAFT_CLOCK_STOP_COUNT    = "N/A" 
+PRODUCT_CREATION_TIME          = 2006-03-01T17:39:00.000
+
+/* Data Object Definition */
+OBJECT                         = TABLE
+
+  NAME                         = "WATER CONCENTRATION DATA"
+  INTERCHANGE_FORMAT           = ASCII
+  ROWS                         = 2592
+  ROW_BYTES                    = 71
+  COLUMNS                      = 5
+
+  DESCRIPTION                  = "This table contains data used
+    to generate the water (H2O) concentration simple cylindrical
+    projection maps in the BROWSE folder of this data set. 
+    These data have been smoothed from the corrected 2-degree 
+    latitude by 2-degree longitude raw concentration data using 
+    a 10-degree box car algorithm. The data were then rebinned 
+    on a 5-degree latitude 5-degree longitude grid."
+
+  OBJECT                       = COLUMN
+    COLUMN_NUMBER              = 1
+    NAME                       = "LATITUDE"
+    DATA_TYPE                  = ASCII_REAL
+    FORMAT                     = "F5.1"
+    UNIT                       = "DEGREE"
+    BYTES                      = 5
+    START_BYTE                 = 1
+    DESCRIPTION                = "Center latitude of 5-degree 
+     latitude 5-degree longitude bin from which data has been
+     accumulated."
+  END_OBJECT                   = COLUMN
+
+  OBJECT                       = COLUMN
+    COLUMN_NUMBER              = 2
+    NAME                       = "LONGITUDE"
+    DATA_TYPE                  = ASCII_REAL
+    FORMAT                     = "F5.1"
+    UNIT                       = "DEGREE"
+    BYTES                      = 5
+    START_BYTE                 = 16
+    DESCRIPTION                = "Center longitude of 5-degree 
+     latitude 5-degree longitude bin from which data has been
+     accumulated."
+  END_OBJECT                   = COLUMN
+
+  OBJECT                       = COLUMN
+    COLUMN_NUMBER              = 3
+    NAME                       = "CONCENTRATION"
+    DATA_TYPE                  = ASCII_REAL
+    FORMAT                     = "F8.3"
+    UNIT                       = "WEIGHT PERCENT"
+    BYTES                      = 8
+    START_BYTE                 = 29
+    NOT_APPLICABLE_CONSTANT    = 9999.999
+    DESCRIPTION                = "Concentration of H2O in weight
+    percent."
+  END_OBJECT                   = COLUMN
+
+  OBJECT                       = COLUMN
+    COLUMN_NUMBER              = 4
+    NAME                       = "SIGMA"
+    DATA_TYPE                  = ASCII_REAL
+    FORMAT                     = "F8.3"
+    UNIT                       = "WEIGHT PERCENT"
+    BYTES                      = 8
+    START_BYTE                 = 46
+    NOT_APPLICABLE_CONSTANT    = 9999.999
+    DESCRIPTION                = "The error associated with the
+    concentration measurement."
+  END_OBJECT                   = COLUMN
+
+  OBJECT                       = COLUMN
+    COLUMN_NUMBER              = 5
+    NAME                       = "SIGMA WITH CFS"
+    DATA_TYPE                  = ASCII_REAL
+    FORMAT                     = "F8.3"
+    UNIT                       = "WEIGHT PERCENT"
+    BYTES                      = 8
+    START_BYTE                 = 63
+    NOT_APPLICABLE_CONSTANT    = 9999.999
+    DESCRIPTION                = "The error associated with the 
+    concentration measurement. This error includes the errors 
+    associated with the correction factors applied to the 
+    concentration data if applicable."
+  END_OBJECT                   = COLUMN
+
+END_OBJECT                     = TABLE
+
+END
+

@@ -5,3 +5,6 @@ Log every use when it happens: who, which tool, what it was used for.
 | Date | Member | Tool | How it assisted |
 |---|---|---|---|
 | 5 Oct 2026 | Karan Sharma | Claude Code | Converted the project specification to Markdown; drafted the team plan and repository structure |
+| 5 Oct 2026 | Karan Sharma | Claude Code | Located and downloaded the Mars Odyssey GRS water map from NASA PDS; wrote the first version of `measurement_field.py` |
+| 12 Oct 2026 | Karan Sharma | Claude Code | Wrote the first version of the cave geometry analysis and ROS node (Advanced 2) and its offline check script |
+| 12 Oct 2026 | Karan Sharma | Claude Code | Wrote the first version of the adaptive sampling logic, ROS node and offline comparison script (Advanced 6) |
