@@ -22,7 +22,10 @@ from tf2_ros.transform_listener import TransformListener
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
 
+from cave_explorer.perception import stop_sign_detector
 from cave_explorer.planning import safe_navigation as safe_nav
+
+import numpy as np
 
 
 def wrap_angle(angle):
@@ -73,7 +76,7 @@ class CaveExplorer(Node):
         # Planning 2/3: explore -> inspect -> explore state machine.
         self.inspection_standoff_ = 1.5
         self.estimated_artifact_distance_ = 3.0  # Approximate range, NOT measured depth.
-        self.camera_horizontal_fov_ = math.radians(60.0)  # Calibrate for actual camera.
+        self.camera_horizontal_fov_ = math.radians(120.0)  # The simulated camera's field of view (it was 60 degrees here, which is wrong)
         self.artifact_merge_radius_ = 2.0
         self.inspection_timeout_ = 45.0
         self.target_lost_timeout_ = 8.0
@@ -151,6 +154,9 @@ class CaveExplorer(Node):
         self.declare_parameter('computer_vision_model_filename', rclpy.Parameter.Type.STRING)
         self.computer_vision_model_ = cv2.CascadeClassifier(self.get_parameter('computer_vision_model_filename').value)
         self.image_sub_ = self.create_subscription(Image, 'camera/image', self.image_callback, 1)
+        # The depth camera gives the distance to a detected sign
+        self.latest_depth_ = None
+        self.depth_sub_ = self.create_subscription(Image, 'camera/depth/image', self.depth_callback, 1)
 
         # Safer exploration (Karan Sharma): remember failed goals, detect a stuck robot, recover
         self.cmd_vel_pub_ = self.create_publisher(Twist, 'cmd_vel', 1)
@@ -344,18 +350,31 @@ class CaveExplorer(Node):
     def now_seconds(self):
         return self.get_clock().now().nanoseconds / 1e9
 
+    def depth_callback(self, depth_msg):
+        try:
+            self.latest_depth_ = self.cv_bridge_.imgmsg_to_cv2(depth_msg, desired_encoding='passthrough')
+        except Exception as exc:
+            self.get_logger().warn(f'Depth image error: {exc}', throttle_duration_sec=10.0)
+
+    def box_range(self, box):
+        """Distance in metres to the object in a box, from the depth image, or None. Uses the nearest 30 % of readings in the box."""
+        if self.latest_depth_ is None:
+            return None
+        x, y, w, h = box
+        patch = np.asarray(self.latest_depth_, dtype=np.float32)[max(y, 0):y + h, max(x, 0):x + w].ravel()
+        patch = patch[np.isfinite(patch) & (patch > 0.5) & (patch < 9.9)]
+        if len(patch) < 20:
+            return None
+        patch.sort()
+        return float(np.median(patch[:max(10, int(0.3 * len(patch)))]))
+
     def image_callback(self, image_msg):
-        """Detect chosen artefact, estimate bearing, and maintain target visibility."""
+        """Detect red octagonal stop signs, measure where they are, and keep the inspection target in view."""
         try:
             image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='passthrough')
             if image_msg.encoding == 'rgb8':
                 image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            if self.computer_vision_model_.empty():
-                self.get_logger().error('Cascade model not loaded; check model filename')
-                return
-            detections = self.computer_vision_model_.detectMultiScale(
-                gray, scaleFactor=1.1, minNeighbors=4, minSize=(20, 20))
+            detections = [(d.x, d.y, d.width, d.height) for d in stop_sign_detector.detect(image)]
         except Exception as exc:
             self.get_logger().warn(f'Image detection error: {exc}')
             return
@@ -363,31 +382,35 @@ class CaveExplorer(Node):
         self.artifact_found_ = len(detections) > 0
         self.detection_streak_ = self.detection_streak_ + 1 if self.artifact_found_ else 0
         for x, y, w, h in detections:
-            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 3)
         self.image_detections_pub_.publish(
             self.cv_bridge_.cv2_to_imgmsg(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), encoding='rgb8'))
 
         if not self.artifact_found_:
             return
-        # Choose largest detected box; the cascade is for one configured artefact type.
-        x, y, w, h = max(detections, key=lambda b: b[2] * b[3])
-        center_x = x + w / 2.0
-        relative_bearing = ((image.shape[1] / 2.0 - center_x) /
-                            image.shape[1]) * self.camera_horizontal_fov_
+        box = max(detections, key=lambda b: b[2] * b[3])
         if self.state_ == 'INSPECT' and self.active_artifact_index_ is not None:
             self.last_target_seen_at_ = self.now_seconds()
         if self.state_ == 'EXPLORE' and self.detection_streak_ >= 2:
-            self.localise_artifact(relative_bearing)
+            self.localise_box(box, image.shape[1])
 
-    def localise_artifact(self, bearing=0.0):
-        """Approximate map-frame target location from camera bearing and assumed range."""
+    def localise_box(self, box, image_width):
+        """Map position of a detected sign from its image column and its measured distance (assumed 3 m if there is no depth)."""
         robot = self.get_pose_2d()
         if robot is None:
             return
-        theta = robot.theta + bearing
+        focal = (image_width / 2.0) / math.tan(self.camera_horizontal_fov_ / 2.0)
+        left = (image_width / 2.0 - (box[0] + box[2] / 2.0)) / focal            # sideways offset per metre of forward distance
+        forward = self.box_range(box) or self.estimated_artifact_distance_
+        camera_x = robot.x + 0.5 * math.cos(robot.theta)                          # the camera is 0.5 m ahead of the robot centre
+        camera_y = robot.y + 0.5 * math.sin(robot.theta)
+        self.localise_artifact(target_xy=(camera_x + forward * math.cos(robot.theta) - forward * left * math.sin(robot.theta),
+                                          camera_y + forward * math.sin(robot.theta) + forward * left * math.cos(robot.theta)))
+
+    def localise_artifact(self, target_xy):
+        """Record a newly seen artefact at a map position, unless it is one already known."""
         p = Point()
-        p.x = robot.x + self.estimated_artifact_distance_ * math.cos(theta)
-        p.y = robot.y + self.estimated_artifact_distance_ * math.sin(theta)
+        p.x, p.y = float(target_xy[0]), float(target_xy[1])
         p.z = 0.5
         for i, old in enumerate(self.artifact_locations_):
             if math.hypot(old.x - p.x, old.y - p.y) < self.artifact_merge_radius_:
