@@ -8,7 +8,7 @@ from copy import deepcopy
 import cv2  # OpenCV2
 import rclpy
 from cv_bridge import CvBridge
-from geometry_msgs.msg import Pose, Pose2D, PoseStamped, Point
+from geometry_msgs.msg import Pose, Pose2D, PoseStamped, Point, Twist
 from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import OccupancyGrid
 from rclpy.action import ActionClient
@@ -21,6 +21,8 @@ from tf2_ros.transform_listener import TransformListener
 
 from visualization_msgs.msg import Marker
 from visualization_msgs.msg import MarkerArray
+
+from cave_explorer.planning import safe_navigation as safe_nav
 
 
 def wrap_angle(angle):
@@ -150,6 +152,21 @@ class CaveExplorer(Node):
         self.computer_vision_model_ = cv2.CascadeClassifier(self.get_parameter('computer_vision_model_filename').value)
         self.image_sub_ = self.create_subscription(Image, 'camera/image', self.image_callback, 1)
 
+        # Safer exploration (Karan Sharma): remember failed goals, detect a stuck robot, recover
+        self.cmd_vel_pub_ = self.create_publisher(Twist, 'cmd_vel', 1)
+        self.frontier_marker_pub_ = self.create_publisher(MarkerArray, 'frontier_markers', 1)
+        self.failed_goals_ = []
+        self.recent_goals_ = []
+        self.frontier_goal_xy_ = None
+        self.goal_sent_at_ = None
+        self.last_result_at_ = 0.0
+        self.frontier_attempts_ = 0
+        self.retry_goal_ = None
+        self.watchdog_ = safe_nav.StuckWatchdog()
+        self.recovery_started_at_ = None
+        self.exploration_done_logged_ = False
+        self.recovery_timer_ = self.create_timer(0.05, self.recovery_loop)
+
         # Timer for main loop
         self.main_loop_timer_ = self.create_timer(0.2, self.main_loop)
     
@@ -232,84 +249,92 @@ class CaveExplorer(Node):
                     frontiers.append((x, y))
 
         return frontiers
-    def planner_frontier_exploration(self):
-        """Choose a frontier and navigate towards it."""
+    def robot_xy(self):
+        """Robot position in the map frame without logging, or None"""
+        try:
+            t = self.tf_buffer.lookup_transform('map', 'base_link', rclpy.time.Time())
+        except TransformException:
+            return None
+        return (t.transform.translation.x, t.transform.translation.y)
 
+    def planner_frontier_exploration(self):
+        """Choose a safe, reachable frontier and navigate towards it (Planning 1)."""
         if self.map_msg_ is None:
             self.get_logger().warn('No map received yet.')
             self.ready_for_next_goal_ = True
             return
-
-        robot_pose = self.get_pose_2d()
-
-        if robot_pose is None:
+        xy = self.robot_xy()
+        if xy is None:
             self.ready_for_next_goal_ = True
             return
 
-        frontiers = self.find_frontiers()
-
-        if len(frontiers) == 0:
-            self.get_logger().warn('No frontiers found.')
+        choice = safe_nav.choose_frontier(self.map_msg_, xy, self.failed_goals_, self.recent_goals_)
+        self.publish_frontier_markers(choice)
+        if choice is None:
+            if not self.exploration_done_logged_:
+                self.get_logger().warn('No safe, reachable frontier left: exploration finished.')
+                self.exploration_done_logged_ = True
             self.ready_for_next_goal_ = True
             return
 
-        resolution = self.map_msg_.info.resolution
-        origin_x = self.map_msg_.info.origin.position.x
-        origin_y = self.map_msg_.info.origin.position.y
-
-        best_goal = None
-        best_distance = float('inf')
-
-        for x, y in frontiers:
-
-            world_x = origin_x + (x + 0.5) * resolution
-            world_y = origin_y + (y + 0.5) * resolution
-
-            distance = math.sqrt(
-                (world_x - robot_pose.x) ** 2 +
-                (world_y - robot_pose.y) ** 2
-            )
-
-            too_close_to_old_goal = False
-
-            for old_x, old_y in self.visited_frontiers_:
-                old_distance = math.sqrt(
-                    (world_x - old_x) ** 2 +
-                    (world_y - old_y) ** 2
-                )
-
-                if old_distance < 1.5:
-                    too_close_to_old_goal = True
-                    break
-
-            if too_close_to_old_goal:
-                continue
-
-            if distance < best_distance:
-                best_distance = distance
-                best_goal = (world_x, world_y)
-
-        if best_goal is None:
-            self.get_logger().warn('No unused frontier found.')
-            self.ready_for_next_goal_ = True
-            return
-
-        goal_pose = Pose2D()
-        goal_pose.x = best_goal[0]
-        goal_pose.y = best_goal[1]
-
-        goal_pose.theta = math.atan2(
-            goal_pose.y - robot_pose.y,
-            goal_pose.x - robot_pose.x
-        )
-
-        self.visited_frontiers_.append(best_goal)
-
+        goal = Pose2D(x=choice['goal'][0], y=choice['goal'][1], theta=choice['heading'])
+        self.recent_goals_ = (self.recent_goals_ + [choice['goal']])[-10:]
+        self.frontier_goal_xy_ = choice['goal']
+        self.frontier_attempts_ = 0
         self.get_logger().info(
-            f'Frontier goal: ({goal_pose.x:.2f}, {goal_pose.y:.2f})'
-        )
+            f'Frontier goal: ({goal.x:.2f}, {goal.y:.2f}), path {choice["path"]:.1f} m, '
+            f'frontier {choice["size"]:.1f} m, {len(choice["candidates"])} candidates')
+        self.send_frontier_goal(goal, xy)
 
-        self.planner_go_to_pose2d(goal_pose)
+    def send_frontier_goal(self, goal, xy):
+        if self.planner_go_to_pose2d(goal, kind='frontier'):
+            self.goal_sent_at_ = self.now_seconds()
+            self.watchdog_.reset(xy, self.goal_sent_at_)
+
+    def publish_frontier_markers(self, choice):
+        """RViz: yellow = candidate frontiers, green = chosen goal, red = goals that failed"""
+        array = MarkerArray()
+        clear = Marker()
+        clear.action = Marker.DELETEALL
+        array.markers.append(clear)
+
+        def sphere(marker_id, ns, x, y, size, rgba, kind=Marker.SPHERE):
+            m = Marker()
+            m.header.frame_id = 'map'
+            m.ns = ns
+            m.id = marker_id
+            m.type = kind
+            m.action = Marker.ADD
+            m.pose.position.x = float(x)
+            m.pose.position.y = float(y)
+            m.pose.position.z = 0.4
+            m.pose.orientation.w = 1.0
+            m.scale.x = m.scale.y = m.scale.z = size
+            m.color.r, m.color.g, m.color.b, m.color.a = rgba
+            return m
+
+        if choice is not None:
+            for i, (x, y, _, _) in enumerate(choice['candidates']):
+                array.markers.append(sphere(i, 'candidates', x, y, 0.7, (1.0, 0.9, 0.0, 0.9)))
+            array.markers.append(sphere(0, 'chosen', choice['goal'][0], choice['goal'][1], 1.4, (0.0, 1.0, 0.2, 1.0)))
+        for i, (x, y) in enumerate(self.failed_goals_):
+            array.markers.append(sphere(i, 'failed', x, y, 1.0, (1.0, 0.0, 0.0, 0.9), Marker.CYLINDER))
+        self.frontier_marker_pub_.publish(array)
+
+    def recovery_loop(self):
+        """Free a stuck robot: reverse for 4 s, then turn right for 2 s"""
+        if self.recovery_started_at_ is None:
+            return
+        elapsed = self.now_seconds() - self.recovery_started_at_
+        command = Twist()
+        if elapsed < 4.0:
+            command.linear.x = -0.8
+        elif elapsed < 6.0:
+            command.angular.z = -1.0
+        else:
+            self.recovery_started_at_ = None
+            self.ready_for_next_goal_ = True
+        self.cmd_vel_pub_.publish(command)
 
     def now_seconds(self):
         return self.get_clock().now().nanoseconds / 1e9
@@ -317,7 +342,9 @@ class CaveExplorer(Node):
     def image_callback(self, image_msg):
         """Detect chosen artefact, estimate bearing, and maintain target visibility."""
         try:
-            image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='bgr8')
+            image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='passthrough')
+            if image_msg.encoding == 'rgb8':
+                image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             if self.computer_vision_model_.empty():
                 self.get_logger().error('Cascade model not loaded; check model filename')
@@ -483,8 +510,23 @@ class CaveExplorer(Node):
                 self.detection_streak_ = 0
             else:
                 self.retry_or_abandon(f'Nav2 status {status}')
-        elif kind == 'frontier' and status != GoalStatus.STATUS_SUCCEEDED:
-            self.get_logger().warn(f'Frontier navigation finished with status {status}')
+        elif kind == 'frontier':
+            self.last_result_at_ = self.now_seconds()
+            quick = self.goal_sent_at_ is not None and self.last_result_at_ - self.goal_sent_at_ < 3.0
+            if status == GoalStatus.STATUS_SUCCEEDED:
+                self.frontier_attempts_ = 0
+            elif self.recovery_started_at_ is not None:
+                pass                       # cancelled because the robot was stuck; already remembered as failed
+            elif status == GoalStatus.STATUS_ABORTED and quick and self.frontier_attempts_ < 2 and self.frontier_goal_xy_:
+                # Nav2 aborts a goal that arrives while it is still finishing the previous one: try again shortly
+                self.frontier_attempts_ += 1
+                self.retry_goal_ = self.frontier_goal_xy_
+                self.get_logger().warn('Frontier goal aborted straight away; will retry')
+            else:
+                self.frontier_attempts_ = 0
+                if self.frontier_goal_xy_:
+                    self.failed_goals_.append(self.frontier_goal_xy_)
+                self.get_logger().warn(f'Frontier goal failed (status {status}); not choosing near it again')
 
     def cancel_current_goal(self):
         """Wait for frontier cancellation to complete before sending inspection goal."""
@@ -650,6 +692,26 @@ class CaveExplorer(Node):
                 self.planner_type_ = PlannerType.GO_TO_FIRST_ARTIFACT
                 self.planner_go_to_first_artifact()
             return
+        if self.state_ == 'EXPLORE':
+            if self.recovery_started_at_ is not None:
+                return                     # backing up; do not plan until it is done
+            xy = self.robot_xy()
+            if (xy is not None and self.goal_kind_ == 'frontier' and self.current_goal_handle_ is not None
+                    and self.watchdog_.is_stuck(xy, self.now_seconds())):
+                self.get_logger().warn(f'Stuck at ({xy[0]:.1f}, {xy[1]:.1f}); cancelling the goal and backing up')
+                if self.frontier_goal_xy_:
+                    self.failed_goals_.append(self.frontier_goal_xy_)
+                self.recovery_started_at_ = self.now_seconds()
+                self.cancel_current_goal()
+                return
+            if self.ready_for_next_goal_ and self.retry_goal_ is not None and xy is not None:
+                if self.now_seconds() - self.last_result_at_ < 1.0:
+                    return
+                goal_xy, self.retry_goal_ = self.retry_goal_, None
+                theta = math.atan2(goal_xy[1] - xy[1], goal_xy[0] - xy[0])
+                self.goal_kind_ = 'frontier'
+                self.send_frontier_goal(Pose2D(x=goal_xy[0], y=goal_xy[1], theta=theta), xy)
+                return
         if self.state_ == 'EXPLORE' and self.ready_for_next_goal_:
             self.planner_type_ = PlannerType.FRONTIER_EXPLORATION
             self.goal_kind_ = 'frontier'
