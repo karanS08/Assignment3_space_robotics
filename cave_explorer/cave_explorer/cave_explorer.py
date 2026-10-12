@@ -634,7 +634,7 @@ class CaveExplorer(Node):
                 elapsed = self.now_seconds() - self.inspection_started_at_
                 lost = (self.last_target_seen_at_ is not None and
                         self.now_seconds() - self.last_target_seen_at_ > self.target_lost_timeout_)
-                                if elapsed > self.inspection_timeout_ or lost:
+                if elapsed > self.inspection_timeout_ or lost:
                     if self.current_goal_handle_ is None and not self.goal_request_pending_:
                         self.cancel_requested_ = False
                         self.inspection_started_at_ = None
