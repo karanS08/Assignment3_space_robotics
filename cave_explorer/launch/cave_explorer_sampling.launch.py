@@ -30,6 +30,11 @@ def generate_launch_description():
         description='Random seed for measurement noise and the random strategy'
     )
 
+    travel_weight_launch_arg = DeclareLaunchArgument(
+        'travel_weight',
+        default_value='0.3',
+        description='Adaptive strategy: how strongly path distance is penalised (0 = ignore distance)'
+    )
     log_directory_launch_arg = DeclareLaunchArgument(
         'log_directory',
         default_value='~/cave_sampling_logs',
@@ -46,6 +51,7 @@ def generate_launch_description():
                      'strategy': LaunchConfiguration('strategy'),
                      'num_samples': LaunchConfiguration('num_samples'),
                      'seed': LaunchConfiguration('seed'),
+                     'travel_weight': LaunchConfiguration('travel_weight'),
                      'log_directory': LaunchConfiguration('log_directory')}]
     )
 
@@ -53,6 +59,7 @@ def generate_launch_description():
     ld.add_action(strategy_launch_arg)
     ld.add_action(num_samples_launch_arg)
     ld.add_action(seed_launch_arg)
+    ld.add_action(travel_weight_launch_arg)
     ld.add_action(log_directory_launch_arg)
     ld.add_action(adaptive_sampling_node)
 
