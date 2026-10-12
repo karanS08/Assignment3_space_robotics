@@ -3,6 +3,7 @@
 import math
 import random
 from enum import Enum
+from copy import deepcopy
 
 import cv2  # OpenCV2
 import rclpy
@@ -11,6 +12,7 @@ from geometry_msgs.msg import Pose, Pose2D, PoseStamped, Point
 from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import OccupancyGrid
 from rclpy.action import ActionClient
+from action_msgs.msg import GoalStatus
 from rclpy.node import Node
 from sensor_msgs.msg import Image
 from tf2_ros import TransformException
@@ -51,6 +53,7 @@ class PlannerType(Enum):
     GO_TO_FIRST_ARTIFACT = 3
     RANDOM_WALK = 4
     RANDOM_GOAL = 5
+    FRONTIER_EXPLORATION = 6
     # Add more!
 
 
@@ -61,10 +64,35 @@ class CaveExplorer(Node):
         # Variables/Flags for mapping
         self.xlim_ = [0.0, 0.0]
         self.ylim_ = [0.0, 0.0]
-
+        self.map_msg_ = None
+        self.visited_frontiers_ = []
         # Variables/Flags for perception
         self.artifact_found_ = False
-
+        # Planning 2/3: explore -> inspect -> explore state machine.
+        self.inspection_standoff_ = 1.5
+        self.estimated_artifact_distance_ = 3.0  # Approximate range, NOT measured depth.
+        self.camera_horizontal_fov_ = math.radians(60.0)  # Calibrate for actual camera.
+        self.artifact_merge_radius_ = 2.0
+        self.inspection_timeout_ = 45.0
+        self.target_lost_timeout_ = 8.0
+        self.max_inspection_retries_ = 1
+        self.state_ = 'EXPLORE'
+        self.artifact_locations_ = []
+        self.artifact_status_ = []  # pending / inspected / abandoned
+        self.active_artifact_index_ = None
+        self.inspection_retries_ = 0
+        self.inspection_started_at_ = None
+        self.last_target_seen_at_ = None
+        self.goal_kind_ = None
+        self.goal_request_pending_ = False
+        self.cancel_requested_ = False
+        self.cancel_in_progress_ = False
+        self.goal_generation_ = 0
+        self.active_goal_generation_ = None
+        self.detection_streak_ = 0
+        self.artifact_found_ = False
+        self.ready_for_next_goal_ = True
+        self.current_goal_handle_ = None
         # Variables/Flags for planning
         self.planner_type_ = PlannerType.ERROR
         self.reached_first_artifact_ = False
@@ -85,9 +113,9 @@ class CaveExplorer(Node):
         self.marker_artifacts_.pose.orientation.y = 0.0
         self.marker_artifacts_.pose.orientation.z = 0.0
         self.marker_artifacts_.pose.orientation.w = 1.0
-        self.marker_artifacts_.scale.x = 1.5
-        self.marker_artifacts_.scale.y = 1.5
-        self.marker_artifacts_.scale.z = 1.5
+        self.marker_artifacts_.scale.x = 0.7
+        self.marker_artifacts_.scale.y = 0.7
+        self.marker_artifacts_.scale.z = 0.7
         self.marker_artifacts_.color.a = 1.0
         self.marker_artifacts_.color.r = 0.0
         self.marker_artifacts_.color.g = 1.0
@@ -96,8 +124,6 @@ class CaveExplorer(Node):
 
         # Remember the artifact locations
         # Array of type geometry_msgs.Point
-        self.artifact_locations_ = []
-
         # Initialise CvBridge
         self.cv_bridge_ = CvBridge()
 
@@ -110,7 +136,6 @@ class CaveExplorer(Node):
         self.get_logger().warn('Waiting for navigate_to_pose action...')
         self.nav2_action_client_.wait_for_server()
         self.get_logger().warn('navigate_to_pose connected')
-        self.ready_for_next_goal_ = True
         self.declare_parameter('print_feedback', rclpy.Parameter.Type.BOOL)
 
         # Publisher for the goal pose visualisation
@@ -160,7 +185,7 @@ class CaveExplorer(Node):
 
     def map_callback(self, map_msg: OccupancyGrid):
         """New map received, so update x and y limits"""
-
+        self.map_msg_ = map_msg
         # Extract data from message
         map_origin = [map_msg.info.origin.position.x, 
                       map_msg.info.origin.position.y]
@@ -175,148 +200,331 @@ class CaveExplorer(Node):
         # self.get_logger().warn('Map received:')
         # self.get_logger().warn(f'  xlim = [{self.xlim_[0]:.2f}, {self.xlim_[1]:.2f}]')
         # self.get_logger().warn(f'  ylim = [{self.ylim_[0]:.2f}, {self.ylim_[1]:.2f}]')
-    
-    def image_callback(self, image_msg):
-        """
-        Recieve an RGB image.
-        Use this method to detect artifacts of interest.
-        
-        A simple method has been provided to begin with for detecting stop signs (which is not what we're actually looking for) 
-        adapted from: https://www.geeksforgeeks.org/detect-an-object-with-opencv-python/
-        """
-    
-        # Copy the image message to a cv image
-        # see http://wiki.ros.org/cv_bridge/Tutorials/ConvertingBetweenROSImagesAndOpenCVImagesPython
-        image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='passthrough')
+    def find_frontiers(self):
+        """Find free map cells next to unknown space."""
 
-        # Create a grayscale version (some simple models use this)
-        # image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if self.map_msg_ is None:
+            return []
 
-        # Retrieve the pre-trained model
-        stop_sign_model = self.computer_vision_model_
+        width = self.map_msg_.info.width
+        height = self.map_msg_.info.height
+        data = self.map_msg_.data
 
-        # Detect artifacts in the image
-        # The minSize is used to avoid very small detections that are probably noise
-        detections = stop_sign_model.detectMultiScale(image, minSize=(20,20))
+        frontiers = []
 
-        # You can set "artifact_found_" to true to signal to "main_loop" that you have found a artifact
-        # You may want to communicate more information
-        # Since the "image_callback" and "main_loop" methods can run at the same time you should protect any shared variables
-        # with a mutex
-        # "artifact_found_" doesn't need a mutex because it's an atomic
-        num_detections = len(detections)
+        for y in range(1, height - 1):
+            for x in range(1, width - 1):
+                idx = y * width + x
 
-        if num_detections > 0:
-            self.artifact_found_ = True
-        else:
-            self.artifact_found_ = False
+                # Only consider free cells
+                if data[idx] != 0:
+                    continue
 
-        # Draw a bounding box rectangle on the image for each detection
-        for(x, y, width, height) in detections:
-            cv2.rectangle(image, (x, y), (x + height, y + width), (0, 255, 0), 5)
+                neighbours = [
+                    data[idx - 1],
+                    data[idx + 1],
+                    data[idx - width],
+                    data[idx + width]
+                ]
 
-        # Publish the image with the detection bounding boxes
-        image_detection_message = self.cv_bridge_.cv2_to_imgmsg(image, encoding="rgb8")
-        self.image_detections_pub_.publish(image_detection_message)
+                # Frontier = free cell beside unknown space
+                if -1 in neighbours:
+                    frontiers.append((x, y))
 
-        if self.artifact_found_:
-            self.get_logger().info('Artifact found!')
-            self.localise_artifact()
+        return frontiers
+    def planner_frontier_exploration(self):
+        """Choose a frontier and navigate towards it."""
 
-
-    def localise_artifact(self):
-        """
-        INCOMPLETE:
-        Compute the location of the artifact
-        Save it to a list, publish rviz marker
-        This version just uses the robot location rather than the artifact location
-        You can find other examples of using RViz markers in the previous assignments template code
-        """
-
-        # Current location of the robot
-        robot_pose = self.get_pose_2d()
-
-        if robot_pose == None:
-            self.get_logger().warn(f'localise_artifact: robot_pose is None.')
+        if self.map_msg_ is None:
+            self.get_logger().warn('No map received yet.')
+            self.ready_for_next_goal_ = True
             return
 
-        # Compute the location of the artifact
-        # This is currently INCOMPLETE
-        point = Point()
-        point.x = robot_pose.x
-        point.y = robot_pose.y
-        point.z = 1.0
+        robot_pose = self.get_pose_2d()
 
-        # Save it
-        self.artifact_locations_.append(point)
+        if robot_pose is None:
+            self.ready_for_next_goal_ = True
+            return
 
-        # Publish the markers
+        frontiers = self.find_frontiers()
+
+        if len(frontiers) == 0:
+            self.get_logger().warn('No frontiers found.')
+            self.ready_for_next_goal_ = True
+            return
+
+        resolution = self.map_msg_.info.resolution
+        origin_x = self.map_msg_.info.origin.position.x
+        origin_y = self.map_msg_.info.origin.position.y
+
+        best_goal = None
+        best_distance = float('inf')
+
+        for x, y in frontiers:
+
+            world_x = origin_x + (x + 0.5) * resolution
+            world_y = origin_y + (y + 0.5) * resolution
+
+            distance = math.sqrt(
+                (world_x - robot_pose.x) ** 2 +
+                (world_y - robot_pose.y) ** 2
+            )
+
+            too_close_to_old_goal = False
+
+            for old_x, old_y in self.visited_frontiers_:
+                old_distance = math.sqrt(
+                    (world_x - old_x) ** 2 +
+                    (world_y - old_y) ** 2
+                )
+
+                if old_distance < 1.5:
+                    too_close_to_old_goal = True
+                    break
+
+            if too_close_to_old_goal:
+                continue
+
+            if distance < best_distance:
+                best_distance = distance
+                best_goal = (world_x, world_y)
+
+        if best_goal is None:
+            self.get_logger().warn('No unused frontier found.')
+            self.ready_for_next_goal_ = True
+            return
+
+        goal_pose = Pose2D()
+        goal_pose.x = best_goal[0]
+        goal_pose.y = best_goal[1]
+
+        goal_pose.theta = math.atan2(
+            goal_pose.y - robot_pose.y,
+            goal_pose.x - robot_pose.x
+        )
+
+        self.visited_frontiers_.append(best_goal)
+
+        self.get_logger().info(
+            f'Frontier goal: ({goal_pose.x:.2f}, {goal_pose.y:.2f})'
+        )
+
+        self.planner_go_to_pose2d(goal_pose)
+
+    def now_seconds(self):
+        return self.get_clock().now().nanoseconds / 1e9
+
+    def image_callback(self, image_msg):
+        """Detect chosen artefact, estimate bearing, and maintain target visibility."""
+        try:
+            image = self.cv_bridge_.imgmsg_to_cv2(image_msg, desired_encoding='bgr8')
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            if self.computer_vision_model_.empty():
+                self.get_logger().error('Cascade model not loaded; check model filename')
+                return
+            detections = self.computer_vision_model_.detectMultiScale(
+                gray, scaleFactor=1.1, minNeighbors=4, minSize=(20, 20))
+        except Exception as exc:
+            self.get_logger().warn(f'Image detection error: {exc}')
+            return
+
+        self.artifact_found_ = len(detections) > 0
+        self.detection_streak_ = self.detection_streak_ + 1 if self.artifact_found_ else 0
+        for x, y, w, h in detections:
+            cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        self.image_detections_pub_.publish(
+            self.cv_bridge_.cv2_to_imgmsg(cv2.cvtColor(image, cv2.COLOR_BGR2RGB), encoding='rgb8'))
+
+        if not self.artifact_found_:
+            return
+        # Choose largest detected box; the cascade is for one configured artefact type.
+        x, y, w, h = max(detections, key=lambda b: b[2] * b[3])
+        center_x = x + w / 2.0
+        relative_bearing = ((image.shape[1] / 2.0 - center_x) /
+                            image.shape[1]) * self.camera_horizontal_fov_
+        if self.state_ == 'INSPECT' and self.active_artifact_index_ is not None:
+            self.last_target_seen_at_ = self.now_seconds()
+        if self.state_ == 'EXPLORE' and self.detection_streak_ >= 2:
+            self.localise_artifact(relative_bearing)
+
+    def localise_artifact(self, bearing=0.0):
+        """Approximate map-frame target location from camera bearing and assumed range."""
+        robot = self.get_pose_2d()
+        if robot is None:
+            return
+        theta = robot.theta + bearing
+        p = Point()
+        p.x = robot.x + self.estimated_artifact_distance_ * math.cos(theta)
+        p.y = robot.y + self.estimated_artifact_distance_ * math.sin(theta)
+        p.z = 0.5
+        for i, old in enumerate(self.artifact_locations_):
+            if math.hypot(old.x - p.x, old.y - p.y) < self.artifact_merge_radius_:
+                # Do not revisit already inspected/abandoned targets.
+                return
+        self.artifact_locations_.append(p)
+        self.artifact_status_.append('pending')
+        self.active_artifact_index_ = len(self.artifact_locations_) - 1
+        self.inspection_retries_ = 0
+        self.last_target_seen_at_ = self.now_seconds()
+        self.state_ = 'PREEMPT'
+        self.get_logger().info(f'New artefact #{self.active_artifact_index_}: stop exploring')
         self.publish_artifact_markers()
+        self.cancel_current_goal()
 
     def publish_artifact_markers(self):
-        """ Publish the artifact location markers"""
+        """Yellow=pending, green=inspected, red=abandoned in RViz."""
+        array = MarkerArray()
+        for i, (p, status) in enumerate(zip(self.artifact_locations_, self.artifact_status_)):
+            m = Marker()
+            m.header.frame_id = 'map'
+            m.header.stamp = self.get_clock().now().to_msg()
+            m.ns = 'artifact_inspection_status'
+            m.id = i
+            m.type = Marker.SPHERE
+            m.action = Marker.ADD
+            m.pose.orientation.w = 1.0
+            m.pose.position = p
+            m.scale.x = m.scale.y = m.scale.z = 0.8
+            m.color.a = 1.0
+            if status == 'inspected':
+                m.color.g = 1.0
+            elif status == 'abandoned':
+                m.color.r = 1.0
+            else:
+                m.color.r = m.color.g = 1.0
+            array.markers.append(m)
+        self.marker_pub_.publish(array)
 
-        # Update the locations
-        self.marker_artifacts_.points = self.artifact_locations_
-
-        # Create and publish the MarkerArray
-        marker_array = MarkerArray()
-        marker_array.markers = [self.marker_artifacts_]
-        self.marker_pub_.publish(marker_array)
-
-
-    def planner_go_to_pose2d(self, pose2d):
-        """Go to a provided 2d pose"""
-
-        # Send a goal to navigate_to_pose with self.nav2_action_client_
+    def planner_go_to_pose2d(self, pose2d, kind='frontier'):
+        """Send a single Nav2 goal; callbacks track the matching request."""
+        if self.goal_request_pending_ or self.current_goal_handle_ is not None:
+            return False
         action_goal = NavigateToPose.Goal()
         action_goal.pose.header.stamp = self.get_clock().now().to_msg()
         action_goal.pose.header.frame_id = 'map'
         action_goal.pose.pose = pose2d_to_pose(pose2d)
-
-        # Publish visualisation
         self.goal_pose_vis_.publish(action_goal.pose)
+        self.goal_kind_ = kind
+        self.goal_generation_ += 1
+        generation = self.goal_generation_
+        self.goal_request_pending_ = True
+        self.ready_for_next_goal_ = False
+        self.get_logger().info(f'Sending {kind} goal ({pose2d.x:.2f}, {pose2d.y:.2f})')
+        try:
+            feedback_cb = self.feedback_callback if self.get_parameter('print_feedback').value else None
+            future = self.nav2_action_client_.send_goal_async(action_goal, feedback_callback=feedback_cb)
+            future.add_done_callback(lambda f, gen=generation: self.goal_response_callback(f, gen))
+        except Exception as exc:
+            self.goal_request_pending_ = False
+            self.ready_for_next_goal_ = True
+            self.get_logger().error(f'Failed to send navigation goal: {exc}')
+            return False
+        return True
 
-        # Decide whether to show feedback or not
-        if self.get_parameter('print_feedback').value:
-            feedback_method = self.feedback_callback
-        else:
-            feedback_method = None
-
-        # Send goal to action server
-        self.get_logger().warn(f'Sending goal [{pose2d.x:.2f}, {pose2d.y:.2f}]...')
-        self.send_goal_future_ = self.nav2_action_client_.send_goal_async(
-            action_goal,
-            feedback_callback=feedback_method)
-        self.send_goal_future_.add_done_callback(self.goal_response_callback)
-
-    def goal_response_callback(self, future):
-        """The requested goal pose has been sent to the action server"""
-
-        goal_handle = future.result()
-        if not goal_handle.accepted:
-            self.get_logger().error('Goal rejected')
+    def goal_response_callback(self, future, generation):
+        self.goal_request_pending_ = False
+        try:
+            handle = future.result()
+        except Exception as exc:
+            self.get_logger().error(f'Goal request failed: {exc}')
+            self.navigation_failed()
             return
-
-        # Goal accepted: get result when it's completed
-        self.get_logger().warn(f'Goal accepted')
-        self.get_result_future_ = goal_handle.get_result_async()
-        self.get_result_future_.add_done_callback(self.goal_reached_callback)
+        if not handle.accepted:
+            self.get_logger().warn('Goal rejected')
+            self.navigation_failed()
+            return
+        self.current_goal_handle_ = handle
+        self.active_goal_generation_ = generation
+        result_future = handle.get_result_async()
+        result_future.add_done_callback(
+            lambda f, h=handle, gen=generation: self.goal_reached_callback(f, h, gen))
+        if self.cancel_requested_:
+            self.cancel_current_goal()
 
     def feedback_callback(self, feedback_msg):
-        """Monitor the feedback from the action server"""
+        self.get_logger().info(f'{feedback_msg.feedback.distance_remaining:.2f} m remaining')
 
-        feedback = feedback_msg.feedback
-
-        self.get_logger().info(f'{feedback.distance_remaining:.2f} m remaining')
-
-    def goal_reached_callback(self, future):
-        """The requested goal has been reached"""
-
-        result = future.result().result
-        self.get_logger().info(f'Goal reached!')
+    def navigation_failed(self):
+        self.current_goal_handle_ = None
+        self.cancel_requested_ = False
+        self.cancel_in_progress_ = False
         self.ready_for_next_goal_ = True
+        if self.state_ == 'PREEMPT':
+            self.state_ = 'INSPECT'
+        elif self.state_ == 'INSPECT':
+            self.retry_or_abandon('navigation failed')
 
+    def goal_reached_callback(self, future, handle, generation):
+        if handle is not self.current_goal_handle_ or generation != self.active_goal_generation_:
+            return
+        try:
+            status = future.result().status
+        except Exception as exc:
+            self.get_logger().warn(f'Navigation result error: {exc}')
+            status = None
+        kind = self.goal_kind_
+        self.current_goal_handle_ = None
+        self.active_goal_generation_ = None
+        self.cancel_requested_ = False
+        self.cancel_in_progress_ = False
+        self.ready_for_next_goal_ = True
+        if self.state_ == 'PREEMPT':
+            self.state_ = 'INSPECT'
+            return
+        if kind == 'inspection' and self.state_ == 'INSPECT':
+            if status == GoalStatus.STATUS_SUCCEEDED:
+                i = self.active_artifact_index_
+                self.artifact_status_[i] = 'inspected'
+                self.reached_first_artifact_ = True
+                self.get_logger().info(f'Planning 2 complete; inspected artefact #{i}; resume exploration')
+                self.publish_artifact_markers()
+                self.active_artifact_index_ = None
+                self.state_ = 'EXPLORE'
+                self.detection_streak_ = 0
+            else:
+                self.retry_or_abandon(f'Nav2 status {status}')
+        elif kind == 'frontier' and status != GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().warn(f'Frontier navigation finished with status {status}')
+
+    def cancel_current_goal(self):
+        """Wait for frontier cancellation to complete before sending inspection goal."""
+        self.cancel_requested_ = True
+        if self.current_goal_handle_ is None or self.cancel_in_progress_:
+            return
+        self.cancel_in_progress_ = True
+        try:
+            f = self.current_goal_handle_.cancel_goal_async()
+            f.add_done_callback(self.cancel_response_callback)
+        except Exception as exc:
+            self.get_logger().warn(f'Cancel request failed: {exc}')
+            self.cancel_in_progress_ = False
+
+    def cancel_response_callback(self, future):
+        self.cancel_in_progress_ = False
+        try:
+            self.get_logger().info(f'Cancel requested: {len(future.result().goals_canceling)} goals cancelling')
+        except Exception as exc:
+            self.get_logger().warn(f'Cancel response failed: {exc}')
+        # The navigation result callback releases the active goal.
+
+    def retry_or_abandon(self, reason):
+        if self.active_artifact_index_ is None:
+            self.state_ = 'EXPLORE'
+            return
+        if self.inspection_retries_ < self.max_inspection_retries_:
+            self.inspection_retries_ += 1
+            self.inspection_started_at_ = None
+            self.last_target_seen_at_ = self.now_seconds()
+            self.get_logger().warn(f'Inspection {reason}; retry {self.inspection_retries_}/1')
+            return
+        i = self.active_artifact_index_
+        self.artifact_status_[i] = 'abandoned'
+        self.publish_artifact_markers()
+        self.get_logger().warn(f'Inspection {reason} twice; abandon #{i} and explore')
+        self.active_artifact_index_ = None
+        self.inspection_started_at_ = None
+        self.detection_streak_ = 0
+        self.state_ = 'EXPLORE'
 
     def planner_move_forwards(self, distance):
         """Simply move forward by the specified distance"""
@@ -327,26 +535,40 @@ class CaveExplorer(Node):
         pose_2d.y += distance * math.sin(pose_2d.theta)
 
         self.planner_go_to_pose2d(pose_2d)
+    def get_close_range_inspection_goal(self, artifact):
+        """Stop at a standoff distance facing the estimated artefact."""
+        robot = self.get_pose_2d()
+        if robot is None:
+            return None
+        dx, dy = artifact.x - robot.x, artifact.y - robot.y
+        distance = math.hypot(dx, dy)
+        if distance < 0.1:
+            return None
+        # If already within standoff, rotate in place toward the target.
+        travel = max(0.0, distance - self.inspection_standoff_)
+        goal = Pose2D()
+        goal.x = robot.x + travel * dx / distance
+        goal.y = robot.y + travel * dy / distance
+        goal.theta = math.atan2(dy, dx)
+        return goal
 
     def planner_go_to_first_artifact(self):
-        """Go to a pre-specified artifact location"""
-
-        goal_pose2d = Pose2D(
-            x = 18.1,
-            y = 6.6,
-            theta = math.pi/2
-        )
-        self.planner_go_to_pose2d(goal_pose2d)
+        if self.active_artifact_index_ is None:
+            return
+        goal = self.get_close_range_inspection_goal(
+            self.artifact_locations_[self.active_artifact_index_])
+        if goal is None:
+            self.retry_or_abandon('cannot compute approach pose')
+            return
+        if self.planner_go_to_pose2d(goal, kind='inspection'):
+            self.inspection_started_at_ = self.now_seconds()
+            self.last_target_seen_at_ = self.now_seconds()
+            self.get_logger().info('Planning 2: approaching artefact, facing target')
 
     def planner_return_home(self):
-        """Return to the origin"""
-
-        goal_pose2d = Pose2D(
-            x = 0.0,
-            y = 0.0,
-            theta = math.pi
-        )
-        self.planner_go_to_pose2d(goal_pose2d)
+        """Optional template method; NOT used for Planning 3 behaviour switching."""
+        goal = Pose2D(x=0.0, y=0.0, theta=math.pi)
+        self.planner_go_to_pose2d(goal, kind='return_home')
 
     def planner_random_walk(self):
         """Go to a random location, which may be invalid"""
@@ -397,66 +619,37 @@ class CaveExplorer(Node):
         self.planner_go_to_pose2d(goal_pose2d)
 
     def main_loop(self):
-        """
-        Set the next goal pose and send to the action server
-        See https://docs.nav2.org/concepts/index.html
-        """
-        
-        # Don't do anything until SLAM is launched
-        if not self.tf_buffer.can_transform(
-                'map',
-                'base_link',
-                rclpy.time.Time()):
-            self.get_logger().warn('Waiting for transform... Have you launched a SLAM node?')
+        """Planning 3: exploration -> preemption -> inspection -> exploration."""
+        if not self.tf_buffer.can_transform('map', 'base_link', rclpy.time.Time()):
             return
-
-        #######################################################
-        # Update flags related to the progress of the current planner
-
-        # Check if previous goal still running
-        if not self.ready_for_next_goal_:
-            # self.get_logger().info(f'Previous goal still running')
+        if self.state_ == 'PREEMPT':
+            if self.current_goal_handle_ is None and not self.goal_request_pending_:
+                self.cancel_requested_ = False
+                self.state_ = 'INSPECT'
+            else:
+                self.cancel_current_goal()
+                return
+        if self.state_ == 'INSPECT':
+            if self.inspection_started_at_ is not None:
+                elapsed = self.now_seconds() - self.inspection_started_at_
+                lost = (self.last_target_seen_at_ is not None and
+                        self.now_seconds() - self.last_target_seen_at_ > self.target_lost_timeout_)
+                if elapsed > self.inspection_timeout_ or lost:
+                    if not self.cancel_requested_:
+                        self.get_logger().warn('Inspection timeout or target lost; cancelling goal')
+                        self.cancel_current_goal()
+                    # Wait for Nav2 result; that callback retries or abandons.
+                    return
+            if self.ready_for_next_goal_ and not self.goal_request_pending_ and self.current_goal_handle_ is None:
+                self.planner_type_ = PlannerType.GO_TO_FIRST_ARTIFACT
+                self.planner_go_to_first_artifact()
             return
+        if self.state_ == 'EXPLORE' and self.ready_for_next_goal_:
+            self.planner_type_ = PlannerType.FRONTIER_EXPLORATION
+            self.goal_kind_ = 'frontier'
+            self.get_logger().info('Planning 1/3: frontier exploration')
+            self.planner_frontier_exploration()
 
-        self.ready_for_next_goal_ = False
-
-        if self.planner_type_ == PlannerType.GO_TO_FIRST_ARTIFACT:
-            self.get_logger().info('Successfully reached first artifact!')
-            self.reached_first_artifact_ = True
-        if self.planner_type_ == PlannerType.RETURN_HOME:
-            self.get_logger().info('Successfully returned home!')
-            self.returned_home_ = True
-
-        #######################################################
-        # Select the next planner to execute
-        # Update this logic as you see fit!
-        if not self.reached_first_artifact_:
-            self.planner_type_ = PlannerType.GO_TO_FIRST_ARTIFACT
-        elif not self.returned_home_:
-            self.planner_type_ = PlannerType.RETURN_HOME
-        else:
-            self.planner_type_ = PlannerType.RANDOM_GOAL
-
-        #######################################################
-        # Execute the planner by calling the relevant method
-        # Add your own planners here!
-        self.get_logger().info(f'Calling planner: {self.planner_type_.name}')
-        if self.planner_type_ == PlannerType.MOVE_FORWARDS:
-            self.planner_move_forwards(10)
-        elif self.planner_type_ == PlannerType.GO_TO_FIRST_ARTIFACT:
-            self.planner_go_to_first_artifact()
-        elif self.planner_type_ == PlannerType.RETURN_HOME:
-            self.planner_return_home()
-        elif self.planner_type_ == PlannerType.RANDOM_WALK:
-            self.planner_random_walk()
-        elif self.planner_type_ == PlannerType.RANDOM_GOAL:
-            self.planner_random_goal()
-        else:
-            self.get_logger().error('No valid planner selected')
-            self.destroy_node()
-
-
-        #######################################################
 
 def main():
     # Initialise
