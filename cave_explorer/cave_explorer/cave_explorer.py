@@ -165,6 +165,7 @@ class CaveExplorer(Node):
         self.watchdog_ = safe_nav.StuckWatchdog()
         self.recovery_started_at_ = None
         self.exploration_done_logged_ = False
+        self.empty_choices_ = 0
         self.recovery_timer_ = self.create_timer(0.05, self.recovery_loop)
 
         # Timer for main loop
@@ -271,11 +272,15 @@ class CaveExplorer(Node):
         choice = safe_nav.choose_frontier(self.map_msg_, xy, self.failed_goals_, self.recent_goals_)
         self.publish_frontier_markers(choice)
         if choice is None:
-            if not self.exploration_done_logged_:
+            # A single empty result can happen while the map is catching up, so only call it finished after many in a row
+            self.empty_choices_ += 1
+            if self.empty_choices_ >= 15 and not self.exploration_done_logged_:
                 self.get_logger().warn('No safe, reachable frontier left: exploration finished.')
                 self.exploration_done_logged_ = True
             self.ready_for_next_goal_ = True
             return
+        self.empty_choices_ = 0
+        self.exploration_done_logged_ = False
 
         goal = Pose2D(x=choice['goal'][0], y=choice['goal'][1], theta=choice['heading'])
         self.recent_goals_ = (self.recent_goals_ + [choice['goal']])[-10:]
