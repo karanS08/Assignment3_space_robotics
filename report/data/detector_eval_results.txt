@@ -1,0 +1,12 @@
+== new detector (perception/artefact_detector.py)
+type              1-3 m        3-5 m        5-9 m   all ranges  false alarms (images / boxes) | other
+alien        17/17  100%    8/8   100%    8/8   100%   33/33  100%  9 / 13 | boxes off any labelled artefact: 21
+crystals     19/21   90%   11/11  100%    9/9   100%   39/41   95%  8 / 8 | boxes off any labelled artefact: 60
+mushroom     24/25   96%   11/11  100%    9/10   90%   44/46   96%  3 / 3 | boxes off any labelled artefact: 31
+sphere       17/21   81%    7/9    78%    6/8    75%   30/38   79%  3 / 3 | boxes off any labelled artefact: 4
+== Andrew's detector on main (Alien -> alien, Rock -> crystals)
+type              1-3 m        3-5 m        5-9 m   all ranges  false alarms (images / boxes) | other
+alien         9/17   53%    1/8    12%    0/8     0%   10/33   30%  4 / 5 | boxes off any labelled artefact: 5
+crystals     15/21   71%    9/11   82%    3/9    33%   27/41   66%  9 / 9 | boxes off any labelled artefact: 56
+
+Captured set: 405 images (simulator, rover teleported around every artefact; labels from world file). Images showing each type: {'crystals': 41, 'ice': 30, 'mushroom': 46, 'sphere': 38, 'alien': 33}; images with no artefact in view: 221

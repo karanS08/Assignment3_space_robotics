@@ -37,3 +37,15 @@ def load_cave_grid(resolution=0.3, margin=6.0):
     grid = np.zeros((height, width), np.int8)
     grid[image > 0] = 100
     return grid, (origin_x, origin_y)
+
+
+def artefacts_from_world():
+    sdf = open(os.path.join(PACKAGE, 'worlds', 'mars_cave.sdf')).read()
+    found = []
+    for m in re.finditer(r'<model name="(artifact_\d+)">\s*<pose>([^<]+)</pose>.*?<uri>[^<]*/artifacts/([^/]+)/', sdf, re.S):
+        x, y, z = (float(v) for v in m.group(2).split()[:3])
+        kind = {'green_alien': 'alien', 'green_crystals_game_ready_asset': 'crystals',
+                'white_sphere': 'sphere', 'mushrooms_blue': 'mushroom',
+                'ice_castles_ny__ice_formations': 'ice'}.get(m.group(3), m.group(3))
+        found.append({'name': m.group(1), 'type': kind, 'x': x, 'y': y})
+    return found
