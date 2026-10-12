@@ -273,85 +273,187 @@ asks for markers showing chosen frontiers and visited artefacts.
 \section{Advanced 2 --- Cave Geometry Analysis}
 \label{sec:advanced2}
 
-\subsection{Objective}
-Compute a distance transform of the map as the cave is explored, use it to find geometrically
-interesting regions, and report during the run at least the \emph{widest accessible area} and a
-\emph{narrow passage}, overlaid on the map in RViz.
+\subsection{What the task asks for}
+As the rover explores, the program should work out the \emph{shape} of the cave from the map the rover is
+building. In particular it should find the \textbf{widest open area} found so far and a \textbf{narrow passage}
+(a bottleneck), and show both in RViz on top of the map. Wide areas could suit future human activity, and narrow
+passages matter for navigation and safety. The result is updated every time the map changes.
 
-\subsection{Method}
-The node (\texttt{cave\_geometry\_node.py}) subscribes to \texttt{/map} and repeats the analysis on every
-update. The analysis itself (\texttt{cave\_geometry.py}) has no ROS dependency, so it was tested offline.
+\subsection{The idea in one picture}
+\label{sec:a2idea}
+The method rests on one simple question, asked for every free spot on the map:
+\emph{how far away is the nearest wall?} Everything else (the centre-line, the widest area, the narrow spots)
+is read off the answer. Figure~\ref{fig:a2steps} shows the six steps on the real map from a Gazebo run, and the text
+below explains each one.
 
-\paragraph{Distance transforms.}
-Cells with occupancy $\ge 50$ are walls, $-1$ is unknown, the rest are free. The Euclidean distance
-from every cell to the nearest wall, $d(\mathbf{x})$, gives clearance in metres. A second transform, the
-distance to the nearest wall \emph{or unknown cell}, is used for the widest area so that unexplored
-space is never counted as open.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{advanced2_steps.png}
+  \caption{The six steps of the cave geometry analysis, on the map the rover built in Gazebo.}
+  \label{fig:a2steps}
+\end{figure}
 
-\paragraph{Accessible space.}
-Free cells with $d \ge 0.5$\,m (the Nav2 robot radius), connected to the cell nearest the robot.
+\begin{enumerate}[nosep]
+  \item \textbf{The map.} The rover's map is a grid of small squares, each 0.3\,m wide. Every square is marked
+        as free, as a wall, or as not seen yet. We only use what the rover has really seen.
+  \item \textbf{Distance to the nearest wall.} For every free square the program works out how far it is from the
+        closest wall. Squares in the middle of a wide room get large numbers, and squares hugging a wall get small
+        ones. (The technical name for this is a \emph{distance transform}.) It is recalculated whenever the map
+        updates, so it grows with the map.
+  \item \textbf{Where the rover can go.} The rover is about 0.5\,m wide on each side, so squares closer than 0.5\,m to a wall are
+        ruled out, and so are free areas the rover could not reach from where it is.
+  \item \textbf{The centre-line.} Imagine walking away from a wall. The distance to it grows by exactly one metre
+        for each metre you walk. That stops being true on the centre-line of a corridor: step towards one wall and
+        you move away from the other, so the distance stops growing steadily. The program looks for exactly the spots where the
+        distance stops growing steadily and marks them in gold. They form a line along the middle of every
+        passage. (The technical name is the \emph{medial axis}. The rule uses how fast the distance changes from
+        square to square, its \emph{gradient}.)
+  \item \textbf{The widest open area.} Among all the squares the rover can reach, the program finds the one with the most
+        room around it. The circle that just fits there, touching no wall and no unseen space, is the widest open area,
+        and its radius says how roomy it is. Unseen space is not counted as open.
+  \item \textbf{Narrow spots.} A narrow spot is a place along the centre-line where the gap between the walls is
+        smaller than nearby, like a doorway between two rooms. Each one is shown as a red line across the gap, labelled with
+        the width. The thickest line is the narrowest. Finding them takes a careful test, described next.
+\end{enumerate}
 
-\paragraph{Medial axis from the gradient.}
-Away from the medial axis the nearest wall is unique and $\|\nabla d\| = 1$. On the medial axis the
-nearest wall switches sides, $\nabla d$ is discontinuous, and its finite-difference estimate cancels.
-Cells of the accessible space with $\|\nabla d\| < 0.8$ are therefore taken as the ridge (centre-line) of the cave.
-
-\begin{lstlisting}[caption={Ridge extraction from the gradient of the distance transform.}]
+\begin{lstlisting}[caption={Step 4 in code: the centre-line is where the distance stops growing by one metre per metre.}]
 def ridge_of(clearance, accessible, resolution, gradient_threshold=0.8):
     d_row, d_col = np.gradient(clearance, resolution)
     return accessible & (np.hypot(d_row, d_col) < gradient_threshold)
 \end{lstlisting}
 
-\paragraph{Widest accessible area.}
-The accessible cell with the largest confirmed clearance is the centre of the largest circle that fits
-in known free space; its clearance is the radius.
+\subsection{How a narrow spot is tested}
+\label{sec:a2cut}
+A spot on the centre-line where the gap is small is only a \emph{narrow passage} if it really separates
+something. A small bump on a wall also makes the gap smaller, but it separates nothing. So each candidate gets a
+\emph{cut test}: draw a line across the gap, from the nearest wall on one side to the nearest wall on the other, and pretend the
+line is a wall. Then look at the free space around it (within 5\,m). If it splits into two separate areas,
+each at least 3\,m$^2$, and at least one of them opens out to 1.5 times the gap, it counts as a narrow passage.
+Figure~\ref{fig:a2cut} shows one candidate that passes the test and one that fails.
 
-\paragraph{Narrow passages.}
-A passage is a local minimum of clearance along the ridge (window about 2\,m) that is a true bottleneck.
-For each candidate, the two nearest wall points on opposite sides define a critical line, and the
-free space inside a 5\,m window is cut along it. The candidate is accepted if the cut leaves two regions of
-at least 3\,m$^2$ each and at least one of them widens to 1.5 times the passage clearance. This rejects
-bumps in a wall that do not separate anything. Passages are labelled \emph{doorway} (widens on both sides)
-or \emph{corridor} (one side). The Hessian of the smoothed distance transform at each passage is also
-computed; opposite-sign eigenvalues mark a saddle point of the clearance map.
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.92\linewidth]{advanced2_cut_test.png}
+  \caption{The cut test. Top: a 3.3\,m gap, where cutting along the red line splits the free space into two separate
+  areas (blue and orange), so it is accepted. Bottom: a small bump in a wall, where the cut leaves one connected area,
+  so it is rejected.}
+  \label{fig:a2cut}
+\end{figure}
 
-\paragraph{Stable reporting.}
-SLAM moves walls by a cell between updates, which made the narrowest passage flip between near-equal
-candidates 31 times in one run. A passage is now reported only if found twice in a row within 1.5\,m, and
-a change is logged only when the width moves by more than 0.5\,m or the position by more than 3\,m. One
-brief false ``doorway'' of 1.2\,m, caused by a half-mapped wall, disappeared with this check.
+Two more details. Each passage is called a \emph{doorway} if both sides open out and a \emph{corridor} if only one
+does. The program also checks whether the spot is a \emph{saddle}, like a mountain pass between two wider areas, using the
+curvature of the distance map. This is reported but not used to decide.
+
+\paragraph{Making the report steady.}
+The map moves by one square between updates. Early on, this made the ``narrowest passage'' jump between
+near-equal candidates 31 times in one run. A passage is now shown only if it was also found, within 1.5\,m, in the
+previous update, and a change is announced only if the width moves by more than 0.5\,m or the place by more than
+3\,m. A brief false 1.2\,m ``doorway'', caused by a half-drawn wall, disappeared with this check.
+
+\subsection{The data going in and out}
+\label{sec:a2data}
+
+\begin{table}[h]
+\centering
+\caption{What the cave geometry program reads and produces.}
+\small
+\begin{tabular}{@{}p{3.1cm}p{3.6cm}p{3.6cm}p{4.2cm}@{}}
+\toprule
+\textbf{Name (ROS topic)} & \textbf{Direction} & \textbf{Type of data} & \textbf{What it holds} \\
+\midrule
+\texttt{/map} & In, from SLAM (about every 2\,s) & Grid of whole numbers & One number per 0.3\,m square: $-1$ not seen, 0 free, 100 wall. The map in Figure~\ref{fig:a2slam} is $216\times170$ squares, about $65\times51$\,m \\[4pt]
+\texttt{cave\_geometry/ distance\_transform} & Out, drawn in RViz & Grid of whole numbers & Same size as the map: the distance to the nearest wall, scaled so that 100 is the roomiest spot; $-1$ where the rover cannot go \\[4pt]
+\texttt{cave\_geometry/ markers} & Out, drawn in RViz & Shapes and text labels & Gold dots (centre-line), a cyan disc and label (widest area), red and orange lines with width labels (narrow spots) \\[4pt]
+Terminal messages & Out & Text & ``Widest accessible area: centre, radius, area'' and ``Narrowest passage: place, width, kind, saddle'', printed when they change \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Results}
-Analysing the cave from the wall layout in the world file (no simulator) took 0.02\,s per map update.
-On the map built by \texttt{slam\_toolbox} during a full Gazebo run, the node found the widest accessible
-area at $[3.0, 33.1]$ with radius $5.7$\,m (area about 100\,m$^2$) and five passages between $3.1$\,m and
-$4.0$\,m wide (Figure~\ref{fig:a2slam}). The narrowest was 3.1\,m at $[6.3, 4.3]$, close to the
-$3.06$\,m found from the world file at $[47.3, 3.8]$ and to a second gap of 3.3\,m at $[46.8, 3.7]$.
+\label{sec:a2results}
+
+\paragraph{On the map the rover built.}
+The same analysis was run on the map made by \texttt{slam\_toolbox} during a full Gazebo run
+(Figure~\ref{fig:a2slam}). It found a reachable area of about 1500\,m$^2$, the widest open area with a radius of
+5.7\,m at $(3.0, 33.1)$ (about 100\,m$^2$), and five narrow spots, 3.1, 3.3, 3.6, 3.7 and 4.0\,m wide. The widest
+area is the large chamber in the top left of the map.
 
 \begin{figure}[h]
   \centering
   \includegraphics[width=\linewidth]{advanced2_gazebo_slam_geometry.png}
-  \caption{Advanced 2 on the real SLAM map from a Gazebo run. Right: clearance, medial axis (gold),
-  widest area (cyan circle) and passages (red lines with widths).}
+  \caption{The final result on the real map from a Gazebo run. Right: gold is the centre-line, the cyan circle is
+  the widest open area, and red lines are narrow spots with their widths.}
   \label{fig:a2slam}
 \end{figure}
 
+\paragraph{It grows as the rover explores.}
+Figure~\ref{fig:a2grow} replays the run: the map is shown only around the places the rover had visited so far (within
+12\,m of each stop), then analysed. After the first stop, the widest area has a radius of 2.8\,m. After three stops it is 4.5\,m,
+and after eight it reaches 5.7\,m, when the rover reaches the big chamber in the top left. The known free space grows from 82\,m$^2$ to more than
+1000\,m$^2$ over the same stops.
+
 \begin{figure}[h]
   \centering
-  \includegraphics[width=0.78\linewidth]{advanced2_offline_partial_map.png}
-  \caption{The same analysis when only part of the cave is known (grey is unknown). The widest area
-  grows from 2.4\,m to 5.7\,m radius as the robot explores, as seen in the run's log.}
+  \includegraphics[width=0.92\linewidth]{advanced2_growth.png}
+  \caption{The result after the rover's first, third and eighth stops (pink dots), and a graph of all stops. Green is the
+  space known so far, the cyan circle is the widest area, and red lines are narrow spots. This replays the run's real
+  stops over its final map.}
+  \label{fig:a2grow}
 \end{figure}
 
-\todo{Karan: add an RViz screenshot of the overlay (distance transform, ridge, widest area, passages) taken during a run.}
+\paragraph{Checking against a separate source.}
+To check the answer is sensible, the same analysis was run on a map drawn directly from the wall positions in the
+simulator's world file, with no simulator running. This is independent of the laser and of SLAM.
 
-\subsection{Limits and improvements}
+\begin{table}[h]
+\centering
+\caption{The same analysis on two different maps of the same cave.}
+\small
+\begin{tabular}{@{}p{3.2cm}p{5.4cm}p{5.4cm}@{}}
+\toprule
+\textbf{Finding} & \textbf{Map the rover built (SLAM)} & \textbf{Map drawn from the world file} \\
+\midrule
+Widest open area & Radius 5.7\,m at $(3.0, 33.1)$ & Radius 5.9\,m at $(2.3, 33.3)$ \\[3pt]
+Narrowest gap & 3.1\,m at $(6.3, 4.3)$; the next is 3.3\,m at $(46.8, 3.7)$ & 3.06\,m at $(47.3, 3.8)$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The widest area agrees within 0.2\,m in radius and 0.7\,m in position. Both maps find the same two gaps of about
+3.1--3.3\,m, near $(6,4)$ and $(47,4)$, but they disagree about which is narrowest. The difference is 0.2\,m or less,
+which is smaller than one map square (0.3\,m), so it is not meaningful. The gap near $(6,4)$ is missing from the
+world-file map. A likely reason is that the real laser also sees the green crystals standing beside it, which the
+wall-only drawing leaves out.
+
+\paragraph{Speed.}
+On the whole cave, one analysis takes about 0.02\,s, so it keeps up with map updates.
+
+\begin{table}[h]
+\centering
+\caption{What each colour means in RViz.}
+\small
+\begin{tabular}{@{}p{3.4cm}p{10.6cm}@{}}
+\toprule
+\textbf{Colour} & \textbf{Meaning} \\
+\midrule
+Gold dots & Centre-line of the cave (the spots furthest from the walls) \\
+Cyan disc and text & Widest open area found so far, with its radius \\
+Red line and text & The narrowest passage, with its width \\
+Orange lines and text & Other narrow passages \\
+Coloured overlay & Distance to the nearest wall: lowest next to the walls and highest in the middle of wide areas \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\todo{Karan: add an RViz screenshot of the overlay (distance map, centre-line, widest area, passages) taken during a run.}
+
+\subsection{Limits and possible improvements}
 \begin{itemize}[nosep]
-  \item The cave is 3--5\,m wide throughout, so ``narrow'' is relative. The 3.1\,m and 3.3\,m gaps are
-        within one map cell (0.3\,m), so which is the narrowest changes between runs.
-  \item Passage widths are quantised by the map resolution.
+  \item The cave is 3--5\,m wide throughout, so ``narrow'' is relative. A gap is only judged narrow compared with the space beside it.
+  \item Widths are only as exact as the map squares (0.3\,m), so close results cannot be ranked reliably.
   \item A long corridor of constant width is reported at its mouth, not along its length.
-  \item Not done: using the ridge as a roadmap (Advanced~4) or to choose sampling sites.
+  \item The analysis is not yet used by other parts. It could, for example, choose where to place sensors or relays, or serve as the
+        skeleton of a roadmap (Advanced 4).
 \end{itemize}
 
 % =====================================================================
