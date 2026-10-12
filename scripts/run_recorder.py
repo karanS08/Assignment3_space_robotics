@@ -39,6 +39,7 @@ class Recorder(Node):
         self.create_subscription(OccupancyGrid, 'map', lambda m: setattr(self, 'map', m), 1)
         self.create_subscription(Image, 'detections_image', lambda m: setattr(self, 'latest_detection', m), 1)
         self.create_timer(5.0, self.tick)
+        self.create_timer(30.0, self.save)      # keep a copy on disk in case the run is interrupted
 
     def tick(self):
         elapsed = time.time() - self.start
@@ -80,8 +81,11 @@ def main():
     rclpy.init()
     node = Recorder(sys.argv[1])
     end = time.time() + float(sys.argv[2])
-    while rclpy.ok() and time.time() < end:
-        rclpy.spin_once(node, timeout_sec=0.5)
+    try:
+        while rclpy.ok() and time.time() < end:
+            rclpy.spin_once(node, timeout_sec=0.5)
+    except BaseException as error:           # an interrupt must not lose the recording
+        print('stopped early:', type(error).__name__)
     node.save()
     print(f'saved {len(node.rows)} rows and {node.saved_detections} detection pictures to {sys.argv[1]}')
 
