@@ -157,13 +157,20 @@ artefacts from the camera. \textbf{Planning} (Christina) chooses where to go, sw
 exploring and inspecting, and keeps a record of visited artefacts. \textbf{Advanced} (Karan) analyses
 the cave geometry as it is explored and samples a spatial science field adaptively.
 
-\begin{notebox}[STUDENT ACTION REQUIRED --- all]
-Replace this paragraph with an accurate statement of what the team achieved. The brief penalises
-misleading summaries. Status known to the report lead on 12~October: Advanced~2 and Advanced~6 work in
-the simulator on the shared repository; Planning~1--3 exist on the planning branch; Perception has a
-first detector and image saver on the main branch; Perception~3 is not yet shared. The parts have
-\emph{not yet been run together} in one launch.
-\end{notebox}
+\paragraph{What was achieved.}
+Status on 12 October, taken from the shared repository and from test runs in the simulator.
+\begin{itemize}[nosep]
+  \item \textbf{Advanced 2 and Advanced 6} (Karan) are complete and merged. Both ran in the simulator with real navigation and a real
+        SLAM map: the cave geometry analysis found the widest open area and the narrow passages, and the adaptive sampler took 30 readings
+        of a real NASA water map in each of 12 runs.
+  \item \textbf{Perception} (Andrew): an image saver and a first colour detector are on the main branch. Karan also built and scored
+        detectors for the alien, crystals, mushroom, sphere and ice on a separate branch (Section~\ref{sec:perception}). Locating artefacts on the map
+        (Perception~3) was not on the repository at the time of writing.
+  \item \textbf{Planning} (Christina): exploration, inspection and behaviour switching are written on the planning branch and are not yet merged into the
+        main branch. Karan has not run them.
+  \item \textbf{The parts have not been run together} in one launch.
+\end{itemize}
+\todo{All: update this list to the final state before submission. The brief penalises statements that overstate what was achieved.}
 
 \paragraph{Software layout.}
 All code is in one ROS~2 package, \texttt{cave\_explorer}, in a shared Git repository, with one
@@ -445,7 +452,16 @@ Coloured overlay & Distance to the nearest wall: lowest next to the walls and hi
 \end{tabular}
 \end{table}
 
-\todo{Karan: add an RViz screenshot of the overlay (distance map, centre-line, widest area, passages) taken during a run.}
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.9\linewidth]{rviz_run_screenshot.png}
+  \caption{RViz during a Gazebo run (screenshot taken while the first, 10-reading run was in progress). The map panel shows the
+  cave geometry overlay: the colour shows the distance to the nearest wall (red = the most room, as in the large chamber at the
+  top left, blue = close to walls), the gold lines are the centre-line, and the red line and label near the bottom right mark the narrowest
+  passage. The white lines join the sampling spots in the order visited, with the readings written beside them (Advanced~6). The
+  Detections panel is empty because the node that fills it was not running in this test.}
+  \label{fig:rviz}
+\end{figure}
 
 \subsection{Limits and possible improvements}
 \begin{itemize}[nosep]
@@ -476,7 +492,8 @@ To make the task realistic, we did not invent a made-up field. We used real meas
 so scientists can work out how much water is mixed into the top layer of the soil. The result is a map of
 Mars showing how wet the soil is in each place. We downloaded it from NASA's public Planetary Data System
 (data set \texttt{ODY-M-GRS-5-ELEMENTS-V1.0}, file \texttt{H2O\_SR\_5X5}; measurements made between June 2002
-and April 2005)~\cite{pds}.
+and April 2005)~\cite{pds}. The way the values were derived is described in the paper by
+Boynton and colleagues~\cite{boynton2007}.
 
 \paragraph{How the amount of water is written.}
 The amount is given as a \emph{percentage of the soil's weight}. A value of 4 means that 4\,kg of every 100\,kg of
@@ -617,14 +634,13 @@ at that spot before any error was added.}
 \label{sec:instrument}
 
 \paragraph{The real instrument.}
-The water map was made by the \emph{Gamma Ray Spectrometer} on Mars Odyssey, a satellite that circles Mars about 400\,km above the
-surface~\cite{boynton2004}. Its main detector is a germanium crystal that counts gamma rays and records the energy of each one. It has to be kept
-extremely cold to work. It cannot see water directly. Instead, cosmic rays from space hit the ground and knock out
-neutrons, and those neutrons make the soil give off gamma rays whose energies are a fingerprint of the elements present.
-Hydrogen leaves a clear mark, and because most hydrogen on Mars is locked in water, scientists turn the hydrogen
-signal into a water amount~\cite{feldman2004}. The instrument senses only the top layer of the ground, between tens of centimetres and about a metre
-deep. From orbit, one measurement covers an area hundreds of kilometres across, which is why NASA's file uses squares
-300\,km wide.
+The water map was made by the \emph{Gamma Ray Spectrometer} on Mars Odyssey, a satellite that has circled Mars in a nearly circular orbit
+about 400\,km above the surface~\cite{pds_catalog}. It is really a set of three instruments that work together: a gamma-ray
+spectrometer, a neutron spectrometer and a high-energy neutron detector~\cite{boynton2004}. They cannot see water directly. Cosmic rays from
+space hit the ground and knock out neutrons, and those neutrons make the soil give off gamma rays whose energies are a fingerprint of the
+elements present. Hydrogen leaves a clear mark, and because most hydrogen on Mars is locked in water, scientists turn the hydrogen
+signal into a water amount~\cite{feldman2004}. The instruments sense only the top layer of the ground, the upper few tens of centimetres~\cite{pds_catalog}.
+From orbit, one measurement covers an area hundreds of kilometres across, which is why NASA's file uses squares 300\,km wide.
 
 \paragraph{What we built instead.}
 We did not simulate the detector, the gamma rays or the neutrons. We simulated what a user of the instrument gets out of
@@ -812,7 +828,7 @@ In short: in these runs the adaptive method gives a survey of about the same qua
 and time. It did not give a more accurate one. Four seeds is a small sample, so a smaller difference could still be hiding
 in these numbers.
 
-\todo{Karan: add an RViz screenshot of the GP mean, uncertainty, true field and samples taken during a run.}
+\todo{Karan: optional: add an RViz screenshot showing the GP mean, uncertainty and true-field overlays, which the screenshot in Figure~\ref{fig:rviz} predates. The sample markers are visible there.}
 
 \subsection{Discussion and limits}
 \begin{itemize}[nosep]
@@ -861,15 +877,16 @@ over a polished generic one. Replace the brackets with what actually happened.
 \end{notebox}
 
 \begin{itemize}[nosep]
-  \item \textbf{Plan.} The team agreed on a split by task block, with a schedule of gates and a list of what each
-        member owes the others. \todo{Say honestly whether the gates were met. The repository history shows little pushed by any member before 11 October.}
-  \item \textbf{Shared repository.} Work was kept on one repository. One member committed straight to the main
-        branch and rewrote the shared node, while another rewrote the same file on a separate branch, so the two
-        versions conflict and have to be merged by hand. \todo{Describe how this was resolved and what the team would do differently.}
-  \item \textbf{Dependencies.} The Planning behaviour needs artefact positions from Perception, which were not
-        available early. \todo{Say how it was handled.}
-  \item \textbf{Integration.} \todo{State honestly whether the parts were run together before the demonstration, and what broke.}
-  \item \textbf{What each member learned.} \todo{One or two sentences each.}
+  \item \textbf{Plan.} The team agreed on a split by task block (Perception, Planning, Advanced), with dated checkpoints and a list of what
+        each member owes the others. The repository shows the first contributions from Perception on 11~October and from Planning on 12~October, after the
+        first planned checkpoints (6 to 10~October).
+  \item \textbf{Shared repository.} One member committed straight to the main branch and edited the shared node, while another rewrote the same file on a
+        separate branch, so the two versions conflict and have to be merged by hand. Karan kept the Advanced work in separate nodes and branches so as
+        not to edit the shared file. The two versions had not been merged at the time of writing.
+  \item \textbf{Dependencies.} The Planning behaviour needs the positions of artefacts from Perception. These were not on the repository by 12~October, so
+        Planning uses a fixed range of 3\,m along the direction of the camera as a stand-in.
+  \item \textbf{Integration.} The parts had not been run together at the time of writing.
+  \item \textbf{What each member learned.} \todo{One or two sentences each, in your own words.}
 \end{itemize}
 
 
@@ -877,16 +894,21 @@ over a polished generic one. Replace the brackets with what actually happened.
 \section*{References}
 \addcontentsline{toc}{section}{References}
 \begin{thebibliography}{9}
-\bibitem{pds} NASA Planetary Data System, Geosciences Node. \emph{ODY Mars Gamma Ray Spectrometer 5 Element Concentration V1.0}
-  (data set ODY-M-GRS-5-ELEMENTS-V1.0, product H2O\_SR\_5X5).
+\bibitem{pds} W.~V. Boynton. \emph{2001 Mars Odyssey Gamma Ray Spectrometer Element Concentration Data}. NASA Planetary Data System,
+  data set ODY-M-GRS-5-ELEMENTS-V1.0, 2007 (product H2O\_SR\_5X5). This is the citation given in the data set's own catalogue.
   \url{https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/}. Downloaded 5 October 2026.
+\bibitem{pds_catalog} NASA Planetary Data System. Catalogue files of the same data set (\texttt{inst.cat}, \texttt{mission.cat}): instrument description, mapping orbit
+  of 400\,km, and sensing depth of the upper few tens of centimetres. Read 12 October 2026.
+\bibitem{boynton2007} W.~V. Boynton et al. ``Concentration of H, Si, Cl, K, Fe, and Th in the low- and mid-latitude regions of Mars.''
+  \emph{Journal of Geophysical Research: Planets}, 112(E12), 2007. doi:10.1029/2007JE002887.
+\bibitem{boynton2004} W.~V. Boynton et al. ``The Mars Odyssey Gamma-Ray Spectrometer instrument suite.''
+  \emph{Space Science Reviews}, 110(1--2), 37--83, 2004. doi:10.1023/B:SPAC.0000021007.76126.15.
+\bibitem{feldman2004} W.~C. Feldman et al. ``Global distribution of near-surface hydrogen on Mars.''
+  \emph{Journal of Geophysical Research: Planets}, 109(E9), 2004. doi:10.1029/2003JE002160.
+\bibitem{mitrofanov2012} I.~Mitrofanov et al. ``Dynamic Albedo of Neutrons (DAN) experiment onboard NASA's Mars Science Laboratory.''
+  \emph{Space Science Reviews}, 170(1--4), 559--582, 2012. doi:10.1007/s11214-012-9924-y.
 \bibitem{wiki_arsia} ``Arsia Mons''. Wikipedia. \url{https://en.wikipedia.org/wiki/Arsia_Mons}. Position 8.35$^{\circ}$S, 239.91$^{\circ}$E.
-\bibitem{boynton2004} W.~V. Boynton et al. ``The Mars Odyssey Gamma-Ray Spectrometer instrument suite.'' \emph{Space Science Reviews}, 110, 2004.
-  \todo{check volume, pages and year before submission}
-\bibitem{feldman2004} W.~C. Feldman et al. ``Global distribution of near-surface hydrogen on Mars.'' \emph{Journal of Geophysical Research}, 109, 2004.
-  \todo{check details before submission}
-\bibitem{mitrofanov2012} I.~G. Mitrofanov et al. ``Dynamic Albedo of Neutrons (DAN) experiment onboard NASA's Mars Science Laboratory.''
-  \emph{Space Science Reviews}, 170, 2012. \todo{check details before submission}
+  Read 12 October 2026.
 \end{thebibliography}
 
 \end{document}
