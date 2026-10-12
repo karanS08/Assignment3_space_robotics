@@ -1,0 +1,84 @@
+% =====================================================================
+%  Shared preamble - packages, colours, heading style, code listings.
+%  Kept close to the Assessment task 1 report look.
+% =====================================================================
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[labelfont={bf,color=sectionblue}]{caption}
+\usepackage{listings}
+\usepackage[most]{tcolorbox}
+\usepackage[colorlinks=true,linkcolor=sectionblue,urlcolor=sectionblue,citecolor=sectionblue]{hyperref}
+
+% ---------------------------- Colours --------------------------------
+\definecolor{sectionblue}{HTML}{1F6FB2}
+\definecolor{codebg}{HTML}{F5F5F5}
+\definecolor{codekw}{HTML}{1F6FB2}
+\definecolor{codecomment}{HTML}{7A7A7A}
+\definecolor{codestring}{HTML}{A31515}
+\definecolor{notegreen}{HTML}{157F7A}
+
+% ------------------------- Heading style -----------------------------
+\titleformat{\section}
+  {\color{sectionblue}\bfseries\large}{\thesection}{0.6em}{}
+\titleformat{\subsection}
+  {\bfseries\normalsize}{\thesubsection}{0.6em}{}
+
+% "N marks" badge next to a task heading
+\newcommand{\taskmarks}[1]{%
+  \hspace{0.5em}\raisebox{0.12ex}{\colorbox{sectionblue}{\color{white}\scriptsize\,#1 marks\,}}}
+
+% ------------------------- Page headers ------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4pt}
+\lhead{\color{sectionblue}\small \reporttitle}
+\rhead{\color{gray}\small \studentname}
+\cfoot{\thepage}
+
+% ------------------------ Code listings -----------------------------
+\lstdefinestyle{py}{
+  language=Python,
+  backgroundcolor=\color{codebg},
+  basicstyle=\ttfamily\footnotesize,
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecomment}\itshape,
+  stringstyle=\color{codestring},
+  numbers=left,
+  numberstyle=\tiny\color{codecomment},
+  numbersep=8pt,
+  frame=single,
+  rulecolor=\color{gray!40},
+  breaklines=true,
+  showstringspaces=false,
+  captionpos=b,
+  xleftmargin=2.2em,
+  framexleftmargin=2em,
+  aboveskip=1em,
+  belowskip=1em,
+}
+\lstset{style=py}
+
+% ---------------------- Note / callout box --------------------------
+\newtcolorbox{notebox}[1][Note]{
+  colback=notegreen!6, colframe=notegreen, coltitle=white,
+  fonttitle=\bfseries, title=#1, boxrule=0.6pt, arc=1pt,
+  left=6pt, right=6pt, top=4pt, bottom=4pt}
+
+% ---------------------- Placeholder figure --------------------------
+% Use where a real RViz screenshot is still needed. Prints a visible
+% grey box so nothing silently ships empty. Replace with \includegraphics.
+\newcommand{\figplaceholder}[1]{%
+  \begingroup\centering
+  \fcolorbox{gray!50}{gray!12}{\parbox[c][3.2cm][c]{0.75\linewidth}{\centering
+  \color{gray!80}\ttfamily\footnotesize [TODO screenshot] #1}}\par
+  \endgroup}

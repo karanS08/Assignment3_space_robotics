@@ -1,0 +1,550 @@
+% =====================================================================
+%  49274 Space Robotics - Team Project: Exploring a Martian Cave
+%  Single-file report. Compile with: make   (pdflatex x2)
+%
+%  DRAFT written by Karan Sharma (report lead). Everything marked
+%  "TODO" or "STUDENT ACTION REQUIRED" must be completed or checked by
+%  the named person before submission. Search for TODO.
+%
+%  The only other input is the auto-generated table of Gazebo results,
+%  generated/sampling_table.tex, made by scripts/sampling_summary.py.
+% =====================================================================
+\documentclass[11pt,a4paper]{article}
+
+\newcommand{\reporttitle}{Team Project: Exploring a Martian Cave}
+\newcommand{\reportsubtitle}{Autonomous perception, planning and science for a Mars rover}
+\newcommand{\studentname}{Than, Li, Sharma}
+\newcommand{\subjectname}{49274 Space Robotics}
+\newcommand{\institution}{University of Technology Sydney}
+\newcommand{\reportdate}{October 2026}
+
+\input{preamble}
+\graphicspath{{../figures/}}
+
+\newcommand{\todo}[1]{\textcolor{red}{\textbf{[TODO: #1]}}}
+
+\begin{document}
+
+% ----------------------------- Title page ----------------------------
+\begin{titlepage}
+    \vspace*{0.18\textheight}
+    {\color{sectionblue}\bfseries\large 49274 --- Space Robotics}\par
+    \vspace{2.2em}
+    {\color{sectionblue}\bfseries\Huge \reporttitle}\par
+    \vspace{0.6em}
+    {\large \reportsubtitle}\par
+    \vspace{4em}
+    \begin{tabular}{@{}ll@{}}
+        \textbf{Team}        & Andrew Than, Christina Li, Karan Sharma \\[2pt]
+        \textbf{Subject}     & \subjectname \\[2pt]
+        \textbf{Institution} & \institution \\[2pt]
+        \textbf{Date}        & \reportdate  \\
+    \end{tabular}
+    \vfill
+    {\color{gray}\small This report describes a ROS~2 / Gazebo system in which a simulated Mars
+        rover explores an unknown cave, detects and localises artefacts, inspects them,
+        analyses the cave geometry, and samples a real NASA water-concentration map
+        adaptively.}
+\end{titlepage}
+
+\clearpage
+\tableofcontents
+\clearpage
+
+% =====================================================================
+\section{Group Member Details}
+
+\begin{center}
+\begin{tabular}{@{}p{3cm}p{4.6cm}p{6.6cm}@{}}
+\toprule
+\textbf{Name} & \textbf{Student number} & \textbf{Main responsibility} \\
+\midrule
+Andrew Than  & \todo{Andrew: student number} & Perception (tasks P1--P3) \\
+Christina Li & \todo{Christina: student number} & Planning (tasks L1--L3) \\
+Karan Sharma & 26276485 & Advanced tasks A2 and A6; report lead; repository \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\noindent Task labels: P1--P3 are Perception 1--3, L1--L3 are Planning 1--3, and A2 and A6 are
+Advanced 2 (cave geometry analysis) and Advanced 6 (adaptive scientific sampling).
+
+% =====================================================================
+\section{Generative AI Disclosure}
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- every member]
+The paragraph for Karan below states what the AI tool did, from the record of the work. Karan must
+add the closing verification statement. Andrew and Christina must write their own paragraphs,
+truthfully, in the same form: which tool, what for, what not for, and what you can explain
+unaided. In Assessment task~2 the marker flagged a vague declaration and warned of a viva, so
+every member should expect to explain any line they submit.
+\end{notebox}
+
+\textbf{Karan Sharma.} Tool: Claude Code (Anthropic), a command-line coding assistant, used
+throughout.
+
+\textbf{Used for:}
+\begin{itemize}[nosep]
+  \item Writing first versions of the cave geometry code (\texttt{cave\_geometry.py} and its ROS node),
+        the adaptive sampling code (measurement field, Gaussian Process sampler and ROS node), the
+        offline test scripts, and the colour and ice detectors with their scoring scripts.
+  \item Locating and downloading the NASA Mars Odyssey data set, and writing the code that reads it.
+  \item Running the simulator and the offline experiments, finding faults in them (false goal
+        failures, a rover that became wedged, an unstable report of the narrowest passage), and
+        proposing and applying fixes.
+  \item Drafting the project plan, responsibilities, dependency list, repository structure and this
+        report.
+\end{itemize}
+
+\textbf{Not used for:} the decision to use real NASA data (Karan's request), the choice to take the hardest task,
+running the final demonstration, or recording the video. The AI tool proposed the particular pair of Advanced tasks (2 and 6) and the task split in the project plan; Karan accepted them.
+
+\textbf{Verification.} Each component was run in the simulator and scored against known truth (the
+artefact positions and cave walls in the world file) before being accepted. All numbers in this
+report were produced by the scripts in the repository.
+\todo{Karan: add a sentence stating honestly which parts of the geometry and sampling code you can
+reproduce and explain unaided, and which you are still consolidating.}
+
+\medskip
+\textbf{Andrew Than.} \todo{Andrew: tool, what it was used for, what not, and what you can explain.}
+
+\medskip
+\textbf{Christina Li.} \todo{Christina: tool, what it was used for, what not, and what you can explain.}
+
+% =====================================================================
+\section{Statement of Individual Contributions}
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- every member]
+The ``Completed?'' entries below are Karan's reading of the repository and must be corrected by the
+member who owns each row. Anyone who disagrees with the statement may write to the Subject
+Coordinator privately.
+\end{notebox}
+
+\begin{center}
+\small
+\begin{tabular}{@{}p{3.1cm}p{2.7cm}p{2.5cm}p{6.2cm}@{}}
+\toprule
+\textbf{Task} & \textbf{Completed?} & \textbf{Member} & \textbf{Contribution} \\
+\midrule
+Perception 1 (dataset) & \todo{confirm} & Andrew Than & Image-saving code in the ROS node. \\[3pt]
+Perception 2 (detection) & \todo{confirm} & Andrew Than &
+  First colour detector (green objects). \\
+ & Yes, additional detectors & Karan Sharma &
+  Alien, crystal, mushroom, sphere and ice detectors, simulator capture and scoring scripts (Section~\ref{sec:perception}). \\[3pt]
+Perception 3 (localisation) & \todo{confirm} & Andrew Than & Not yet on the shared repository. \\[3pt]
+Planning 1 (exploration) & \todo{confirm} & Christina Li & Frontier exploration. \\[3pt]
+Planning 2 (inspection) & \todo{confirm} & Christina Li & Stand-off approach goal and inspection. \\[3pt]
+Planning 3 (switching) & \todo{confirm} & Christina Li & Explore--inspect state machine with timeout, retry and visited record. \\[3pt]
+Advanced 2 (geometry) & Yes & Karan Sharma & Design, code, simulator tests, evidence. \\[3pt]
+Advanced 6 (sampling) & Yes & Karan Sharma & Design, code, simulator tests, comparison. \\[3pt]
+Report writing & In progress & Karan Sharma (lead), all & Karan edits and unifies; each member writes their own task section. \\[3pt]
+Recorded videos & \todo{confirm} & \todo{who} & \todo{what} \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% =====================================================================
+\section{Project Overview}
+
+The task is to program a simulated Mars rover to explore an unknown lava-tube-like cave without
+human input: build a map, find artefacts of scientific interest, and understand the environment. The
+cave is a Gazebo world of walls and 14 artefacts of five types (green alien, green crystals, white
+sphere, blue mushrooms, ice formations) plus stop signs. The rover carries a laser scanner, an RGB
+camera and a depth camera; \texttt{slam\_toolbox} builds the map and Nav2 plans and drives to goals.
+
+The team split the work into three parts. \textbf{Perception} (Andrew) detects and localises
+artefacts from the camera. \textbf{Planning} (Christina) chooses where to go, switches between
+exploring and inspecting, and keeps a record of visited artefacts. \textbf{Advanced} (Karan) analyses
+the cave geometry as it is explored and samples a spatial science field adaptively.
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- all]
+Replace this paragraph with an accurate statement of what the team achieved. The brief penalises
+misleading summaries. Status known to the report lead on 12~October: Advanced~2 and Advanced~6 work in
+the simulator on the shared repository; Planning~1--3 exist on the planning branch; Perception has a
+first detector and image saver on the main branch; Perception~3 is not yet shared. The parts have
+\emph{not yet been run together} in one launch.
+\end{notebox}
+
+\paragraph{Software layout.}
+All code is in one ROS~2 package, \texttt{cave\_explorer}, in a shared Git repository, with one
+folder per part (\texttt{perception/}, \texttt{planning/}, \texttt{advanced/}). Tests that need no
+simulator and the scripts used for every figure are in \texttt{scripts/}. The Advanced tasks run as
+their own nodes, so they do not edit the shared node that the other parts use.
+
+% =====================================================================
+\section{Perception}
+\label{sec:perception}
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- Andrew]
+Andrew writes Perception 1, 2 and 3: approach, how well it worked, how it could be improved, key
+code, and evidence. Perception~1 needs the number of images collected for each artefact type. Perception~3
+needs the method for estimating positions, how repeated detections of one artefact were merged, and
+RViz screenshots of markers at the artefacts. Karan has only written the part below.
+\end{notebox}
+
+\subsection{Perception 1--3 (Andrew)}
+\todo{Andrew: write these three subsections.}
+
+\subsection{Additional artefact detectors and their scoring (Karan)}
+\todo{Karan and Andrew: agree how this subsection is presented, so the report is clear who built what. The text below is a factual record.}
+
+\paragraph{Why a test set was needed.}
+The first detector on the shared repository thresholds green hue. To measure it, and to build better
+ones, Karan wrote a script that teleports the rover to many viewpoints around each artefact in the
+simulator and records the camera and depth images (405 images). The world file gives the true
+position of each artefact, so each image is labelled with which artefact types are really in view
+(1--9\,m away, with a clear line of sight). The labels are used only to find colours and to score
+detectors; the detectors see only the image.
+
+\paragraph{Colour detectors.}
+Each type has a distinct colour. The alien is pale lime (saturation 160--180), the crystals deep
+emerald (saturation 204--255), the mushroom caps saturated blue (hue 110--112) and the sphere
+pale blue-white (hue 105, saturation about 49). A mask per type, cleaned with morphological opening and
+closing, gives boxes. The rover's own body, which fills the bottom-left of every frame, is blanked out.
+The alien and crystals are told apart by saturation alone.
+
+\begin{table}[h]
+\centering
+\caption{Artefacts found among those labelled as visible (405 captured images). A box counts when
+it covers the artefact's true image column. ``False alarm'' means a box of a type with no artefact of
+that type ahead within 12\,m.}
+\begin{tabular}{@{}lccccc@{}}
+\toprule
+\textbf{Type} & \textbf{1--3 m} & \textbf{3--5 m} & \textbf{5--9 m} & \textbf{All} & \textbf{False-alarm boxes} \\
+\midrule
+Alien (new)       & 17/17 & 8/8   & 8/8  & \textbf{33/33 (100\%)} & 13 \\
+Alien (main branch)  & 9/17  & 1/8   & 0/8  & 10/33 (30\%)           & 5  \\
+Crystals (new)    & 19/21 & 11/11 & 9/9  & 39/41 (95\%)  & 8  \\
+Crystals (main branch) & 15/21 & 9/11 & 3/9 & 27/41 (66\%) & 9 \\
+Mushroom (new)    & 24/25 & 11/11 & 9/10 & 44/46 (96\%)  & 3  \\
+Sphere (new)      & 17/21 & 7/9   & 6/8  & 30/38 (79\%)  & 3  \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{perception2_detector_examples.png}
+  \caption{Detections on captured images, with the true artefact type and range written at the bottom of each panel.}
+\end{figure}
+
+\paragraph{Ice needed a different method.}
+Ice is hard for three reasons found by measurement. Each formation is about $5\times5\times1.5$\,m,
+and the point used by the world file lies up to 3\,m from its centre, so a point label was wrong.
+Its pixels are about half blue-grey and half brown-beige, the same colour as the cave walls and floor,
+so no colour range works: a learned colour rule finds 15--21\% of ice and puts a false box in 62--82\% of
+images. The detector in \texttt{ice\_detector.py} therefore classifies pixels with a random forest using
+colour, local texture and two depth features (height above the floor and surface bumpiness). True ice
+pixels for training and scoring come from projecting the ice mesh into each image and keeping the points
+whose range agrees with the depth image. Trained on half the images and scored on the other half, it finds
+ice in 18 of 33 images that show it (55\%), with a false ice box in 5\% of images, at 62\,ms per frame.
+This is usable but not reliable.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{perception2_ice_examples.png}
+  \caption{Ice detections on images the forest was not trained on. These are clear views; the overall
+  detection rate is 55\%.}
+\end{figure}
+
+\paragraph{Limits.}
+Colour ranges were measured in this one world and tuned on the same 405 images, so the figures above
+are optimistic for a new scene or a fresh set of viewpoints. The detectors return a box and image
+column; turning that into a map position (Perception~3) needs the depth image and the robot pose.
+The detectors are not yet called from the rover's image callback. The image passed to them must be
+in BGR order; ROS images arrive as RGB.
+
+% =====================================================================
+\section{Planning}
+\label{sec:planning}
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- Christina]
+Christina writes Planning 1, 2 and 3: the exploration method and design choices, how well it works,
+what she would add with more time; the inspection approach and difficulties; and the switching
+behaviour, including timeout, retry, abandon and the visited record. Include RViz screenshots. The brief
+asks for markers showing chosen frontiers and visited artefacts.
+\end{notebox}
+
+\subsection{Planning 1 --- Autonomous exploration}\todo{Christina}
+\subsection{Planning 2 --- Close-range inspection}\todo{Christina}
+\subsection{Planning 3 --- Behaviour switching}\todo{Christina}
+
+% =====================================================================
+\section{Advanced 2 --- Cave Geometry Analysis}
+\label{sec:advanced2}
+
+\subsection{Objective}
+Compute a distance transform of the map as the cave is explored, use it to find geometrically
+interesting regions, and report during the run at least the \emph{widest accessible area} and a
+\emph{narrow passage}, overlaid on the map in RViz.
+
+\subsection{Method}
+The node (\texttt{cave\_geometry\_node.py}) subscribes to \texttt{/map} and repeats the analysis on every
+update. The analysis itself (\texttt{cave\_geometry.py}) has no ROS dependency, so it was tested offline.
+
+\paragraph{Distance transforms.}
+Cells with occupancy $\ge 50$ are walls, $-1$ is unknown, the rest are free. The Euclidean distance
+from every cell to the nearest wall, $d(\mathbf{x})$, gives clearance in metres. A second transform, the
+distance to the nearest wall \emph{or unknown cell}, is used for the widest area so that unexplored
+space is never counted as open.
+
+\paragraph{Accessible space.}
+Free cells with $d \ge 0.5$\,m (the Nav2 robot radius), connected to the cell nearest the robot.
+
+\paragraph{Medial axis from the gradient.}
+Away from the medial axis the nearest wall is unique and $\|\nabla d\| = 1$. On the medial axis the
+nearest wall switches sides, $\nabla d$ is discontinuous, and its finite-difference estimate cancels.
+Cells of the accessible space with $\|\nabla d\| < 0.8$ are therefore taken as the ridge (centre-line) of the cave.
+
+\begin{lstlisting}[caption={Ridge extraction from the gradient of the distance transform.}]
+def ridge_of(clearance, accessible, resolution, gradient_threshold=0.8):
+    d_row, d_col = np.gradient(clearance, resolution)
+    return accessible & (np.hypot(d_row, d_col) < gradient_threshold)
+\end{lstlisting}
+
+\paragraph{Widest accessible area.}
+The accessible cell with the largest confirmed clearance is the centre of the largest circle that fits
+in known free space; its clearance is the radius.
+
+\paragraph{Narrow passages.}
+A passage is a local minimum of clearance along the ridge (window about 2\,m) that is a true bottleneck.
+For each candidate, the two nearest wall points on opposite sides define a critical line, and the
+free space inside a 5\,m window is cut along it. The candidate is accepted if the cut leaves two regions of
+at least 3\,m$^2$ each and at least one of them widens to 1.5 times the passage clearance. This rejects
+bumps in a wall that do not separate anything. Passages are labelled \emph{doorway} (widens on both sides)
+or \emph{corridor} (one side). The Hessian of the smoothed distance transform at each passage is also
+computed; opposite-sign eigenvalues mark a saddle point of the clearance map.
+
+\paragraph{Stable reporting.}
+SLAM moves walls by a cell between updates, which made the narrowest passage flip between near-equal
+candidates 31 times in one run. A passage is now reported only if found twice in a row within 1.5\,m, and
+a change is logged only when the width moves by more than 0.5\,m or the position by more than 3\,m. One
+brief false ``doorway'' of 1.2\,m, caused by a half-mapped wall, disappeared with this check.
+
+\subsection{Results}
+Analysing the cave from the wall layout in the world file (no simulator) took 0.02\,s per map update.
+On the map built by \texttt{slam\_toolbox} during a full Gazebo run, the node found the widest accessible
+area at $[3.0, 33.1]$ with radius $5.7$\,m (area about 100\,m$^2$) and five passages between $3.1$\,m and
+$4.0$\,m wide (Figure~\ref{fig:a2slam}). The narrowest was 3.1\,m at $[6.3, 4.3]$, close to the
+$3.06$\,m found from the world file at $[47.3, 3.8]$ and to a second gap of 3.3\,m at $[46.8, 3.7]$.
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{advanced2_gazebo_slam_geometry.png}
+  \caption{Advanced 2 on the real SLAM map from a Gazebo run. Right: clearance, medial axis (gold),
+  widest area (cyan circle) and passages (red lines with widths).}
+  \label{fig:a2slam}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.78\linewidth]{advanced2_offline_partial_map.png}
+  \caption{The same analysis when only part of the cave is known (grey is unknown). The widest area
+  grows from 2.4\,m to 5.7\,m radius as the robot explores, as seen in the run's log.}
+\end{figure}
+
+\todo{Karan: add an RViz screenshot of the overlay (distance transform, ridge, widest area, passages) taken during a run.}
+
+\subsection{Limits and improvements}
+\begin{itemize}[nosep]
+  \item The cave is 3--5\,m wide throughout, so ``narrow'' is relative. The 3.1\,m and 3.3\,m gaps are
+        within one map cell (0.3\,m), so which is the narrowest changes between runs.
+  \item Passage widths are quantised by the map resolution.
+  \item A long corridor of constant width is reported at its mouth, not along its length.
+  \item Not done: using the ridge as a roadmap (Advanced~4) or to choose sampling sites.
+\end{itemize}
+
+% =====================================================================
+\section{Advanced 6 --- Adaptive Scientific Sampling}
+\label{sec:advanced6}
+
+\subsection{Objective}
+Let the rover measure a spatially varying science quantity at its position, build a Gaussian Process
+(GP) model of the field from its own measurements, use the prediction and its uncertainty to choose
+where to sample next, and compare this with a simple baseline. The sampler must not use the true field
+when choosing.
+
+\subsection{The measurement field: real NASA data}
+The field is the water (H$_2$O) concentration, in weight percent, measured from orbit by the Gamma Ray
+Spectrometer on NASA's 2001 Mars Odyssey. It was downloaded from the Planetary Data System Geosciences
+Node (data set \texttt{ODY-M-GRS-5-ELEMENTS-V1.0}, product \texttt{H2O\_SR\_5X5}, observations
+June 2002 to April 2005): a $5^\circ\times5^\circ$ grid of 2592 bins, 1508 with valid data, values 1.6 to
+7.4\,wt\%, each with its own measurement error. A $12\times12$ bin patch around Arsia Mons in the Tharsis
+region (a region with lava-tube skylights; 2.3 to 5.0\,wt\%) is stretched over the cave extent
+($65\times55$\,m) and interpolated between bins. A measurement is the true value at the rover's position plus
+Gaussian noise with the instrument's reported standard deviation for that location.
+
+\begin{notebox}[State these limits in the report]
+(1) Values and noise are real; the spatial scale is not: a bin is about 300\,km across on Mars and the patch
+spans about 3300\,km, but is compressed onto a cave tens of metres wide. (2) The data are orbital surface
+measurements, not cave measurements; none exist. (3) The label does not say whether longitude is east or
+west; east was assumed after checking that known water-rich regions appear where expected. The brief allows
+``data adapted from an existing source'' that need not match the cave.
+\end{notebox}
+
+\subsection{Method}
+\paragraph{Separation of truth.}
+The sampler (\texttt{adaptive\_sampling.py}) has no reference to the field. It receives one
+measurement at a time. The true field is read in one place, to score the result.
+
+\paragraph{Gaussian Process.}
+scikit-learn's \texttt{GaussianProcessRegressor}, input the robot's $(x,y)$, a constant $\times$ RBF
+kernel plus a white-noise term, targets normalised. The length scale is bounded to 5--60\,m. The
+hyperparameters are fitted only from 8 samples; before that the prior (length scale 10\,m) is used, because
+the fit on fewer samples chose a very short length scale that made everywhere look equally uncertain.
+
+\paragraph{Choosing the next location.}
+Candidates are cells of a 1\,m lattice in the accessible part of the current map, at least 1.5\,m from
+walls and unknown space (so Nav2 can reach them), at least 4\,m from existing samples and at least 4\,m from
+goals that failed. Each is scored by
+\begin{equation}
+  \text{score} = \frac{\sigma(\mathbf{x})}{\max\sigma} \;-\; w\,\frac{\text{path}(\mathbf{x})}{\max\text{path}},
+\end{equation}
+the GP standard deviation minus a penalty for the shortest path through free space (Dijkstra on the
+grid, not straight-line distance). The best score is the next goal. The weight $w$ is the
+\emph{travel weight}; 0.3 is the default and 0.1 was also tested. The baseline picks uniformly at random
+from the same candidates. Because candidates exist only in the known map, the method also drives
+exploration toward its edge.
+
+\begin{lstlisting}[caption={Choice of the next sampling location (adaptive strategy).}]
+_, std = self.predict(xy)
+score = (std / max(std.max(), 1e-9)
+         - self.travel_weight_ * distances / max(distances.max(), 1e-9))
+best = np.argmax(score)
+\end{lstlisting}
+
+\paragraph{Driving the robot (\texttt{adaptive\_sampling\_node.py}).}
+The node measures at the robot's position, updates the GP, chooses the next point and sends it to Nav2,
+then repeats. It publishes the GP mean, the GP uncertainty, the true field and the samples (coloured by
+value) to RViz, and writes a CSV of every run. It runs instead of the exploration node, since both send goals.
+Two faults found in simulator runs were fixed:
+\begin{itemize}[nosep]
+  \item \textbf{Instant aborts.} Nav2 aborts a goal that arrives the moment the previous one ends. The
+        node treated each as a real failure and excluded a 4\,m circle around a perfectly good place
+        (30 times in one run, sending the rover zig-zagging, 648\,m for 30 samples). Goals aborted within
+        3\,s are now retried, after a 1\,s pause.
+  \item \textbf{Wedged rover.} A goal placed beside an artefact in a narrow passage left the rover stuck
+        for 12\,minutes while the node waited out 120\,s timeouts. The node now detects no movement
+        for 15\,s, cancels the goal, reverses for 4\,s, turns right for 2\,s, and avoids that place. Goals
+        were also moved from 0.9\,m to 1.5\,m from walls.
+\end{itemize}
+
+\subsection{Results}
+\paragraph{Offline study (no simulator).}
+The robot is moved instantly, the map is revealed within 12\,m of each place visited, and the error is the RMSE
+over the whole reachable cave. Ten runs per strategy, 40 samples each (Figure~\ref{fig:a6off}).
+
+\begin{table}[h]
+\centering
+\caption{Offline comparison: RMSE of the reconstructed field (wt\% H$_2$O), mean $\pm$ standard deviation over 10 runs.}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+\textbf{Samples} & \textbf{Adaptive} & \textbf{Random} \\
+\midrule
+5  & 0.567 $\pm$ 0.077 & 0.483 $\pm$ 0.042 \\
+10 & 0.463 $\pm$ 0.088 & 0.486 $\pm$ 0.096 \\
+20 & 0.293 $\pm$ 0.031 & 0.366 $\pm$ 0.098 \\
+30 & 0.250 $\pm$ 0.044 & 0.250 $\pm$ 0.030 \\
+40 & 0.215 $\pm$ 0.044 & 0.217 $\pm$ 0.024 \\
+Mean distance travelled (40 samples) & 476\,m & 934\,m \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{advanced6_offline_rmse.png}
+  \caption{Offline reconstruction error against samples (left) and distance travelled (right).}
+  \label{fig:a6off}
+\end{figure}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{advanced6_offline_maps.png}
+  \caption{One offline run per strategy. Left: true NASA field. Middle: GP mean. Right: GP standard
+  deviation. White dots are samples joined in visiting order.}
+\end{figure}
+
+\paragraph{Gazebo runs (real Nav2 and SLAM).}
+Each run takes 30 samples from a fresh simulator start. Adaptive and random runs use the same seeds,
+which set the measurement noise and the random choices. The table is generated from the run logs.
+
+\begin{table}[h]
+\centering
+\caption{Gazebo comparison: RMSE of the reconstructed field after 10, 20 and 30 samples (mean $\pm$ std over seeds),
+mean distance and wall-clock time for 30 samples, and mean distance at which RMSE first reached 0.30
+(number of runs that reached it).}
+\resizebox{\linewidth}{!}{\input{generated/sampling_table}}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{advanced6_gazebo_multiseed.png}
+  \caption{Gazebo runs: error against samples and against distance travelled.}
+\end{figure}
+
+\todo{Karan: after the batch finishes, write two or three sentences reading the table above (does adaptive
+reach a given error with less travel? does it end with lower error? how much does the travel weight matter?)
+and state the number of seeds.}
+
+\todo{Karan: add an RViz screenshot of the GP mean, uncertainty, true field and samples taken during a run.}
+
+\subsection{Discussion and limits}
+\begin{itemize}[nosep]
+  \item In the offline study, adaptive is worse than random after 5 samples, because the travel penalty keeps
+        it near the start while the GP extrapolates over unseen cave. It is ahead from about 10 samples
+        (clearest at 20: 0.293 against 0.366) and uses about half the distance. By 30 and 40 samples the two
+        have the same error (0.250 against 0.250, and 0.215 against 0.217). The reliable advantage is
+        therefore reaching a given error sooner and with less driving, not a lower final error.
+  \item The offline study ignores driving time and navigation failures. The Gazebo runs include them.
+  \item Measurement noise (0.2 to 0.6\,wt\%) is large against the field's range (2.3 to 5.0\,wt\%), which
+        puts a floor on the achievable error of about 0.2.
+  \item The online error is computed over the cave explored so far, so its region grows during a run.
+  \item Possible improvements: choose the travel weight from the remaining sample budget; use the map to
+        sample at ridge points rather than a lattice; and a kernel that is not isotropic.
+\end{itemize}
+
+% =====================================================================
+\section{Results}
+\label{sec:results}
+
+\begin{notebox}[STUDENT ACTION REQUIRED --- all]
+Describe what was achieved overall, with pictures, graphs or plots as evidence of a working system. Include the
+video link below. The report lead will assemble this once all parts are on the shared repository and have
+been run together.
+\end{notebox}
+
+\paragraph{Summary of what has been shown, by part.}
+\begin{itemize}[nosep]
+  \item \textbf{Advanced 2:} widest area and passages found and displayed on the real SLAM map
+        (Figure~\ref{fig:a2slam}).
+  \item \textbf{Advanced 6:} 30-sample adaptive and random runs completed in Gazebo with real navigation; offline
+        comparison over 10 runs (Section~\ref{sec:advanced6}).
+  \item \textbf{Perception, Planning:} \todo{Andrew and Christina: one or two lines each, with a figure.}
+\end{itemize}
+
+\paragraph{Video.}
+\todo{Link to the video(s). Upload to YouTube, OneDrive or Google Drive and check that the marker can open it. If
+several short videos are submitted, say so here and list them. About five minutes in total.}
+
+% =====================================================================
+\section{Reflection on Teamwork}
+
+\begin{notebox}[Write this from your own experience]
+The points below are facts known from the repository history; the marker rewards a specific, honest account
+over a polished generic one. Replace the brackets with what actually happened.
+\end{notebox}
+
+\begin{itemize}[nosep]
+  \item \textbf{Plan.} The team agreed on a split by task block, with a schedule of gates and a list of what each
+        member owes the others. \todo{Say honestly whether the gates were met. The repository history shows little pushed by any member before 11 October.}
+  \item \textbf{Shared repository.} Work was kept on one repository. One member committed straight to the main
+        branch and rewrote the shared node, while another rewrote the same file on a separate branch, so the two
+        versions conflict and have to be merged by hand. \todo{Describe how this was resolved and what the team would do differently.}
+  \item \textbf{Dependencies.} The Planning behaviour needs artefact positions from Perception, which were not
+        available early. \todo{Say how it was handled.}
+  \item \textbf{Integration.} \todo{State honestly whether the parts were run together before the demonstration, and what broke.}
+  \item \textbf{What each member learned.} \todo{One or two sentences each.}
+\end{itemize}
+
+\end{document}

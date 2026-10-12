@@ -1,0 +1,10 @@
+*.aux
+*.log
+*.toc
+*.out
+*.fdb_latexmk
+*.fls
+*.gf
+*.pk
+*.tfm
+main.pdf
