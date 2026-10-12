@@ -82,6 +82,8 @@ class CaveExplorer(Node):
         self.target_lost_timeout_ = 8.0
         self.max_inspection_retries_ = 1
         self.state_ = 'EXPLORE'
+        self.last_far_hint_at_ = -1e9
+        self.far_goals_ = []
         self.artifact_locations_ = []
         self.artifact_status_ = []  # pending / inspected / abandoned
         self.active_artifact_index_ = None
@@ -407,11 +409,43 @@ class CaveExplorer(Node):
         left = (image_width / 2.0 - (box[0] + box[2] / 2.0)) / focal            # sideways offset per metre of forward distance
         forward = self.box_range(box)
         if forward is None:
+            self.approach_far_sign(robot, left)
             return
         camera_x = robot.x + 0.5 * math.cos(robot.theta)                          # the camera is 0.5 m ahead of the robot centre
         camera_y = robot.y + 0.5 * math.sin(robot.theta)
         self.localise_artifact(target_xy=(camera_x + forward * math.cos(robot.theta) - forward * left * math.sin(robot.theta),
                                           camera_y + forward * math.sin(robot.theta) + forward * left * math.cos(robot.theta)))
+
+    def approach_far_sign(self, robot, left):
+        """A sign is seen but is beyond the depth camera's 10 m: drive towards it so it can be measured and placed.
+
+        Goes along the sign's bearing to the farthest known-free cell up to 12 m away (stopping 1 m short of a wall or unknown space).
+        """
+        now = self.now_seconds()
+        if self.map_msg_ is None or now - self.last_far_hint_at_ < 20.0 or self.recovery_started_at_ is not None:
+            return
+        info = self.map_msg_.info
+        grid = np.array(self.map_msg_.data, dtype=np.int16).reshape(info.height, info.width)
+        heading = robot.theta + math.atan2(left, 1.0)
+        reach = None
+        for step in range(1, 25):                                                   # every 0.5 m out to 12 m
+            x, y = robot.x + 0.5 * step * math.cos(heading), robot.y + 0.5 * step * math.sin(heading)
+            col, row = int((x - info.origin.position.x) / info.resolution), int((y - info.origin.position.y) / info.resolution)
+            r = int(0.9 / info.resolution)
+            patch = grid[max(row - r, 0):row + r + 1, max(col - r, 0):col + r + 1]
+            if not (0 <= row < info.height and 0 <= col < info.width) or patch.size == 0 or (patch != 0).any():
+                break
+            reach = (x, y, 0.5 * step)
+        if reach is None or reach[2] < 3.0:
+            return
+        goal = (reach[0], reach[1])
+        if any(math.hypot(goal[0] - g[0], goal[1] - g[1]) < 3.0 for g in self.failed_goals_ + self.far_goals_):
+            return
+        self.last_far_hint_at_ = now
+        self.far_goals_.append(goal)
+        self.get_logger().info(f'Far sign seen at bearing {math.degrees(heading):.0f} deg; approaching ({goal[0]:.1f}, {goal[1]:.1f}), {reach[2]:.1f} m ahead')
+        self.retry_goal_ = goal
+        self.cancel_current_goal()
 
     def localise_artifact(self, target_xy):
         """Record a newly seen artefact at a map position, unless it is one already known."""
