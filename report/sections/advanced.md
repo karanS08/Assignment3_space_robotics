@@ -49,5 +49,22 @@ Offline comparison (`python3 scripts/sampling_offline_check.py`): 10 runs per st
 
 - **Reading of the result:** adaptive is *worse* for roughly the first 13 samples: the travel penalty keeps it near the start, so the GP extrapolates over the unseen cave. After that it is better, and it reaches a given error in about a third of the travel distance (RMSE 0.30 at about 240 m against about 700 m for random). Differences at 30 and 40 samples are within about one standard deviation, so the sample-count advantage is modest; the travel advantage is the clear one.
 - **Evidence:** `figures/advanced6_offline_rmse.png`, `figures/advanced6_offline_maps.png`.
-- **Not yet done:** runs in Gazebo with real navigation (one adaptive, one random, same seed and sample count); RViz screenshots; plot of the logged CSVs.
+
+Gazebo comparison (12 Oct, one run each, 30 samples, seed 0, real Nav2 and SLAM, no manual help):
+
+| Samples | Adaptive RMSE | Random RMSE | Adaptive travel | Random travel |
+|---:|---:|---:|---:|---:|
+| 5 | 0.437 | 0.502 | 55 m | 38 m |
+| 10 | 0.292 | 0.456 | 179 m | 139 m |
+| 15 | 0.270 | 0.269 | 251 m | 372 m |
+| 20 | 0.270 | 0.212 | 273 m | 538 m |
+| 30 | 0.233 | 0.180 | 341 m | 818 m |
+| Wall time | 461 s | 1074 s | | |
+
+- **Adaptive wins early and on effort:** it reaches RMSE 0.30 after 9 samples and 164 m (random: 13 samples, 255 m), and finishes in 43 % of the time and 42 % of the distance.
+- **Random wins on final error in this run:** 0.180 against 0.233. Adaptive sits on a plateau near 0.27 from sample 10 to 28 and only drops when it finally visits the far left of the cave, which random reached by chance at sample 19-20.
+- **Likely cause:** the travel penalty (weight 0.3) keeps adaptive in the nearby right half until uncertainty there is low. Lowering the weight would trade distance for earlier coverage. Not tuned yet.
+- **Caveat:** one run per strategy, so the final-error gap is not statistically meaningful. The offline study (10 runs) is the better evidence on error; the Gazebo runs show the behaviour works with real navigation.
+- **Evidence:** `figures/advanced6_gazebo_comparison.png`, data in `data/gazebo_run4_adaptive_30samples.csv` and `data/gazebo_run5_random_30samples.csv`. `data/gazebo_run1_*` and `gazebo_run2_*` are earlier runs on buggy code (run 2 was hand-assisted) and are kept for the record only.
+- **Not yet done:** repeat Gazebo runs with several seeds; tune `travel_weight`; RViz screenshots.
 - **Known limits:** offline simulation ignores driving time and Nav2 failures. Noise (0.2-0.6 wt %) is large against the field's range (2.3-5.0 wt %), which sets an error floor near 0.2. Online RMSE is computed over the cave explored so far, so its region grows during a run.
