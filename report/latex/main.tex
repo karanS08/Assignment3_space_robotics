@@ -476,7 +476,7 @@ To make the task realistic, we did not invent a made-up field. We used real meas
 so scientists can work out how much water is mixed into the top layer of the soil. The result is a map of
 Mars showing how wet the soil is in each place. We downloaded it from NASA's public Planetary Data System
 (data set \texttt{ODY-M-GRS-5-ELEMENTS-V1.0}, file \texttt{H2O\_SR\_5X5}; measurements made between June 2002
-and April 2005).
+and April 2005)~\cite{pds}.
 
 \paragraph{How the amount of water is written.}
 The amount is given as a \emph{percentage of the soil's weight}. A value of 4 means that 4\,kg of every 100\,kg of
@@ -512,9 +512,11 @@ The rover explores a cave about $65 \times 55$\,m, so the NASA map had to be fit
 five steps. The same steps are in the software, in \texttt{measurement\_field.py}.
 
 \begin{enumerate}[nosep]
-  \item \textbf{Choose a piece of Mars.} We took a block of $12 \times 12 = 144$ squares around Arsia Mons, a
-        large volcano in the Tharsis region of Mars (latitude $37.5^{\circ}$S to $17.5^{\circ}$N, longitude
-        $212.5^{\circ}$ to $267.5^{\circ}$E). We chose it because every square has a measurement, because the
+  \item \textbf{Choose a piece of Mars.} We took a block of $12 \times 12 = 144$ squares around Arsia Mons
+        (latitude $37.5^{\circ}$S to $17.5^{\circ}$N, longitude $212.5^{\circ}$ to $267.5^{\circ}$E).
+        Arsia Mons is a giant volcano, the southernmost of three in a row on the Tharsis bulge, a huge raised region
+        near the equator of Mars. It lies at $8.35^{\circ}$S, $239.91^{\circ}$E~\cite{wiki_arsia}, close to the middle of the
+        block. We chose it because every square has a measurement, because the
         water varies from place to place (so there is something to discover), and because caves with
         openings in their roofs have been seen from orbit in this region.
   \item \textbf{Match it to the map.} The cave map uses metres: $x$ runs from $-5$ to $60$ and $y$ from
@@ -538,7 +540,7 @@ five steps. The same steps are in the software, in \texttt{measurement\_field.py
   \centering
   \includegraphics[width=0.92\linewidth]{advanced6_nasa_field_on_map.png}
   \caption{From NASA's map to the cave map. (1)~The whole NASA map of water in Martian soil; the red box is the
-  block we used, and the star is Arsia Mons. (2)~The block itself: 144 squares with their values. (3)~The same block
+  block we used, and the star marks Arsia Mons, a giant volcano near the middle of the block. (2)~The block itself: 144 squares with their values. (3)~The same block
   stretched over the cave map. Colour is shown only where the rover can drive. Panels 2 and 3 share one colour scale.}
 \end{figure}
 
@@ -610,6 +612,49 @@ at that spot before any error was added.}
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection{The real instrument and our virtual one}
+\label{sec:instrument}
+
+\paragraph{The real instrument.}
+The water map was made by the \emph{Gamma Ray Spectrometer} on Mars Odyssey, a satellite that circles Mars about 400\,km above the
+surface~\cite{boynton2004}. Its main detector is a germanium crystal that counts gamma rays and records the energy of each one. It has to be kept
+extremely cold to work. It cannot see water directly. Instead, cosmic rays from space hit the ground and knock out
+neutrons, and those neutrons make the soil give off gamma rays whose energies are a fingerprint of the elements present.
+Hydrogen leaves a clear mark, and because most hydrogen on Mars is locked in water, scientists turn the hydrogen
+signal into a water amount~\cite{feldman2004}. The instrument senses only the top layer of the ground, between tens of centimetres and about a metre
+deep. From orbit, one measurement covers an area hundreds of kilometres across, which is why NASA's file uses squares
+300\,km wide.
+
+\paragraph{What we built instead.}
+We did not simulate the detector, the gamma rays or the neutrons. We simulated what a user of the instrument gets out of
+it: a water value, with an error, for a place. The rover gives its position, the program looks up NASA's water value
+for that place (blending smoothly between squares), adds a random error of the size NASA reports for that square, and
+returns the answer. In the code this is the function \texttt{measure(x, y)} in \texttt{measurement\_field.py}. The part of the
+program that chooses where to go can call only this function, and never sees the true value.
+
+\begin{table}[h]
+\centering
+\caption{The real instrument compared with our simulated one.}
+\small
+\begin{tabular}{@{}p{3.1cm}p{5.4cm}p{5.5cm}@{}}
+\toprule
+ & \textbf{Real instrument (Mars Odyssey)} & \textbf{Our simulated instrument} \\
+\midrule
+Where it is & On a satellite, about 400\,km above Mars & On the rover, at its position \\[3pt]
+What it covers & An area about 300\,km wide per measurement & A single point \\[3pt]
+How a value is made & Counting gamma rays, then turning the hydrogen signal into water & A look-up in NASA's finished map \\[3pt]
+Where the error comes from & Few gamma rays counted, and corrections for other effects & A random number of the size NASA reports \\[3pt]
+What it returns & Water as a percentage of soil weight & The same \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{What the simulation leaves out.}
+It leaves out the physics of the gamma rays and neutrons, the blurring caused by the 300\,km footprint (ours reads a single point), and
+any error that is shared between measurements. Our errors are all random and independent of each other, but real errors are partly
+systematic. The nearest real equivalent for a rover is the neutron instrument on the Curiosity rover, called DAN, which looks for
+hydrogen under the wheels~\cite{mitrofanov2012}. We did not model it.
 
 \subsection{What is real and what is not}
 
@@ -793,5 +838,22 @@ over a polished generic one. Replace the brackets with what actually happened.
   \item \textbf{Integration.} \todo{State honestly whether the parts were run together before the demonstration, and what broke.}
   \item \textbf{What each member learned.} \todo{One or two sentences each.}
 \end{itemize}
+
+
+% =====================================================================
+\section*{References}
+\addcontentsline{toc}{section}{References}
+\begin{thebibliography}{9}
+\bibitem{pds} NASA Planetary Data System, Geosciences Node. \emph{ODY Mars Gamma Ray Spectrometer 5 Element Concentration V1.0}
+  (data set ODY-M-GRS-5-ELEMENTS-V1.0, product H2O\_SR\_5X5).
+  \url{https://pds-geosciences.wustl.edu/ody/ody-m-grs-5-elements-v1/odgm_xxxx/}. Downloaded 5 October 2026.
+\bibitem{wiki_arsia} ``Arsia Mons''. Wikipedia. \url{https://en.wikipedia.org/wiki/Arsia_Mons}. Position 8.35$^{\circ}$S, 239.91$^{\circ}$E.
+\bibitem{boynton2004} W.~V. Boynton et al. ``The Mars Odyssey Gamma-Ray Spectrometer instrument suite.'' \emph{Space Science Reviews}, 110, 2004.
+  \todo{check volume, pages and year before submission}
+\bibitem{feldman2004} W.~C. Feldman et al. ``Global distribution of near-surface hydrogen on Mars.'' \emph{Journal of Geophysical Research}, 109, 2004.
+  \todo{check details before submission}
+\bibitem{mitrofanov2012} I.~G. Mitrofanov et al. ``Dynamic Albedo of Neutrons (DAN) experiment onboard NASA's Mars Science Laboratory.''
+  \emph{Space Science Reviews}, 170, 2012. \todo{check details before submission}
+\end{thebibliography}
 
 \end{document}
