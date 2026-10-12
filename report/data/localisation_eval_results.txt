@@ -1,0 +1,15 @@
+Position error of each sighting that matched a visible artefact of the same type [m]: median / 90th percentile (n)
+type                        1-3 m                  3-5 m                  5-9 m
+alien            0.26 / 0.64 (17)        0.17 / 0.54 (8)        0.15 / 0.18 (8)
+crystals         0.97 / 1.60 (19)       1.43 / 1.62 (11)        1.53 / 1.71 (9)
+mushroom         0.85 / 1.06 (37)       0.74 / 0.94 (11)        0.88 / 0.98 (9)
+sphere           0.79 / 0.85 (17)        0.77 / 0.81 (7)        0.80 / 0.84 (6)
+ice              1.09 / 2.05 (12)        2.54 / 2.91 (5)        2.32 / 4.11 (7)
+all matched sightings: median 0.80 m, 90th percentile 1.59 m, n = 183
+
+Merged map: artefacts found against the real ones (a found artefact counts as right if within 3 m of a real one of that type)
+alien      real 3 | merged entries seen 3+ times: 5 (right place: 3, not near any real one: 2) | real artefacts covered: 3/3
+crystals   real 3 | merged entries seen 3+ times: 4 (right place: 4, not near any real one: 0) | real artefacts covered: 3/3
+mushroom   real 3 | merged entries seen 3+ times: 3 (right place: 3, not near any real one: 0) | real artefacts covered: 3/3
+sphere     real 3 | merged entries seen 3+ times: 3 (right place: 3, not near any real one: 0) | real artefacts covered: 3/3
+ice        real 2 | merged entries seen 3+ times: 7 (right place: 4, not near any real one: 3) | real artefacts covered: 2/2
