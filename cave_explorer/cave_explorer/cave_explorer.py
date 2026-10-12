@@ -356,6 +356,8 @@ class CaveExplorer(Node):
         except Exception as exc:
             self.get_logger().warn(f'Depth image error: {exc}', throttle_duration_sec=10.0)
 
+    min_box_height_ = 22    # [pixels] smaller boxes are signs beyond about 7 m, where the nearest-depth reading often hits closer rock
+
     def box_range(self, box):
         """Distance in metres to the object in a box, from the depth image, or None. Uses the nearest 30 % of readings in the box."""
         if self.latest_depth_ is None:
@@ -405,6 +407,8 @@ class CaveExplorer(Node):
             return
         focal = (image_width / 2.0) / math.tan(self.camera_horizontal_fov_ / 2.0)
         left = (image_width / 2.0 - (box[0] + box[2] / 2.0)) / focal            # sideways offset per metre of forward distance
+        if box[3] < self.min_box_height_:
+            return                                                                  # too far for the depth reading to be trusted
         forward = self.box_range(box)
         if forward is None:
             return
