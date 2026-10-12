@@ -26,3 +26,6 @@ models/**
 
 # Tooling output
 graphify-out/
+
+# Local Claude Code settings
+.claude/

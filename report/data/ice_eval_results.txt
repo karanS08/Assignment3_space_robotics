@@ -1,0 +1,4 @@
+Trained on 203 images, scored on 202 images the forest never saw:
+  min box area 1500: ice found in 18 of 33 images showing it (55%); false ice box in 10 of 202 images (5%), 12 boxes
+  min box area 4000: ice found in 16 of 33 images showing it (48%); false ice box in 3 of 202 images (1%), 3 boxes
+Final forest trained on all 405 images, saved to ../cave_explorer/data/ice_forest.joblib (2.7 MB)
