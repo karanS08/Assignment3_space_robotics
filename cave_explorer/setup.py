@@ -25,7 +25,7 @@ setup(
         ('share/' + package_name, ['package.xml']),
         ('share/' + package_name + '/launch', glob('launch/*launch.[pxy][yma]*')),
         ('share/' + package_name + '/config', glob('config/*')),
-    ] + generate_data_files('share/' + package_name + '/', 'urdf') + generate_data_files('share/' + package_name + '/', 'worlds'),
+    ] + generate_data_files('share/' + package_name + '/', 'urdf') + generate_data_files('share/' + package_name + '/', 'worlds') + generate_data_files('share/' + package_name + '/', 'data'),
     install_requires=['setuptools'],
     zip_safe=True,
     maintainer='Graeme Best',
@@ -35,7 +35,9 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'cave_explorer = cave_explorer.cave_explorer:main'
+            'cave_explorer = cave_explorer.cave_explorer:main',
+            'cave_geometry = cave_explorer.advanced.cave_geometry_node:main',
+            'adaptive_sampling = cave_explorer.advanced.adaptive_sampling_node:main'
         ],
     },
 )
