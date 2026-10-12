@@ -17,7 +17,7 @@ import time
 import numpy as np
 import rclpy
 from action_msgs.msg import GoalStatus
-from geometry_msgs.msg import Point, PoseStamped
+from geometry_msgs.msg import Point, PoseStamped, Twist
 from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import OccupancyGrid
 from rclpy.action import ActionClient
@@ -49,6 +49,9 @@ class AdaptiveSamplingNode(Node):
         self.declare_parameter('seed', 0)
         self.declare_parameter('travel_weight', 0.3)
         self.declare_parameter('goal_timeout', 120.0)
+        self.declare_parameter('goal_clearance', 1.5)
+        self.declare_parameter('stuck_time', 15.0)
+        self.declare_parameter('settle_time', 1.0)
         self.declare_parameter('measurement_table', '')
         self.declare_parameter('log_directory', '~/cave_sampling_logs')
 
@@ -61,7 +64,8 @@ class AdaptiveSamplingNode(Node):
         table = self.get_parameter('measurement_table').value or default_table_path()
         self.field_ = MeasurementField(table, seed=seed)
         self.sampler_ = AdaptiveSampler(strategy=self.strategy_, seed=seed,
-                                        travel_weight=self.get_parameter('travel_weight').value)
+                                        travel_weight=self.get_parameter('travel_weight').value,
+                                        goal_clearance=self.get_parameter('goal_clearance').value)
 
         # Latest map
         self.grid_ = None
@@ -74,6 +78,12 @@ class AdaptiveSamplingNode(Node):
         self.goal_xy_ = None
         self.goal_handle_ = None
         self.goal_sent_time_ = None
+        self.goal_attempts_ = 0
+        self.retry_goal_ = False
+        self.navigation_ended_time_ = None
+        self.progress_xy_ = None
+        self.progress_time_ = None
+        self.recovery_start_time_ = None
         self.travelled_ = 0.0
         self.last_xy_ = None
         self.log_rows_ = []
@@ -89,8 +99,10 @@ class AdaptiveSamplingNode(Node):
         self.get_logger().warn('navigate_to_pose connected')
 
         self.goal_pose_vis_ = self.create_publisher(PoseStamped, 'goal_pose', 1)
+        self.cmd_vel_pub_ = self.create_publisher(Twist, 'cmd_vel', 1)
         self.mean_pub_ = self.create_publisher(OccupancyGrid, 'adaptive_sampling/mean', 1)
         self.uncertainty_pub_ = self.create_publisher(OccupancyGrid, 'adaptive_sampling/uncertainty', 1)
+        self.ground_truth_pub_ = self.create_publisher(OccupancyGrid, 'adaptive_sampling/ground_truth', 1)
         self.marker_pub_ = self.create_publisher(MarkerArray, 'adaptive_sampling/markers', 1)
         self.map_sub_ = self.create_subscription(OccupancyGrid, 'map', self.map_callback, 1)
 
@@ -98,6 +110,9 @@ class AdaptiveSamplingNode(Node):
 
         # Timer for main loop
         self.main_loop_timer_ = self.create_timer(0.5, self.main_loop)
+
+        # Timer for driving the robot directly when it is stuck
+        self.recovery_timer_ = self.create_timer(0.05, self.recovery_loop)
 
     def get_robot_xy(self):
         """Robot position in the map frame, or None if not yet available"""
@@ -131,14 +146,39 @@ class AdaptiveSamplingNode(Node):
         if self.finished_:
             return
 
+        if self.recovery_start_time_ is not None:
+            return
+
+        now = self.get_clock().now()
+
         if self.navigating_:
-            # Give up on goals that take too long
-            elapsed = (self.get_clock().now() - self.goal_sent_time_).nanoseconds / 1e9
-            if elapsed > self.get_parameter('goal_timeout').value:
-                self.get_logger().warn(f'Goal [{self.goal_xy_[0]:.1f}, {self.goal_xy_[1]:.1f}] timed out')
-                if self.goal_handle_ is not None:
-                    self.goal_handle_.cancel_goal_async()
+            # Stuck: the robot has not moved for a while, e.g. wedged on an object the laser cannot see
+            if math.hypot(robot_xy[0] - self.progress_xy_[0], robot_xy[1] - self.progress_xy_[1]) > 0.5:
+                self.progress_xy_ = robot_xy
+                self.progress_time_ = now
+            elif (now - self.progress_time_).nanoseconds / 1e9 > self.get_parameter('stuck_time').value:
+                self.get_logger().warn(f'Stuck at [{robot_xy[0]:.1f}, {robot_xy[1]:.1f}], backing up')
+                self.cancel_goal()
+                self.sampler_.blacklist(robot_xy[0], robot_xy[1])
                 self.goal_failed()
+                self.recovery_start_time_ = now
+                return
+
+            # Give up on goals that take too long
+            if (now - self.goal_sent_time_).nanoseconds / 1e9 > self.get_parameter('goal_timeout').value:
+                self.get_logger().warn(f'Goal [{self.goal_xy_[0]:.1f}, {self.goal_xy_[1]:.1f}] timed out')
+                self.cancel_goal()
+                self.goal_failed()
+            return
+
+        # Nav2 aborts a goal that arrives while it is still finishing the previous one
+        if self.navigation_ended_time_ is not None and \
+                (now - self.navigation_ended_time_).nanoseconds / 1e9 < self.get_parameter('settle_time').value:
+            return
+
+        if self.retry_goal_:
+            self.retry_goal_ = False
+            self.go_to(self.goal_xy_, robot_xy)
             return
 
         self.take_sample(robot_xy)
@@ -151,7 +191,28 @@ class AdaptiveSamplingNode(Node):
         if goal_xy is None:
             self.get_logger().warn('No reachable location left to sample', throttle_duration_sec=5.0)
             return
+        self.goal_attempts_ = 0
         self.go_to(goal_xy, robot_xy)
+
+    def recovery_loop(self):
+        """Free a stuck robot: reverse, then turn right on the spot"""
+        if self.recovery_start_time_ is None:
+            return
+
+        elapsed = (self.get_clock().now() - self.recovery_start_time_).nanoseconds / 1e9
+        command = Twist()
+        if elapsed < 4.0:
+            command.linear.x = -0.8
+        elif elapsed < 6.0:
+            command.angular.z = -1.0
+        else:
+            self.recovery_start_time_ = None
+            self.navigation_ended_time_ = self.get_clock().now()
+        self.cmd_vel_pub_.publish(command)
+
+    def cancel_goal(self):
+        if self.goal_handle_ is not None:
+            self.goal_handle_.cancel_goal_async()
 
     def take_sample(self, robot_xy):
         """Measure at the robot's position, unless it is too close to an existing sample"""
@@ -191,6 +252,12 @@ class AdaptiveSamplingNode(Node):
         rows, cols = np.nonzero(accessible)
         x, y = cave_geometry.cell_to_world(rows, cols, self.resolution_, self.origin_xy_)
         truth = self.field_.ground_truth(x, y)
+
+        # Show the true field too, for comparing against the GP mean by eye
+        truth_grid = np.full(accessible.shape, np.nan)
+        truth_grid[rows, cols] = truth
+        self.publish_grid(self.ground_truth_pub_, truth_grid)
+
         return float(np.sqrt(np.mean((mean[rows, cols] - truth)**2))), float(np.mean(std[rows, cols]))
 
     def publish_grid(self, publisher, values):
@@ -220,9 +287,9 @@ class AdaptiveSamplingNode(Node):
         samples.type = Marker.SPHERE_LIST
         samples.action = Marker.ADD
         samples.pose.orientation.w = 1.0
-        samples.scale.x = 1.0
-        samples.scale.y = 1.0
-        samples.scale.z = 1.0
+        samples.scale.x = 1.5
+        samples.scale.y = 1.5
+        samples.scale.z = 1.5
 
         path = Marker()
         path.header.frame_id = self.map_frame_
@@ -231,7 +298,7 @@ class AdaptiveSamplingNode(Node):
         path.type = Marker.LINE_STRIP
         path.action = Marker.ADD
         path.pose.orientation.w = 1.0
-        path.scale.x = 0.1
+        path.scale.x = 0.2
         path.color = ColorRGBA(r=1.0, g=1.0, b=1.0, a=0.8)
 
         markers = [samples, path]
@@ -248,9 +315,9 @@ class AdaptiveSamplingNode(Node):
             label.action = Marker.ADD
             label.pose.position.x = x
             label.pose.position.y = y
-            label.pose.position.z = 1.8
+            label.pose.position.z = 2.5
             label.pose.orientation.w = 1.0
-            label.scale.z = 0.8
+            label.scale.z = 1.6
             label.color = ColorRGBA(r=1.0, g=1.0, b=1.0, a=1.0)
             label.text = f'{value:.1f}'
             markers.append(label)
@@ -277,7 +344,10 @@ class AdaptiveSamplingNode(Node):
         self.navigating_ = True
         self.goal_xy_ = goal_xy
         self.goal_handle_ = None
+        self.goal_attempts_ += 1
         self.goal_sent_time_ = self.get_clock().now()
+        self.progress_xy_ = robot_xy
+        self.progress_time_ = self.goal_sent_time_
         self.nav2_action_client_.send_goal_async(action_goal).add_done_callback(self.goal_response_callback)
 
     def goal_response_callback(self, future):
@@ -289,16 +359,24 @@ class AdaptiveSamplingNode(Node):
             return
 
         self.goal_handle_ = goal_handle
-        goal_handle.get_result_async().add_done_callback(self.goal_result_callback)
+        goal_handle.get_result_async().add_done_callback(
+            lambda future: self.goal_result_callback(future, goal_handle))
 
-    def goal_result_callback(self, future):
+    def goal_result_callback(self, future, goal_handle):
         """Navigation has ended, successfully or not"""
-        if not self.navigating_:
-            # Already handled by the timeout
+        if not self.navigating_ or goal_handle is not self.goal_handle_:
+            # A goal that was already given up on (timeout or stuck)
             return
 
+        now = self.get_clock().now()
         if future.result().status == GoalStatus.STATUS_SUCCEEDED:
             self.navigating_ = False
+            self.navigation_ended_time_ = now
+        elif (now - self.goal_sent_time_).nanoseconds / 1e9 < 3.0 and self.goal_attempts_ < 3:
+            # Aborted straight away: usually Nav2 still finishing the previous goal, so try again
+            self.navigating_ = False
+            self.navigation_ended_time_ = now
+            self.retry_goal_ = True
         else:
             self.get_logger().warn(f'Could not reach [{self.goal_xy_[0]:.1f}, {self.goal_xy_[1]:.1f}]')
             self.goal_failed()
@@ -307,6 +385,8 @@ class AdaptiveSamplingNode(Node):
         """Avoid this goal in future; the main loop then samples wherever the robot ended up"""
         self.sampler_.blacklist(self.goal_xy_[0], self.goal_xy_[1])
         self.navigating_ = False
+        self.goal_handle_ = None
+        self.navigation_ended_time_ = self.get_clock().now()
 
     def finish(self):
         """All samples taken: save the log"""

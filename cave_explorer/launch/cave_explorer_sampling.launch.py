@@ -30,6 +30,12 @@ def generate_launch_description():
         description='Random seed for measurement noise and the random strategy'
     )
 
+    log_directory_launch_arg = DeclareLaunchArgument(
+        'log_directory',
+        default_value='~/cave_sampling_logs',
+        description='Where to save the CSV log of each run'
+    )
+
     # Advanced 6: adaptive scientific sampling.
     # Run this instead of cave_explorer_autonomy.launch.py, since both send navigation goals.
     adaptive_sampling_node = Node(
@@ -39,13 +45,15 @@ def generate_launch_description():
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time'),
                      'strategy': LaunchConfiguration('strategy'),
                      'num_samples': LaunchConfiguration('num_samples'),
-                     'seed': LaunchConfiguration('seed')}]
+                     'seed': LaunchConfiguration('seed'),
+                     'log_directory': LaunchConfiguration('log_directory')}]
     )
 
     ld.add_action(use_sim_time_launch_arg)
     ld.add_action(strategy_launch_arg)
     ld.add_action(num_samples_launch_arg)
     ld.add_action(seed_launch_arg)
+    ld.add_action(log_directory_launch_arg)
     ld.add_action(adaptive_sampling_node)
 
     return ld

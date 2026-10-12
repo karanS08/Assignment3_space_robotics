@@ -50,8 +50,8 @@ def travel_distances(accessible, start_cell, resolution):
 
 
 class AdaptiveSampler:
-    def __init__(self, strategy='adaptive', candidate_spacing=1.0, min_sample_spacing=2.0,
-                 goal_clearance=0.9, travel_weight=0.3, robot_radius=0.5,
+    def __init__(self, strategy='adaptive', candidate_spacing=1.0, min_sample_spacing=4.0,
+                 goal_clearance=1.5, travel_weight=0.3, robot_radius=0.5,
                  blacklist_spacing=4.0, seed=None):
         """
         strategy: 'adaptive' goes where the GP is most uncertain, discounted by travel distance.
@@ -91,11 +91,13 @@ class AdaptiveSampler:
 
     def fit(self):
         # Signal variance * smoothness over metres + measurement noise
-        kernel = (ConstantKernel(1.0, (1e-2, 1e2)) * RBF(10.0, (3.0, 60.0))
+        kernel = (ConstantKernel(1.0, (1e-2, 1e2)) * RBF(10.0, (5.0, 60.0))
                   + WhiteKernel(0.1, (1e-3, 1.0)))
 
-        # With very few samples the hyperparameters cannot be estimated, so keep the prior ones
-        optimizer = 'fmin_l_bfgs_b' if len(self.sample_values_) >= 5 else None
+        # With few samples the hyperparameters cannot be estimated reliably: the fit tends to
+        # pick a very short length scale, which makes everywhere look equally uncertain.
+        # Keep the prior ones until there is enough data
+        optimizer = 'fmin_l_bfgs_b' if len(self.sample_values_) >= 8 else None
 
         self.gp_ = GaussianProcessRegressor(kernel=kernel, normalize_y=True, optimizer=optimizer,
                                             n_restarts_optimizer=2,

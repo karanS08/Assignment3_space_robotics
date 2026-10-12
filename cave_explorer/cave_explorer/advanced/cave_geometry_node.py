@@ -35,6 +35,7 @@ class CaveGeometryNode(Node):
         self.result_ = None
         self.reported_widest_ = None
         self.reported_narrowest_ = None
+        self.previous_passages_ = []
 
         # Prepare transformation to get robot pose
         self.tf_buffer = Buffer()
@@ -63,6 +64,14 @@ class CaveGeometryNode(Node):
             robot_xy=self.get_robot_xy(),
             robot_radius=self.get_parameter('robot_radius').value,
             max_passages=self.get_parameter('max_passages').value)
+
+        # Walls that are only partly mapped can look like a passage for one update.
+        # Only keep passages that were also found, at about the same place, last time
+        detected = self.result_.passages
+        self.result_.passages = [
+            p for p in detected
+            if any(math.hypot(p.x - q.x, p.y - q.y) < 1.5 for q in self.previous_passages_)]
+        self.previous_passages_ = detected
 
         self.publish_distance_transform(map_msg)
         self.publish_markers(map_msg)
@@ -117,10 +126,10 @@ class CaveGeometryNode(Node):
 
         # Widest accessible area
         if result.widest is not None:
-            disc = self.make_marker(map_msg, 'widest_area', 0, Marker.CYLINDER, (0.1, 0.4, 1.0, 0.4))
+            disc = self.make_marker(map_msg, 'widest_area', 0, Marker.CYLINDER, (0.0, 1.0, 1.0, 0.5))
             disc.pose.position.x = float(result.widest.x)
             disc.pose.position.y = float(result.widest.y)
-            disc.pose.position.z = 0.1
+            disc.pose.position.z = 0.3
             disc.scale.x = 2.0 * result.widest.radius
             disc.scale.y = 2.0 * result.widest.radius
             disc.scale.z = 0.05
@@ -130,7 +139,7 @@ class CaveGeometryNode(Node):
             label.pose.position.x = float(result.widest.x)
             label.pose.position.y = float(result.widest.y)
             label.pose.position.z = 2.0
-            label.scale.z = 1.2
+            label.scale.z = 2.2
             label.text = f'Widest area: radius {result.widest.radius:.1f} m'
             markers.append(label)
 
@@ -139,7 +148,7 @@ class CaveGeometryNode(Node):
             rgba = (1.0, 0.0, 0.0, 1.0) if i == 0 else (1.0, 0.5, 0.0, 0.9)
 
             line = self.make_marker(map_msg, 'passages', 2 * i, Marker.LINE_LIST, rgba)
-            line.scale.x = 0.4 if i == 0 else 0.25
+            line.scale.x = 0.6 if i == 0 else 0.4
             line.points = [Point(x=passage.wall_a[0], y=passage.wall_a[1], z=0.2),
                            Point(x=passage.wall_b[0], y=passage.wall_b[1], z=0.2)]
             markers.append(line)
@@ -148,7 +157,7 @@ class CaveGeometryNode(Node):
             label.pose.position.x = float(passage.x)
             label.pose.position.y = float(passage.y)
             label.pose.position.z = 2.0
-            label.scale.z = 1.2 if i == 0 else 0.9
+            label.scale.z = 2.2 if i == 0 else 1.6
             label.text = f'Narrowest: {passage.width:.1f} m' if i == 0 else f'{passage.width:.1f} m'
             markers.append(label)
 
@@ -160,18 +169,21 @@ class CaveGeometryNode(Node):
         """Log the main features when they change"""
         widest = self.result_.widest
         if widest is not None:
-            summary = (round(widest.x), round(widest.y), round(widest.radius, 1))
-            if summary != self.reported_widest_:
-                self.reported_widest_ = summary
+            last = self.reported_widest_
+            if last is None or abs(widest.radius - last.radius) > 0.3 \
+                    or math.hypot(widest.x - last.x, widest.y - last.y) > 3.0:
+                self.reported_widest_ = widest
                 self.get_logger().info(
                     f'Widest accessible area: centre [{widest.x:.1f}, {widest.y:.1f}], '
                     f'radius {widest.radius:.2f} m, area {math.pi * widest.radius**2:.0f} m^2')
 
         if self.result_.passages:
+            # The map shifts by a cell between updates, so only report a real change
             narrowest = self.result_.passages[0]
-            summary = (round(narrowest.x), round(narrowest.y), round(narrowest.width, 1))
-            if summary != self.reported_narrowest_:
-                self.reported_narrowest_ = summary
+            last = self.reported_narrowest_
+            if last is None or abs(narrowest.width - last.width) > 0.5 \
+                    or math.hypot(narrowest.x - last.x, narrowest.y - last.y) > 3.0:
+                self.reported_narrowest_ = narrowest
                 self.get_logger().info(
                     f'Narrowest passage: [{narrowest.x:.1f}, {narrowest.y:.1f}], '
                     f'width {narrowest.width:.2f} m, {narrowest.kind}, '
