@@ -254,12 +254,52 @@ This is usable but not reliable.
   detection rate is 55\%.}
 \end{figure}
 
+\paragraph{Stop signs: a red-octagon classifier.}
+The template's stop-sign detector is a Haar cascade (a trained pattern matcher). Some walls of the cave carry
+the Mars timeline poster, which has framed year labels, and the cascade fires on them. In the first runs of the
+shared exploration code this produced 22 to 27 ``artefacts'' although the cave holds only five real stop signs.
+Karan therefore wrote a rule-based classifier (\texttt{stop\_sign\_detector.py}, no trained weights) that asks for what a stop sign is:
+strongly red pixels, a solid blob that is roughly square and fills about 83\,\% of its bounding box, an outline with about eight corners,
+and pale lettering inside (red has high colour saturation, the letters low). The numeric limits were measured from
+the simulator's sign photo (red value about 87, saturation about 212).
+
+To score it, the rover was teleported around every real sign. For each of the five signs there are 5 photos on an arc in front of the sign,
+28$^\circ$ apart (from $-56^\circ$ to $+56^\circ$, a $140^\circ$ cone) at about 4\,m; one of the 25 is impossible
+because the rover cannot get 4\,m from that wall at $-56^\circ$, so there are 24. Another 193 photos look at every other wall (including the poster walls),
+24 look at artefacts and 40 are random views, and a second set of 40 photos shows the seven poster walls from both sides (a deliberate
+hard test). The world file says where every sign is, so each photo is labelled automatically; the detectors only see the image.
+A box counts as a false alarm only if no real sign lies in that direction at any distance (13 of 15 boxes first counted as false were real, distant signs).
+
+\begin{table}[h]
+\centering
+\caption{Template cascade against the red-octagon classifier on simulator photos.}
+\begin{tabular}{@{}lcc@{}}
+\toprule
+ & \textbf{Cascade} & \textbf{Red octagon} \\
+\midrule
+Signs found, all clear views (within 9\,m) & 26/32 (81\,\%) & 28/32 (88\,\%) \\
+Signs found, arc photos showing the sign clearly (23 of the 24) & 22/23 & 22/23 \\
+False boxes on 233 photos with no sign in view & 1 & 2 \\
+False boxes on the poster-wall photos (48) & 5 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{stopsign_arc_examples.png}
+  \caption{Stop-sign arc photos (green: red-octagon box, blue: cascade box) and photos with no sign where the cascade still fires.}
+\end{figure}
+
+The classifier removes the poster false alarms and finds slightly more signs. Its two false boxes (one on a rock wall, one in a random view)
+are small and narrow; they are not explained. The photos used to choose the limits are the photos used to score it, so the numbers are optimistic.
+
 \paragraph{Limits.}
 Colour ranges were measured in this one world and tuned on the same 405 images, so the figures above
 are optimistic for a new scene or a fresh set of viewpoints. The detectors return a box and image
 column; turning that into a map position (Perception~3) needs the depth image and the robot pose.
-The detectors are not yet called from the rover's image callback. The image passed to them must be
-in BGR order; ROS images arrive as RGB.
+Only the stop-sign classifier is called from the rover's image callback; the colour and ice detectors are scored offline on saved images and are not part of the running node.
+The image passed to them must be in BGR order; ROS images arrive as RGB.
 
 % =====================================================================
 \section{Planning}
@@ -275,6 +315,61 @@ asks for markers showing chosen frontiers and visited artefacts.
 \subsection{Planning 1 --- Autonomous exploration}\todo{Christina}
 \subsection{Planning 2 --- Close-range inspection}\todo{Christina}
 \subsection{Planning 3 --- Behaviour switching}\todo{Christina}
+
+\subsection{Changes to the shared exploration code (Karan, integration)}
+\todo{Christina: agree with Karan how this subsection is presented, so it is clear which parts are Christina's design and which are fixes added during integration.}
+The integrated node is built on Christina's \texttt{planning} branch. Running that code in the simulator (baseline) showed problems, which were fixed
+in the integrated version on \texttt{main}. Both versions drive the same Gazebo cave on the same laptop.
+
+\paragraph{What the baseline did.}
+\begin{itemize}
+  \item It got stuck beside the green crystals, whose wide base sticks out below the laser's height and cannot be seen by the laser-only costmaps. In one run it sat there for about 3.5 minutes until it was rescued by hand.
+  \item Of 143 goals in an offline model of its goal rule, 110 were unreachable (inside walls or unknown space). A rule that picks free space at least 1.2\,m from walls and unknown cells, reachable by a path, gave 27 goals and none unreachable.
+  \item The stop-sign cascade fired on the poster walls (22 to 27 ``artefacts'', none within 4\,m of a real sign in one run).
+  \item The camera was assumed to have a $60^\circ$ field of view; it has $120^\circ$. Aborted goals were not retried. A one-line indentation error (line 637) stopped the node from starting.
+\end{itemize}
+
+\paragraph{What was changed.}
+Goals are frontier clusters that are far enough from walls and unknown space, reachable, and ranked by path length (\texttt{safe\_navigation.py}).
+A watchdog treats less than 0.5\,m of movement in 15\,s as stuck: it cancels the goal, remembers it as failed, reverses for 4\,s and turns for 2\,s.
+Instantly aborted goals are retried. Chosen frontiers appear as RViz markers. The cascade is replaced by the red-octagon classifier above, and the sign's position is
+now measured with the depth camera (nearest 30\,\% of depth readings in the box, 0.5--9.9\,m) and the true $120^\circ$ field of view.
+The depth camera sees only 10\,m, so a sign seen from farther away is not placed at once. Instead the rover drives along the sign's bearing to the farthest known-free cell
+(up to 12\,m) and places it once it is within depth range. The exploration only counts as finished after 15 empty results in a row.
+
+\begin{table}[h]
+\centering
+\caption{Two 12-minute simulator runs of each version on \texttt{main}: before and after the far-sign approach was added
+(both include the other fixes above). All numbers come from the node logs and the position recorder.}
+\begin{tabular}{@{}lcccc@{}}
+\toprule
+ & \textbf{Before 1} & \textbf{Before 2} & \textbf{After 1} & \textbf{After 2} \\
+\midrule
+Real signs inspected (of 5)            & 4 & 4 & 5 & 5 \\
+Artefacts reported (5 real signs)      & 6 & 6 & 8 & 7 \\
+Inspection goals not near a real sign  & 2 & 3 & 3 & 2 \\
+Stuck events handled                   & 2 & 2 & 0 & 0 \\
+Frontier goals chosen                  & 14 & 16 & 23 & 18 \\
+Distance driven [m]                    & 177 & 175 & 251 & 223 \\
+Robot stops moving at [s]              & 290 & 380 & 345 & 310 \\
+Cave mapped at the end [\%]            & 100 & 100 & 100 & 100 \\
+Inspections that timed out             & 2 & 4 & 2 & 2 \\
+Manual rescues needed                  & 0 & 0 & 0 & 0 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=\linewidth]{planning_main_vs_far_sign.png}
+  \caption{Left: share of the cave's free space mapped over time. Middle and right: path of one run of each version (red squares: real stop signs).}
+\end{figure}
+
+\paragraph{What this shows and what it does not.}
+With the far-sign approach all five signs were inspected in both runs and nothing got stuck; without it the sign at about (29, 28) was missed in both runs (nearest inspection goal 18.5\,m away).
+Mapping is complete after about 4 to 6 minutes in every run, and then the rover stops, because it has no task left. There are only two runs of each version, and earlier single runs
+of the earlier version did find all five signs, so the evidence is moderate. The number of reported artefacts is still above five: a sign seen from far away can be placed in the wrong spot because the nearest
+depth readings come from closer rock, which creates a second ``artefact''. We did not remove these duplicates. Real signs come from the world file only to check the results; the code never sees them.
 
 % =====================================================================
 \section{Advanced 2 --- Cave Geometry Analysis}

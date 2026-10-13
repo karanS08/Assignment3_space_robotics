@@ -47,6 +47,10 @@ def analyse(folder):
 
     # Stuck: the robot moved less than 0.5 m in 15 s (three 5 s samples)
     moved = np.hypot(*(xy[3:] - xy[:-3]).T)
+    # Ignore the idle time at the end, after the code has finished exploring and has nothing left to do
+    active = t[3:] <= t[1:][np.hypot(*np.diff(xy, axis=0).T) > 0.3][-1]
+    moved = moved[active]
+    finished_at = float(t[1:][np.hypot(*np.diff(xy, axis=0).T) > 0.3][-1])
     stuck_seconds = 5.0 * float(np.sum(moved < 0.5))
     longest, run = 0, 0
     for flag in moved < 0.5:
@@ -62,7 +66,7 @@ def analyse(folder):
         interventions = [l.strip() for l in open(path) if l.strip()]
     return dict(
         t=t, xy=xy, coverage=100.0 * free / REFERENCE_FREE, distance=distance, stuck_seconds=stuck_seconds,
-        longest_stuck=5.0 * longest, seconds=float(t[-1]),
+        longest_stuck=5.0 * longest, seconds=float(t[-1]), last_move=finished_at,
         frontier_goals=len(re.findall(r'Frontier goal', log)),
         stuck_events=len(re.findall(r'Stuck at', log)),
         retries=len(re.findall(r'will retry', log)),
@@ -79,9 +83,9 @@ for spec in sys.argv[3:]:
     name, folder = spec.split('=', 1)
     runs[name] = analyse(os.path.expanduser(folder))
 
-labels = [('Run length [s]', 'seconds', '{:.0f}'), ('Distance driven [m]', 'distance', '{:.0f}'),
-          ('Cave mapped at the end [%]', None, '{:.0f}'), ('Time spent not moving [s]', 'stuck_seconds', '{:.0f}'),
-          ('Longest time not moving [s]', 'longest_stuck', '{:.0f}'), ('Frontier goals chosen', 'frontier_goals', '{}'),
+labels = [('Run length [s]', 'seconds', '{:.0f}'), ('Robot stops moving at [s]', 'last_move', '{:.0f}'), ('Distance driven [m]', 'distance', '{:.0f}'),
+          ('Cave mapped at the end [%]', None, '{:.0f}'), ('Time not moving before that [s]', 'stuck_seconds', '{:.0f}'),
+          ('Longest stop before that [s]', 'longest_stuck', '{:.0f}'), ('Frontier goals chosen', 'frontier_goals', '{}'),
           ('Goals that failed or were cancelled', 'failed', '{}'), ('Goals retried after an instant abort', 'retries', '{}'),
           ('Stuck events handled by the code', 'stuck_events', '{}'), ('Manual rescues needed', None, '{}'),
           ('Artefacts the code reported', 'artefacts', '{}'), ('Inspections completed', 'inspections', '{}'),
