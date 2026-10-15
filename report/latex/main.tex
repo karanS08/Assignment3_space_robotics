@@ -60,7 +60,7 @@
 \textbf{Name} & \textbf{Student number} & \textbf{Main responsibility} \\
 \midrule
 Andrew Than  & \todo{Andrew: student number} & Perception (tasks P1--P3) \\
-Christina Li & \todo{Christina: student number} & Planning (tasks L1--L3) \\
+Christina Li & 25730019 & Planning (tasks L1--L3) \\
 Karan Sharma & 26276485 & Advanced tasks A2 and A6; report lead; repository \\
 \bottomrule
 \end{tabular}
@@ -108,9 +108,15 @@ reproduce and explain unaided, and which you are still consolidating.}
 \medskip
 \textbf{Andrew Than.} \todo{Andrew: tool, what it was used for, what not, and what you can explain.}
 
-\medskip
-\textbf{Christina Li.} \todo{Christina: tool, what it was used for, what not, and what you can explain.}
 
+\textbf{Christina Li.} Tool: ChatGPT (OpenAI), used to assist with Planning 1--3 and report preparation.
+
+\textbf{Used for:} Understanding ROS 2 and Nav2 concepts, developing and debugging the planning code, troubleshooting navigation problems, and improving the English explanations in the report.
+
+\textbf{Not used for:} Replacing actual simulation tests, inventing experimental results, or generating demonstration footage. I ran the system in Ubuntu using ROS 2, Gazebo and RViz, checked the navigation logs, and recorded the demonstration videos.
+
+\textbf{Verification:} I tested autonomous exploration, close-range inspection and behaviour switching in the simulator. I can explain the basic planning process, how navigation goals are sent, and how the system switches between exploration and inspection. I reviewed the report against the results observed during testing.
+  
 % =====================================================================
 \section{Statement of Individual Contributions}
 
@@ -132,14 +138,15 @@ Perception 2 (detection) & \todo{confirm} & Andrew Than &
  & Yes, additional detectors & Karan Sharma &
   Alien, crystal, mushroom, sphere and ice detectors, simulator capture and scoring scripts (Section~\ref{sec:perception}). \\[3pt]
 Perception 3 (localisation) & \todo{confirm} & Andrew Than & Not yet on the shared repository. \\[3pt]
-Planning 1 (exploration) & \todo{confirm} & Christina Li & Frontier exploration. \\[3pt]
-Planning 2 (inspection) & \todo{confirm} & Christina Li & Stand-off approach goal and inspection. \\[3pt]
-Planning 3 (switching) & \todo{confirm} & Christina Li & Explore--inspect state machine with timeout, retry and visited record. \\[3pt]
+Planning 1 (exploration) & Yes & Christina Li & Frontier exploration. \\[3pt]
+Planning 2 (inspection) & Yes & Christina Li & Stand-off approach goal and inspection. \\[3pt]
+Planning 3 (switching) & Yes & Christina Li & Explore--inspect state machine with timeout, retry and visited record. \\[3pt]
 Advanced 2 (geometry) & Yes & Karan Sharma & Design, code, simulator tests, evidence. \\[3pt]
 Advanced 6 (sampling) & Yes & Karan Sharma & Design, code, simulator tests, comparison. \\[3pt]
 Report writing & In progress & Karan Sharma (lead), all & Karan edits and unifies; each member writes their own task section. \\[3pt]
 Recorded videos & \todo{confirm} & \todo{who} & \todo{what} \\
 \bottomrule
+Recorded videos & Yes (Planning) & Christina Li & Recorded Planning 1--3 simulator demonstrations using Gazebo and RViz. \\
 \end{tabular}
 \end{center}
 
@@ -312,9 +319,47 @@ behaviour, including timeout, retry, abandon and the visited record. Include RVi
 asks for markers showing chosen frontiers and visited artefacts.
 \end{notebox}
 
-\subsection{Planning 1 --- Autonomous exploration}\todo{Christina}
-\subsection{Planning 2 --- Close-range inspection}\todo{Christina}
-\subsection{Planning 3 --- Behaviour switching}\todo{Christina}
+\subsection{Planning 1 --- Autonomous exploration}
+The aim of Planning 1 was to allow the Mars rover to explore an unknown cave without manually selecting navigation goals. I used a frontier-based exploration approach together with ROS 2, SLAM and Nav2. A frontier is the boundary between mapped free space and an unexplored area. By selecting these boundaries as navigation targets, the rover can gradually expand its knowledge of the cave.
+
+The planning node uses the occupancy grid published by SLAM to identify candidate exploration locations. The main design consideration was to select targets in known free space rather than sending the rover directly into unknown or occupied cells. After choosing a frontier, the node sends a navigation goal to Nav2. Nav2 then handles path planning and robot movement, while the planning node decides which area to explore next.
+
+During testing in Ubuntu 22.04 with ROS 2 Humble, Gazebo and RViz, the rover successfully received autonomous frontier goals. The terminal displayed messages such as ``Planning 1/3: frontier exploration'' and ``Sending frontier goal'', while RViz showed the occupancy map and navigation process. These observations confirmed that the exploration node could communicate with Nav2 and initiate navigation without manual goal selection.
+
+One difficulty was that not every selected frontier could be reached successfully. Navigation could fail when a target became unsuitable as the map changed or when obstacles restricted the available path. The implementation therefore needs to handle unsuccessful goals rather than repeatedly selecting the same unreachable location.
+
+With more time, I would improve frontier scoring by considering the expected information gain, navigation distance and obstacle clearance. I would also carry out longer exploration runs to measure how much of the cave could be mapped and how often navigation goals succeeded.
+
+The main result demonstrated in this project was autonomous frontier goal generation and navigation using the live SLAM map. However, complete cave coverage and consistent success across all possible frontier locations were not established by the recorded tests.
+
+\subsection{Planning 2 --- Close-range inspection}
+
+The purpose of Planning 2 was to allow the rover to approach detected artefacts for closer inspection. Instead of navigating directly to an artefact's position, the system generates a stand-off navigation goal. This allows the rover to approach the target from a suitable distance while reducing the risk of collision.
+
+The planning node uses the target position to calculate an inspection goal and sends it to Nav2. Nav2 handles the navigation process, while the planning node monitors the goal status and determines when the inspection is complete.
+
+During testing in Gazebo and RViz, the rover successfully switched from frontier exploration to artefact inspection. The terminal logs showed that inspection goals were sent to Nav2 and that Planning 2 was completed. This provided evidence that the inspection process worked during the recorded simulation.
+
+One difficulty was handling unsuccessful navigation attempts. During the recorded demonstration, Nav2 returned a failure status and the planning system attempted a retry. The inspection subsequently completed. However, this does not prove that every navigation failure or timeout can be recovered from successfully.
+
+With more time, I would improve the inspection goal selection by considering obstacle clearance, camera visibility and alternative approach positions. I would also test the system with more artefacts and different cave locations.
+
+Overall, Planning 2 demonstrated that the rover could approach and inspect an artefact in the tested simulation scenarios. However, reliable inspection of every artefact in the cave was not established.
+
+
+\subsection{Planning 3 --- Behaviour switching}
+
+Planning 3 coordinates autonomous exploration and close-range artefact inspection using a state-based approach. The rover normally operates in exploration mode, selecting frontier goals and sending them to Nav2. When a new artefact target is available, the planning node switches to inspection mode and sends an approach goal. After the inspection is completed, the rover returns to autonomous exploration.
+
+The planning system monitors navigation feedback to determine whether a goal has succeeded or failed. It includes timeout handling and a retry mechanism to avoid waiting indefinitely when a navigation attempt is unsuccessful. A visited-artefact record is also maintained to reduce repeated inspections of the same target.
+
+During testing with ROS 2 Humble, Gazebo and RViz, the terminal logs showed the rover exploring the cave, receiving an artefact inspection target, completing the inspection and returning to frontier exploration. The recorded demonstration also showed one navigation failure followed by a retry and a successful inspection.
+
+One difficulty was handling situations where an inspection target became unavailable or navigation failed. Although the main explore--inspect--resume sequence worked during testing, not every timeout or target-loss scenario was fully verified.
+
+With more time, I would improve recovery from repeated navigation failures, strengthen the handling of lost targets and test the visited-artefact record across longer exploration runs.
+
+Overall, Planning 3 demonstrated automatic switching between exploration and inspection in the tested simulation. However, further testing is needed to establish reliable operation in all possible navigation and target-loss situations.
 
 \subsection{Changes to the shared exploration code (Karan, integration)}
 \todo{Christina: agree with Karan how this subsection is presented, so it is clear which parts are Christina's design and which are fixes added during integration.}
@@ -956,7 +1001,11 @@ been run together.
         (Figure~\ref{fig:a2slam}).
   \item \textbf{Advanced 6:} 12 runs of 30 readings completed in Gazebo with real navigation (4 seeds, 3 settings); offline
         comparison over 10 runs (Section~\ref{sec:advanced6}).
-  \item \textbf{Perception, Planning:} \todo{Andrew and Christina: one or two lines each, with a figure.}
+  
+ \item Perception: \todo{Andrew: add Perception results and a figure.}
+
+\item Planning (Christina): Planning 1--3 were tested in ROS 2 Humble using Gazebo, RViz and Nav2. The rover generated frontier exploration goals, switched to close-range artefact inspection, and resumed exploration after completing an inspection. The recorded logs also showed one unsuccessful navigation attempt followed by a retry and a completed inspection. These results demonstrate the explore--inspect--resume workflow in the tested scenarios, although complete cave coverage and recovery from every failure were not verified.
+
 \end{itemize}
 
 \paragraph{Video.}
@@ -981,7 +1030,15 @@ over a polished generic one. Replace the brackets with what actually happened.
   \item \textbf{Dependencies.} The Planning behaviour needs the positions of artefacts from Perception. These were not on the repository by 12~October, so
         Planning uses a fixed range of 3\,m along the direction of the camera as a stand-in.
   \item \textbf{Integration.} The parts had not been run together at the time of writing.
-  \item \textbf{What each member learned.} \todo{One or two sentences each, in your own words.}
+  
+\item \textbf{What each member learned.}
+
+\textbf{Christina Li:} I learned that developing a planning algorithm is only part of building an autonomous robotic system. Testing Planning 1--3 in Gazebo showed me how important navigation feedback, error handling and coordination with the perception module are. I also learned to verify the robot's behaviour through simulation logs and RViz rather than relying only on the code.
+
+\textbf{Andrew Than:} \todo{Andrew: add your own reflection.}
+
+\textbf{Karan Sharma:} \todo{Karan: add your own reflection.}
+
 \end{itemize}
 
 
