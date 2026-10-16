@@ -1,5 +1,7 @@
 """Save selected camera frames to disk for building the vision dataset.
 
+Makes a folder, calculates current time and last image time for 3 seconds before saving next image, saves image in folder, notifies terminal, repeats
+
 Owner: Andrew Than
 Task: Perception 1
 """
