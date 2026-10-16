@@ -18,7 +18,7 @@ class CaveExplorer(Node):
     self.save_interval_ = 3.0 #saves images every 3 seconds
 
     def image_callback(self, image_msg):
-        if current_time - self.last_image_save_time_ > self.save_interval_: #perception_1 loop every 3 seconds
+        if current_time - self.last_image_save_time_ > self.save_interval_: #loop every 3 seconds
         
             filename = f"image_{int(current_time)}.png" #name of image
             filepath = os.path.join(self.dataset_directory_, filename) #building path
