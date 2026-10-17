@@ -87,7 +87,7 @@ def detect(image_bgr, kinds=None):
 def draw(image_bgr, detections):
     """Draw boxes and labels on a copy of the image"""
     colours = {'alien': (0, 255, 0), 'crystals': (0, 200, 120), 'mushroom': (255, 120, 0),
-               'sphere': (255, 255, 255), }
+               'sphere': (255, 255, 255), 'ice': (255, 230, 150)}
     out = image_bgr.copy()
     for d in detections:
         colour = colours.get(d.kind, (0, 0, 255))

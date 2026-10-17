@@ -45,30 +45,37 @@ def features(image_bgr, depth):
                       local_std(d, 7), np.hypot(gx, gy), d, height, _ROWS]).astype(np.float32)
 
 
-def model_path():
-    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', 'ice_forest.joblib')
+def model_path(name='ice_forest.npz'):
+    here = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..', 'data', name)
     if os.path.exists(here):
         return here
     from ament_index_python.packages import get_package_share_directory
-    return os.path.join(get_package_share_directory('cave_explorer'), 'data', 'ice_forest.joblib')
+    return os.path.join(get_package_share_directory('cave_explorer'), 'data', name)
 
 
 def load_model(path=None):
+    """The forest as numpy arrays (ice_forest.npz, no scikit-learn needed), or a scikit-learn .joblib file"""
     global _model
     if _model is None or path is not None:
-        import joblib
-        _model = joblib.load(path or model_path())
+        path = path or model_path()
+        if path.endswith('.npz'):
+            from cave_explorer.perception.box_classifier import BoxClassifier
+            _model = BoxClassifier(path)
+        else:
+            import joblib
+            _model = joblib.load(path)
     return _model
 
 
-def detect(image_bgr, depth, model=None, threshold=THRESHOLD, min_area=MIN_AREA):
-    """Find ice formations. Returns a list of Detection with kind 'ice'"""
+def detect(image_bgr, depth, model=None, threshold=THRESHOLD, min_area=MIN_AREA, step=2):
+    """Find ice formations. Returns a list of Detection with kind 'ice'. step: classify every step-th pixel"""
     model = model or load_model()
     f = features(image_bgr, depth)
     h, w = f.shape[:2]
 
-    # Classify every other pixel, which is fast enough and loses nothing at these blob sizes
-    probability = model.predict_proba(f[::2, ::2].reshape(-1, f.shape[2]))[:, 1].reshape(h // 2, w // 2)
+    # Classify every step-th pixel, which is fast enough and loses nothing at these blob sizes
+    sub = f[::step, ::step]
+    probability = model.predict_proba(sub.reshape(-1, f.shape[2]))[:, 1].reshape(sub.shape[:2])
     mask = cv2.resize((probability > threshold).astype(np.uint8) * 255, (w, h), interpolation=cv2.INTER_NEAREST)
     mask[ROVER_ROWS:, :ROVER_COLUMNS] = 0
     mask = cv2.morphologyEx(mask, cv2.MORPH_OPEN, np.ones((9, 9), np.uint8))
