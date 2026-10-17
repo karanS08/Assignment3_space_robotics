@@ -3,77 +3,67 @@
 Owner: Andrew Than.
 
 ## Perception 1: Image dataset
-1 Group Member Details
-Andrew Than	13223096
 
-3 Statement of Individual Contributions
-Perception 1 (dataset) – COMPLETED
-Perception 2( detection) – Alien, rock completed
-Perception 3 (localisation) – Partially completed
-Recorded videos – not completed
-4 Project Overview
+### Method
 
-5 Perception 
-5.1 Perception 1
-The objective of Perception Task 1 was to collect a dataset of artefact images from the rover's onboard RGB camera. An automated image collection approach was selected to reduce manual effort and ensure data was gathered continuously during exploration.
-The rover's RGB camera feed was accessed through the ROS 2 camera/image topic. Images received by the image callback were converted to OpenCV format using the CvBridge library. A dataset directory is automatically created, and images were stored at regular intervals throughout exploration. To avoid saving duplicate frames and to reduce storage consumption, an interval of three seconds was chosen to capture an image. The filename for each image is generated to have its timestamp so that each image was in logical order with unique names.
-The implementation of the dataset collection system is shown in Figure.1
+The aim of Perception 1 was to collect a dataset of artefact images from the rover's onboard RGB camera. Images are saved automatically while the rover explores, so the dataset grows without manual effort.
 
-<img width="940" height="201" alt="image" src="https://github.com/user-attachments/assets/a5d2cf4a-a34a-4b06-86cd-b79000524483" />
- 
-Figure 1. Dataset Collection System Code
+The camera feed is read from the ROS 2 `camera/image` topic. Each frame received by the image callback is converted to OpenCV format with `CvBridge`. A dataset directory is created at start-up, and a frame is saved every 3 s. The interval avoids near-identical consecutive frames and limits storage use. Each file is named after its timestamp, so the images are unique and in time order. The relevant part of `perception/dataset_collector.py` is shown below.
 
-The images were then saved into this dataset directory during the running of the image callback in Figure 2.
+```python
+# Set-up: create the dataset folder and the save interval
+self.dataset_directory_ = os.path.expanduser("~/artifact_dataset")
+os.makedirs(self.dataset_directory_, exist_ok=True)
+self.last_image_save_time_ = 0.0
+self.save_interval_ = 3.0  # seconds between saved images
 
-<img width="940" height="229" alt="image" src="https://github.com/user-attachments/assets/d1a13719-9553-494a-af3b-02bebe87cfa6" />
+# In image_callback: save one frame every save_interval_ seconds
+if current_time - self.last_image_save_time_ > self.save_interval_:
+    filename = f"image_{int(current_time)}.png"
+    filepath = os.path.join(self.dataset_directory_, filename)
+    cv2.imwrite(filepath, image)
+    self.last_image_save_time_ = current_time
+    self.get_logger().info(f"Saved dataset image: {filepath}")
+```
 
-Figure 2. Image Save Directory Code
+### Results
 
-The dataset collection system functioned successfully and continuously captured images throughout the rover exploration. The automated approach ensured that images were collected from a variety of distances, orientations and viewpoints without human input. A few examples of each artefact captured by the rover can be seen.
+The collector ran throughout exploration and captured artefacts from a range of distances, orientations and viewpoints without human input. Figure 1 shows one example of each artefact type and a negative example with no artefact.
 
-Alien	
-<img width="243" height="198" alt="image" src="https://github.com/user-attachments/assets/cabf4a82-7148-4e72-85d9-6220ba3beed5" />
+| Alien | Crystal | Ice cap | Sphere |
+|:---:|:---:|:---:|:---:|
+| ![Alien](../figures/perception1/alien.png) | ![Crystal](../figures/perception1/crystal.png) | ![Ice cap](../figures/perception1/ice.png) | ![Sphere](../figures/perception1/sphere.png) |
 
-Rock
-<img width="241" height="244" alt="image" src="https://github.com/user-attachments/assets/59907b87-138c-4765-8740-ed266fd5c581" />
+| Mushroom | Stop sign | Nothing (negative) |
+|:---:|:---:|:---:|
+| ![Mushroom](../figures/perception1/mushroom.png) | ![Stop sign](../figures/perception1/stop_sign.png) | ![Nothing](../figures/perception1/nothing.png) |
 
+*Figure 1. Example dataset images for each artefact type, captured by the rover camera during exploration.*
 
-Ice Cap	 
-<img width="244" height="121" alt="image" src="https://github.com/user-attachments/assets/7d34dc20-5541-47b7-abf2-729514147de6" />
+Because the images were collected during autonomous exploration, the number of images of each artefact depends on the rover's path. Artefacts that stayed in view for longer contributed more images, so the dataset is imbalanced (Table 1).
 
-Sphere	 
-<img width="243" height="261" alt="image" src="https://github.com/user-attachments/assets/f7d15fa9-c348-4dcf-a777-2994c342fdca" />
+*Table 1. Distribution of artefact images collected in 5 minutes of exploration.*
 
-Mushroom	 
-<img width="243" height="245" alt="image" src="https://github.com/user-attachments/assets/59755c39-1817-4608-a07f-1b2d09cc846a" />
-
-Stop Sign	 
-<img width="347" height="425" alt="image" src="https://github.com/user-attachments/assets/6d00f453-f0eb-4b17-806b-3de6874cf115" />
-
-Nothing	 
-<img width="338" height="217" alt="image" src="https://github.com/user-attachments/assets/517bf3a6-1747-49da-b2c1-ec24de1f4313" />
-
-
-Because image collection occurred during autonomous exploration, the number of samples obtained for each artefact type depended on the rover's navigation path. Artefacts that were observed more frequently contributed a larger number of images, resulting in an imbalanced dataset.
-Table. 1 – Distribution of artefact images collected in 5 minutes
-
-Table 1 - Distribution of artefact images collected in 5 minutes
-| Artefact Type | Images Collected |
-|--------------|-----------------:|
+| Artefact type | Images collected |
+|---|---:|
 | Alien | 4 |
-| Rock | 17 |
-| Ice Cap | 23 |
+| Crystal | 17 |
+| Ice cap | 23 |
 | Sphere | 41 |
 | Mushroom | 13 |
-| Stop Sign | 73 |
-| Nothing (Negative Example) | 1 |
+| Stop sign | 73 |
+| Nothing (negative example) | 1 |
 | **Total** | **100** |
 
+<!-- TODO Andrew: the rows add up to 172, not 100. If an image can show more than one artefact, say so here; otherwise fix the counts. -->
 
-The results demonstrate that the dataset was not evenly distributed across artefact classes. Sphere and Stop Sign artefacts appeared more frequently within the rover's field of view, whereas Alien artefacts were encountered significantly less. This reflects the autonomous exploration behaviour of the rover rather than a deliberate sampling strategy. Overall, the dataset collection system successfully generated a collection of 100 artefact images without requiring manual intervention, demonstrating that the rover could continuously gather visual data while exploring the environment.
-Although the dataset collection system successfully automated the image capture process, several limitations were identified. All captured images were stored within a single dataset directory, meaning artefact classes were not automatically separated during collection. Consequently, the system did not record the artefact class associated with each image, requiring manual inspection and sorting before the dataset could be used for analysis. Additionally, because images were collected during autonomous exploration, the frequency with which each artefact was observed depended on the rover's navigation path. As a result, some artefact classes were represented by more images than others, creating an imbalanced dataset. 
-Future work could focus on automatically organising and labelling images during collection. For example, once an artefact has been detected by the perception system, the corresponding image could be automatically saved into a dedicated folder for that artefact class. This would significantly reduce the manual effort required to sort and label the dataset. Additional metadata, including artefact distance, rover position and timestamp information, could also be stored to provide greater context for each image. Finally, a more structured exploration strategy could be implemented to ensure a more balanced number of images are collected for each artefact type.
+Spheres and stop signs appeared in the camera's view most often, while the alien was seen least. This reflects the rover's exploration path rather than a deliberate sampling strategy. In total, 100 artefact images were collected with no manual intervention.
 
+### Limitations and improvements
+
+All images are saved to a single directory, and the artefact class of each image is not recorded. The images therefore had to be inspected and sorted by hand before they could be used. The class balance also depends on the navigation path, which leaves some classes with far fewer images than others.
+
+The collection could be improved by labelling images automatically: once the perception system detects an artefact, the frame could be saved into a folder for that class. Metadata such as the artefact distance, rover pose and timestamp could be stored with each image. A more structured exploration strategy, or a cap on images per class, would give a more balanced dataset.
 
 ## Perception 2: Artefact detection
 
