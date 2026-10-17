@@ -2,6 +2,6 @@
 
 | Name | Student number |
 |---|---|
-| Andrew Than | |
+| Andrew Than | 13223096 |
 | Christina Li | |
 | Karan Sharma | |
