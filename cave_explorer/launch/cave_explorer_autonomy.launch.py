@@ -31,6 +31,8 @@ def generate_launch_description():
         package='cave_explorer',
         executable='cave_explorer',
         output='screen',
+        # A newer NumPy in the user's own Python packages breaks cv_bridge, so only the system packages are used
+        additional_env={'PYTHONNOUSERSITE': '1'},
         parameters=[{'use_sim_time': LaunchConfiguration('use_sim_time'),
                      'print_feedback': LaunchConfiguration('print_feedback'),
                     'computer_vision_model_filename': PathJoinSubstitution(config_path+['stop_data.xml'])}]

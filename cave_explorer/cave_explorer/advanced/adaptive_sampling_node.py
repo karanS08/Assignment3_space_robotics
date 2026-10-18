@@ -12,8 +12,10 @@ Task: Advanced 6
 import csv
 import math
 import os
+import subprocess
 import time
 
+import cv2
 import numpy as np
 import rclpy
 from action_msgs.msg import GoalStatus
@@ -22,6 +24,7 @@ from nav2_msgs.action import NavigateToPose
 from nav_msgs.msg import OccupancyGrid
 from rclpy.action import ActionClient
 from rclpy.node import Node
+from sensor_msgs.msg import Image
 from std_msgs.msg import ColorRGBA
 from tf2_ros import TransformException
 from tf2_ros.buffer import Buffer
@@ -54,6 +57,7 @@ class AdaptiveSamplingNode(Node):
         self.declare_parameter('settle_time', 1.0)
         self.declare_parameter('measurement_table', '')
         self.declare_parameter('log_directory', '~/cave_sampling_logs')
+        self.declare_parameter('show_results', True)   # open the results map in an image viewer when finished
 
         self.strategy_ = self.get_parameter('strategy').value
         self.num_samples_ = self.get_parameter('num_samples').value
@@ -86,7 +90,12 @@ class AdaptiveSamplingNode(Node):
         self.recovery_start_time_ = None
         self.travelled_ = 0.0
         self.last_xy_ = None
+        self.path_ = []                # robot positions, for the results map
+        self.last_maps_ = None         # (walls, accessible, GP mean, GP std, true field) from the latest evaluation
+        self.results_image_ = None     # results map, shown in the Detections panel once finished
         self.log_rows_ = []
+        self.last_sample_ = None       # (count, x, y, value, rmse, mean uncertainty), shown on the camera image
+        self.next_goal_info_ = None    # (x, y, predicted value, predicted uncertainty) of the location being driven to
 
         # Prepare transformation to get robot pose
         self.tf_buffer = Buffer()
@@ -105,6 +114,9 @@ class AdaptiveSamplingNode(Node):
         self.ground_truth_pub_ = self.create_publisher(OccupancyGrid, 'adaptive_sampling/ground_truth', 1)
         self.marker_pub_ = self.create_publisher(MarkerArray, 'adaptive_sampling/markers', 1)
         self.map_sub_ = self.create_subscription(OccupancyGrid, 'map', self.map_callback, 1)
+        # Camera image with the sampling progress written on it, shown in the RViz Detections panel
+        self.overlay_pub_ = self.create_publisher(Image, 'detections_image', 1)
+        self.image_sub_ = self.create_subscription(Image, 'camera/image', self.image_callback, 1)
 
         self.get_logger().info(f'Sampling strategy: {self.strategy_}, {self.num_samples_} samples, seed {seed}')
 
@@ -121,6 +133,43 @@ class AdaptiveSamplingNode(Node):
         except TransformException:
             return None
         return (t.transform.translation.x, t.transform.translation.y)
+
+    def image_callback(self, image_msg):
+        """Write the latest sample and the next sampling location on the camera image for the RViz Detections panel"""
+        if image_msg.encoding not in ('rgb8', 'bgr8'):
+            return
+        if self.results_image_ is not None:
+            out = Image()
+            out.header = image_msg.header
+            out.height, out.width = self.results_image_.shape[:2]
+            out.encoding, out.is_bigendian, out.step = 'bgr8', 0, self.results_image_.shape[1] * 3
+            out.data = self.results_image_.tobytes()
+            self.overlay_pub_.publish(out)
+            return
+        image = np.frombuffer(bytes(image_msg.data), np.uint8).reshape(image_msg.height, image_msg.width, 3).copy()
+        title = 'Adaptive sampling (GP)' if self.strategy_ == 'adaptive' else f'Baseline: {self.strategy_} sampling'
+        lines = [f'{title}: {len(self.sampler_.sample_values_)}/{self.num_samples_} samples']
+        if self.last_sample_ is not None:
+            count, x, y, value, rmse, mean_std = self.last_sample_
+            lines.append(f'Sample {count} at ({x:.1f}, {y:.1f}): {value:.2f} wt% H2O')
+            lines.append(f'Map error (RMSE) {rmse:.3f}   mean uncertainty {mean_std:.3f}')
+        lines.append(f'Distance travelled {self.travelled_:.0f} m')
+        if self.finished_:
+            lines.append('Finished')
+        elif self.next_goal_info_ is not None:
+            x, y, mean, std, fitted = self.next_goal_info_
+            lines.append(f'Driving to ({x:.1f}, {y:.1f})' + (f': GP predicts {mean:.2f} +- {std:.2f}' if fitted else ''))
+        height = 28 * len(lines) + 12
+        band = image[:height].astype(np.float32)
+        image[:height] = (0.35 * band).astype(np.uint8)
+        for i, text in enumerate(lines):
+            cv2.putText(image, text, (10, 28 * (i + 1)), cv2.FONT_HERSHEY_SIMPLEX, 0.65, (255, 255, 255), 2, cv2.LINE_AA)
+        out = Image()
+        out.header = image_msg.header
+        out.height, out.width, out.encoding = image_msg.height, image_msg.width, image_msg.encoding
+        out.is_bigendian, out.step = 0, image_msg.width * 3
+        out.data = image.tobytes()
+        self.overlay_pub_.publish(out)
 
     def map_callback(self, map_msg: OccupancyGrid):
         """New map received"""
@@ -142,6 +191,8 @@ class AdaptiveSamplingNode(Node):
         if self.last_xy_ is not None:
             self.travelled_ += math.hypot(robot_xy[0] - self.last_xy_[0], robot_xy[1] - self.last_xy_[1])
         self.last_xy_ = robot_xy
+        if not self.path_ or math.hypot(robot_xy[0] - self.path_[-1][0], robot_xy[1] - self.path_[-1][1]) > 0.3:
+            self.path_.append(robot_xy)
 
         if self.finished_:
             return
@@ -226,6 +277,7 @@ class AdaptiveSamplingNode(Node):
 
         rmse, mean_std = self.evaluate(robot_xy)
         count = len(self.sampler_.sample_values_)
+        self.last_sample_ = (count, robot_xy[0], robot_xy[1], value, rmse, mean_std)
         self.log_rows_.append([count, self.get_clock().now().nanoseconds / 1e9,
                                robot_xy[0], robot_xy[1], value, self.travelled_, rmse, mean_std])
         self.get_logger().info(
@@ -257,6 +309,7 @@ class AdaptiveSamplingNode(Node):
         truth_grid = np.full(accessible.shape, np.nan)
         truth_grid[rows, cols] = truth
         self.publish_grid(self.ground_truth_pub_, truth_grid)
+        self.last_maps_ = (self.grid_ > 50, accessible, mean, std, truth_grid)
 
         return float(np.sqrt(np.mean((mean[rows, cols] - truth)**2))), float(np.mean(std[rows, cols]))
 
@@ -341,6 +394,8 @@ class AdaptiveSamplingNode(Node):
         self.goal_pose_vis_.publish(action_goal.pose)
 
         self.get_logger().info(f'Next sampling location [{goal_xy[0]:.1f}, {goal_xy[1]:.1f}]')
+        mean, std = self.sampler_.predict(np.array([goal_xy]))
+        self.next_goal_info_ = (goal_xy[0], goal_xy[1], float(mean[0]), float(std[0]), self.sampler_.gp_ is not None)
         self.navigating_ = True
         self.goal_xy_ = goal_xy
         self.goal_handle_ = None
@@ -403,6 +458,67 @@ class AdaptiveSamplingNode(Node):
         self.get_logger().info(
             f'Finished: {len(self.log_rows_)} samples, travelled {self.travelled_:.0f} m, '
             f'final RMSE {self.log_rows_[-1][6]:.3f}. Log saved to {filename}')
+
+        if self.last_maps_ is not None:
+            self.results_image_ = self.results_map()
+            picture = filename[:-4] + '.png'
+            cv2.imwrite(picture, self.results_image_)
+            self.get_logger().info(f'Results map saved to {picture}')
+            if self.get_parameter('show_results').value:
+                try:
+                    subprocess.Popen(['xdg-open', picture], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except OSError as exc:
+                    self.get_logger().warn(f'Could not open the results map: {exc}')
+
+    def results_map(self):
+        """Picture of the result: true field, GP estimate and GP uncertainty side by side, with walls, path and samples"""
+        walls, accessible, mean, std, truth = self.last_maps_
+        rows, cols = np.nonzero(walls | accessible)
+        top, bottom = max(rows.min() - 3, 0), min(rows.max() + 4, walls.shape[0])
+        left, right = max(cols.min() - 3, 0), min(cols.max() + 4, walls.shape[1])
+        scale = 560.0 / (right - left)                                    # each panel 560 pixels wide
+        valid = np.isfinite(truth) & accessible
+        low, high = np.nanmin(truth[valid]), np.nanmax(truth[valid])      # same colour scale for truth and estimate
+
+        def to_pixel(x, y):
+            r, c = cave_geometry.world_to_cell(x, y, self.resolution_, self.origin_xy_)
+            return int((c - left + 0.5) * scale), int((bottom - 1 - r + 0.5) * scale)   # north up
+
+        def panel(values, vmin, vmax, title, colormap):
+            v = np.clip((values - vmin) / max(vmax - vmin, 1e-9), 0, 1)
+            v = np.nan_to_num(v)
+            image = cv2.applyColorMap((255 * v).astype(np.uint8), colormap)
+            image[~accessible] = (60, 60, 60)
+            image[walls] = (0, 0, 0)
+            image = image[top:bottom, left:right][::-1]
+            image = cv2.resize(image, (int(round((right - left) * scale)), int(round((bottom - top) * scale))),
+                               interpolation=cv2.INTER_NEAREST)
+            for a, b in zip(self.path_[:-1], self.path_[1:]):
+                cv2.line(image, to_pixel(*a), to_pixel(*b), (255, 255, 255), 2, cv2.LINE_AA)
+            for k, (x, y) in enumerate(self.sampler_.sample_xy_):
+                cv2.circle(image, to_pixel(x, y), 6, (255, 255, 255), -1)
+                cv2.circle(image, to_pixel(x, y), 6, (0, 0, 0), 2)
+                cv2.putText(image, str(k + 1), (to_pixel(x, y)[0] + 7, to_pixel(x, y)[1] - 5),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.45, (255, 255, 255), 1, cv2.LINE_AA)
+            band = np.full((34, image.shape[1], 3), 255, np.uint8)
+            cv2.putText(band, title, (8, 24), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 0), 1, cv2.LINE_AA)
+            return np.vstack([band, image])
+
+        panels = [panel(truth, low, high, f'True water (NASA data) {low:.1f}-{high:.1f} wt%', cv2.COLORMAP_VIRIDIS),
+                  panel(mean, low, high, 'GP estimate (same colour scale)', cv2.COLORMAP_VIRIDIS),
+                  panel(std, np.nanmin(std[accessible]), np.nanmax(std[accessible]), 'GP uncertainty (bright = unsure)',
+                        cv2.COLORMAP_INFERNO)]
+        gap = np.full((panels[0].shape[0], 8, 3), 255, np.uint8)
+        figure = np.hstack([panels[0], gap, panels[1], gap, panels[2]])
+        last = self.log_rows_[-1]
+        lines = [f'Adaptive sampling result ({self.strategy_}): {len(self.log_rows_)} samples, {self.travelled_:.0f} m driven',
+                 f'Map error (RMSE) {last[6]:.3f} wt% H2O, mean uncertainty {last[7]:.3f}. '
+                 'White: path and numbered samples. Black: walls.']
+        header = np.full((70, figure.shape[1], 3), 255, np.uint8)
+        for k, text in enumerate(lines):
+            cv2.putText(header, text, (10, 28 + 30 * k), cv2.FONT_HERSHEY_SIMPLEX, 0.75 if k == 0 else 0.6, (0, 0, 0),
+                        2 if k == 0 else 1, cv2.LINE_AA)
+        return np.vstack([header, figure])
 
 
 def main():
