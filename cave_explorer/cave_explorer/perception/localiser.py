@@ -26,6 +26,7 @@ CAMERA_FOV = math.radians(120.0)    # horizontal field of view of the simulated 
 CAMERA_OFFSET = 0.5                 # camera position ahead of the robot centre (m)
 MIN_DEPTH, MAX_DEPTH = 0.5, 9.9     # depth readings outside this range are invalid (m)
 MERGE_DISTANCE = 2.0                # detections closer than this are the same artefact (m)
+MERGE_DISTANCES = {'crystals': 3.0, 'ice': 5.0}  # a crystal cluster is several metres wide, an ice formation about 5 m
 
 
 def box_depth(depth_image, box):
@@ -69,14 +70,16 @@ def localise(robot_x, robot_y, robot_theta, box, depth_image):
 class ArtefactMap:
     """Known artefacts, one entry per physical artefact: {'type', 'x', 'y', 'count'}."""
 
-    def __init__(self, merge_distance=MERGE_DISTANCE):
+    def __init__(self, merge_distance=MERGE_DISTANCE, merge_distances=MERGE_DISTANCES):
         self.merge_distance_ = merge_distance
+        self.merge_distances_ = merge_distances
         self.artefacts_ = []
 
     def add(self, artefact_type, x, y):
         """Add one detection; return the index of the artefact it was merged into, or of the new artefact."""
         for i, known in enumerate(self.artefacts_):
-            if known['type'] == artefact_type and math.hypot(x - known['x'], y - known['y']) < self.merge_distance_:
+            limit = self.merge_distances_.get(artefact_type, self.merge_distance_)
+            if known['type'] == artefact_type and math.hypot(x - known['x'], y - known['y']) < limit:
                 known['count'] += 1
                 known['x'] += (x - known['x']) / known['count']    # running average of all detections
                 known['y'] += (y - known['y']) / known['count']
