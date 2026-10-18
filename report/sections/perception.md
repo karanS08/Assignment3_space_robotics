@@ -44,7 +44,7 @@ Because the images were collected during autonomous exploration, the number of i
 
 *Table 1. Distribution of artefact images collected in 5 minutes of exploration.*
 
-| Artefact type | Images collected |
+| Artefact type | Images showing it |
 |---|---:|
 | Alien | 4 |
 | Crystal | 17 |
@@ -53,9 +53,9 @@ Because the images were collected during autonomous exploration, the number of i
 | Mushroom | 13 |
 | Stop sign | 73 |
 | Nothing (negative example) | 1 |
-| **Total** | **100** |
+| **Images saved** | **100** |
 
-<!-- TODO Andrew: the rows add up to 172, not 100. If an image can show more than one artefact, say so here; otherwise fix the counts. -->
+One image can show several artefacts, so the counts add up to 172 for 100 images.
 
 Spheres and stop signs appeared in the camera's view most often, while the alien was seen least. This reflects the rover's exploration path rather than a deliberate sampling strategy. In total, 100 artefact images were collected with no manual intervention.
 
