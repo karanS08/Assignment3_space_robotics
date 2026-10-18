@@ -1,0 +1,29 @@
+=== offline geometry_offline_check.py
+grid (208, 253) time 0.016s accessible cells 17671 ridge 1347
+widest WideArea(x=np.float64(2.3499999999999996), y=np.float64(33.25), radius=5.894064811316549)
+  passage (47.3, 3.8) width 3.06 corridor saddle=True
+  passage (43.8, 4.2) width 3.71 corridor saddle=False
+  passage (48.8, 9.8) width 4.37 corridor saddle=False
+  passage (40.8, 27.8) width 4.51 doorway saddle=True
+  passage (4.1, 0.2) width 4.74 corridor saddle=True
+clearance_at robot 2.4
+=== offline sampling_offline_check.py
+samples             adaptive               random
+      5       0.567 +- 0.077       0.483 +- 0.042
+     10       0.463 +- 0.088       0.486 +- 0.096
+     20       0.293 +- 0.031       0.366 +- 0.098
+     30       0.250 +- 0.044       0.250 +- 0.030
+     40       0.215 +- 0.044       0.217 +- 0.024
+travel                 476 m                934 m
+
+Saved advanced6_offline_rmse.png and advanced6_offline_maps.png to /home/karan/space_robotics_sim/verify/repo/scripts
+=== offline stopsign_octagon_eval.py /home/karan/space_robotics_sim/dataset/sim_stop
+The 25 arc photos, by angle from the front of the sign (5 signs each):
+detector             -56 deg   -28 deg    +0 deg   +28 deg   +56 deg       all
+template cascade         3/4       4/4       5/5       5/5       5/5     22/23
+red octagon              3/4       4/4       5/5       5/5       5/5     22/23
+
+False alarms on the 233 images with no stop sign in view (a box over a real but distant sign does not count):
+detector             poster walls     rock walls      artefacts         random            all
+template cascade             1/14          0/161           0/23           0/35          1/233
+red octagon                  0/14          1/161           0/23           1/35          2/233

@@ -1,0 +1,21 @@
+[INFO] [launch]: All log files can be found below /home/karan/.ros/log/2026-10-13-01-11-38-452507-rog-107116
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [cave_geometry-1]: process started with pid [107140]
+[cave_geometry-1] [INFO] [1791814300.758801018] [cave_geometry_node]: Widest accessible area: centre [-2.7, -0.0], radius 2.40 m, area 18 m^2
+[cave_geometry-1] Traceback (most recent call last):
+[cave_geometry-1]   File "/home/karan/space_robotics_sim/ws_verify/install/cave_explorer/lib/cave_explorer/cave_geometry", line 33, in <module>
+[cave_geometry-1]     sys.exit(load_entry_point('cave-explorer', 'console_scripts', 'cave_geometry')())
+[cave_geometry-1]   File "/home/karan/space_robotics_sim/ws_verify/build/cave_explorer/cave_explorer/advanced/cave_geometry_node.py", line 201, in main
+[cave_geometry-1]     rclpy.spin(cave_geometry_node)
+[cave_geometry-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/__init__.py", line 229, in spin
+[cave_geometry-1]     executor.spin_once()
+[cave_geometry-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 808, in spin_once
+[cave_geometry-1]     self._spin_once_impl(timeout_sec)
+[cave_geometry-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 797, in _spin_once_impl
+[cave_geometry-1]     handler, entity, node = self.wait_for_ready_callbacks(timeout_sec=timeout_sec)
+[cave_geometry-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 780, in wait_for_ready_callbacks
+[cave_geometry-1]     return next(self._cb_iter)
+[cave_geometry-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/rclpy/executors.py", line 653, in _wait_for_ready_callbacks
+[cave_geometry-1]     wait_set = _rclpy.WaitSet(
+[cave_geometry-1] rclpy._rclpy_pybind11.RCLError: failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130
+[ERROR] [cave_geometry-1]: process has died [pid 107140, exit code 1, cmd '/home/karan/space_robotics_sim/ws_verify/install/cave_explorer/lib/cave_explorer/cave_geometry --ros-args --params-file /tmp/launch_params_zq4oql3k'].

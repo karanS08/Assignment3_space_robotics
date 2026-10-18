@@ -1,0 +1,252 @@
+[INFO] [launch]: All log files can be found below /home/karan/.ros/log/2026-10-12-17-40-41-332036-rog-9263
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [cave_explorer-1]: process started with pid [9288]
+[cave_explorer-1] [WARN] [1791787243.222684940] [cave_explorer_node]: Waiting for navigate_to_pose action...
+[cave_explorer-1] [WARN] [1791787244.225646177] [cave_explorer_node]: navigate_to_pose connected
+[cave_explorer-1] [INFO] [1791787244.316876472] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787244.317452676] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787244.806613464] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787244.807278940] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787244.916866636] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787244.917361601] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787245.116892485] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787245.117476205] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787245.316187121] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787245.316716678] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787245.516442672] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787245.517014701] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787245.717039357] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791787245.717748451] [cave_explorer_node]: No map received yet.
+[cave_explorer-1] [INFO] [1791787245.916585293] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787245.919904105] [cave_explorer_node]: Frontier goal: (3.64, 2.37)
+[cave_explorer-1] [INFO] [1791787245.920537069] [cave_explorer_node]: Sending frontier goal (3.64, 2.37)
+[cave_explorer-1] [INFO] [1791787251.168275914] [cave_explorer_node]: New artefact #0: stop exploring
+[cave_explorer-1] [INFO] [1791787251.171912437] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787251.318201724] [cave_explorer_node]: Sending inspection goal (5.14, 1.59)
+[cave_explorer-1] [INFO] [1791787251.319158542] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787252.179971449] [cave_explorer_node]: Planning 2 complete; inspected artefact #0; resume exploration
+[cave_explorer-1] [INFO] [1791787252.316820883] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787252.319108446] [cave_explorer_node]: Frontier goal: (4.48, 4.43)
+[cave_explorer-1] [INFO] [1791787252.319742367] [cave_explorer_node]: Sending frontier goal (4.48, 4.43)
+[cave_explorer-1] [INFO] [1791787255.916592731] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787255.919043912] [cave_explorer_node]: Frontier goal: (8.68, 4.13)
+[cave_explorer-1] [INFO] [1791787255.919674283] [cave_explorer_node]: Sending frontier goal (8.68, 4.13)
+[cave_explorer-1] [INFO] [1791787260.146595902] [cave_explorer_node]: New artefact #1: stop exploring
+[cave_explorer-1] [INFO] [1791787260.149833846] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787260.317384777] [cave_explorer_node]: Sending inspection goal (8.72, 1.89)
+[cave_explorer-1] [INFO] [1791787260.318107099] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787260.780337828] [cave_explorer_node]: Planning 2 complete; inspected artefact #1; resume exploration
+[cave_explorer-1] [INFO] [1791787260.919294252] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787260.921472620] [cave_explorer_node]: Frontier goal: (10.18, 5.01)
+[cave_explorer-1] [INFO] [1791787260.922122154] [cave_explorer_node]: Sending frontier goal (10.18, 5.01)
+[cave_explorer-1] [INFO] [1791787262.818120665] [cave_explorer_node]: New artefact #2: stop exploring
+[cave_explorer-1] [INFO] [1791787262.822093968] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787262.918282864] [cave_explorer_node]: Sending inspection goal (10.57, 2.94)
+[cave_explorer-1] [INFO] [1791787262.919130402] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787263.379649970] [cave_explorer_node]: Planning 2 complete; inspected artefact #2; resume exploration
+[cave_explorer-1] [INFO] [1791787263.517605859] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787263.520139214] [cave_explorer_node]: Frontier goal: (8.38, 5.91)
+[cave_explorer-1] [INFO] [1791787263.521113048] [cave_explorer_node]: Sending frontier goal (8.38, 5.91)
+[cave_explorer-1] [WARN] [1791787305.717300387] [cave_explorer_node]: Frontier navigation finished with status 6
+[cave_explorer-1] [INFO] [1791787305.719070744] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787305.721610749] [cave_explorer_node]: Frontier goal: (14.08, 4.37)
+[cave_explorer-1] [INFO] [1791787305.722461999] [cave_explorer_node]: Sending frontier goal (14.08, 4.37)
+[cave_explorer-1] [INFO] [1791787315.440094021] [cave_explorer_node]: New artefact #3: stop exploring
+[cave_explorer-1] [INFO] [1791787315.443718949] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [WARN] [1791787315.517312777] [cave_explorer_node]: Inspection timeout or target lost; retry 1/1
+[cave_explorer-1] [INFO] [1791787315.719228967] [cave_explorer_node]: Sending inspection goal (12.65, 1.97)
+[cave_explorer-1] [INFO] [1791787315.720280903] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787316.181941592] [cave_explorer_node]: Planning 2 complete; inspected artefact #3; resume exploration
+[cave_explorer-1] [INFO] [1791787316.316223451] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787316.319784123] [cave_explorer_node]: Frontier goal: (15.58, 5.26)
+[cave_explorer-1] [INFO] [1791787316.320399956] [cave_explorer_node]: Sending frontier goal (15.58, 5.26)
+[cave_explorer-1] [INFO] [1791787318.429554996] [cave_explorer_node]: New artefact #4: stop exploring
+[cave_explorer-1] [INFO] [1791787318.433373761] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787318.519805116] [cave_explorer_node]: Sending inspection goal (14.62, 2.50)
+[cave_explorer-1] [INFO] [1791787318.520718457] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787318.980787434] [cave_explorer_node]: Planning 2 complete; inspected artefact #4; resume exploration
+[cave_explorer-1] [INFO] [1791787319.117127245] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787319.121309575] [cave_explorer_node]: Frontier goal: (14.98, 6.76)
+[cave_explorer-1] [INFO] [1791787319.122158015] [cave_explorer_node]: Sending frontier goal (14.98, 6.76)
+[cave_explorer-1] [INFO] [1791787324.516582959] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787324.521095393] [cave_explorer_node]: Frontier goal: (13.48, 7.62)
+[cave_explorer-1] [INFO] [1791787324.521841446] [cave_explorer_node]: Sending frontier goal (13.48, 7.62)
+[cave_explorer-1] [INFO] [1791787327.316784097] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787327.322388402] [cave_explorer_node]: Frontier goal: (11.08, 9.42)
+[cave_explorer-1] [INFO] [1791787327.323101935] [cave_explorer_node]: Sending frontier goal (11.08, 9.42)
+[cave_explorer-1] [INFO] [1791787331.516582872] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787331.520826852] [cave_explorer_node]: Frontier goal: (9.58, 10.62)
+[cave_explorer-1] [INFO] [1791787331.521320523] [cave_explorer_node]: Sending frontier goal (9.58, 10.62)
+[cave_explorer-1] [INFO] [1791787334.317240326] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787334.322035560] [cave_explorer_node]: Frontier goal: (6.88, 11.82)
+[cave_explorer-1] [INFO] [1791787334.322903701] [cave_explorer_node]: Sending frontier goal (6.88, 11.82)
+[cave_explorer-1] [INFO] [1791787338.733155170] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787338.739752914] [cave_explorer_node]: Frontier goal: (8.38, 19.32)
+[cave_explorer-1] [INFO] [1791787338.740468580] [cave_explorer_node]: Sending frontier goal (8.38, 19.32)
+[cave_explorer-1] [INFO] [1791787347.752358661] [cave_explorer_node]: New artefact #5: stop exploring
+[cave_explorer-1] [INFO] [1791787347.758773825] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787347.765388369] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787347.918674298] [cave_explorer_node]: Sending inspection goal (7.91, 20.76)
+[cave_explorer-1] [INFO] [1791787347.919725606] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787349.189971657] [cave_explorer_node]: Planning 2 complete; inspected artefact #5; resume exploration
+[cave_explorer-1] [INFO] [1791787349.316873990] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787349.323484736] [cave_explorer_node]: Frontier goal: (12.28, 21.12)
+[cave_explorer-1] [INFO] [1791787349.324573998] [cave_explorer_node]: Sending frontier goal (12.28, 21.12)
+[cave_explorer-1] [INFO] [1791787351.382700717] [cave_explorer_node]: New artefact #6: stop exploring
+[cave_explorer-1] [INFO] [1791787351.387193800] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787351.518489779] [cave_explorer_node]: Sending inspection goal (9.31, 22.21)
+[cave_explorer-1] [INFO] [1791787351.519285273] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787351.980857004] [cave_explorer_node]: Planning 2 complete; inspected artefact #6; resume exploration
+[cave_explorer-1] [INFO] [1791787352.117824501] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787352.125687015] [cave_explorer_node]: Frontier goal: (13.78, 21.72)
+[cave_explorer-1] [INFO] [1791787352.126349056] [cave_explorer_node]: Sending frontier goal (13.78, 21.72)
+[cave_explorer-1] [INFO] [1791787356.716140371] [cave_explorer_node]: New artefact #7: stop exploring
+[cave_explorer-1] [INFO] [1791787356.721425129] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787356.724928521] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787356.917484263] [cave_explorer_node]: Sending inspection goal (14.11, 22.48)
+[cave_explorer-1] [INFO] [1791787356.918735029] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787357.779969210] [cave_explorer_node]: Planning 2 complete; inspected artefact #7; resume exploration
+[cave_explorer-1] [INFO] [1791787357.917251747] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787357.925536663] [cave_explorer_node]: Frontier goal: (17.38, 28.92)
+[cave_explorer-1] [INFO] [1791787357.926254853] [cave_explorer_node]: Sending frontier goal (17.38, 28.92)
+[cave_explorer-1] [INFO] [1791787359.375893123] [cave_explorer_node]: New artefact #8: stop exploring
+[cave_explorer-1] [INFO] [1791787359.381202699] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787359.517585500] [cave_explorer_node]: Sending inspection goal (15.41, 23.72)
+[cave_explorer-1] [INFO] [1791787359.518334821] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787359.988881075] [cave_explorer_node]: Planning 2 complete; inspected artefact #8; resume exploration
+[cave_explorer-1] [INFO] [1791787360.117180656] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787360.124902683] [cave_explorer_node]: Frontier goal: (15.88, 29.82)
+[cave_explorer-1] [INFO] [1791787360.125732547] [cave_explorer_node]: Sending frontier goal (15.88, 29.82)
+[cave_explorer-1] [WARN] [1791787395.518482544] [cave_explorer_node]: Frontier navigation finished with status 6
+[cave_explorer-1] [INFO] [1791787395.716378786] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787395.724994400] [cave_explorer_node]: Frontier goal: (5.08, 27.12)
+[cave_explorer-1] [INFO] [1791787395.725689038] [cave_explorer_node]: Sending frontier goal (5.08, 27.12)
+[cave_explorer-1] [INFO] [1791787401.335472957] [cave_explorer_node]: New artefact #9: stop exploring
+[cave_explorer-1] [INFO] [1791787401.339852200] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787401.341305171] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787401.517479490] [cave_explorer_node]: Sending inspection goal (9.74, 26.22)
+[cave_explorer-1] [INFO] [1791787401.518251349] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787402.380223916] [cave_explorer_node]: Planning 2 complete; inspected artefact #9; resume exploration
+[cave_explorer-1] [INFO] [1791787402.517159986] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787402.526002628] [cave_explorer_node]: Frontier goal: (3.58, 27.72)
+[cave_explorer-1] [INFO] [1791787402.526828100] [cave_explorer_node]: Sending frontier goal (3.58, 27.72)
+[cave_explorer-1] [INFO] [1791787410.716862213] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787410.724537922] [cave_explorer_node]: Frontier goal: (0.28, 27.72)
+[cave_explorer-1] [INFO] [1791787410.725405417] [cave_explorer_node]: Sending frontier goal (0.28, 27.72)
+[cave_explorer-1] [INFO] [1791787415.517137263] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787415.525791343] [cave_explorer_node]: Frontier goal: (2.68, 23.82)
+[cave_explorer-1] [INFO] [1791787415.526720488] [cave_explorer_node]: Sending frontier goal (2.68, 23.82)
+[cave_explorer-1] [INFO] [1791787420.653835373] [cave_explorer_node]: New artefact #10: stop exploring
+[cave_explorer-1] [INFO] [1791787420.658878643] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787420.717851984] [cave_explorer_node]: Sending inspection goal (4.00, 31.73)
+[cave_explorer-1] [INFO] [1791787420.718455491] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787421.389008919] [cave_explorer_node]: Planning 2 complete; inspected artefact #10; resume exploration
+[cave_explorer-1] [INFO] [1791787421.517344586] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787421.526561497] [cave_explorer_node]: Frontier goal: (9.88, 34.02)
+[cave_explorer-1] [INFO] [1791787421.527890566] [cave_explorer_node]: Sending frontier goal (9.88, 34.02)
+[cave_explorer-1] [INFO] [1791787423.673248984] [cave_explorer_node]: New artefact #11: stop exploring
+[cave_explorer-1] [INFO] [1791787423.680329858] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787423.719944090] [cave_explorer_node]: Sending inspection goal (5.49, 33.14)
+[cave_explorer-1] [INFO] [1791787423.720893576] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787424.392858265] [cave_explorer_node]: Planning 2 complete; inspected artefact #11; resume exploration
+[cave_explorer-1] [INFO] [1791787424.517202048] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787424.526444415] [cave_explorer_node]: Frontier goal: (11.38, 34.62)
+[cave_explorer-1] [INFO] [1791787424.527240635] [cave_explorer_node]: Sending frontier goal (11.38, 34.62)
+[cave_explorer-1] [INFO] [1791787426.649535471] [cave_explorer_node]: New artefact #12: stop exploring
+[cave_explorer-1] [INFO] [1791787426.654483984] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787426.718510902] [cave_explorer_node]: Sending inspection goal (7.06, 34.45)
+[cave_explorer-1] [INFO] [1791787426.719466711] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787427.190192456] [cave_explorer_node]: Planning 2 complete; inspected artefact #12; resume exploration
+[cave_explorer-1] [INFO] [1791787427.317351878] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787427.325932590] [cave_explorer_node]: Frontier goal: (12.88, 34.62)
+[cave_explorer-1] [INFO] [1791787427.326828523] [cave_explorer_node]: Sending frontier goal (12.88, 34.62)
+[cave_explorer-1] [INFO] [1791787430.317846461] [cave_explorer_node]: New artefact #13: stop exploring
+[cave_explorer-1] [INFO] [1791787430.324044748] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787430.326427670] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787430.518851086] [cave_explorer_node]: Sending inspection goal (9.88, 34.80)
+[cave_explorer-1] [INFO] [1791787430.519783250] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787431.180382264] [cave_explorer_node]: Planning 2 complete; inspected artefact #13; resume exploration
+[cave_explorer-1] [INFO] [1791787431.319675947] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787431.329575379] [cave_explorer_node]: Frontier goal: (14.98, 34.92)
+[cave_explorer-1] [INFO] [1791787431.330418672] [cave_explorer_node]: Sending frontier goal (14.98, 34.92)
+[cave_explorer-1] [INFO] [1791787437.671974328] [cave_explorer_node]: New artefact #14: stop exploring
+[cave_explorer-1] [INFO] [1791787437.679625667] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787437.718712630] [cave_explorer_node]: Sending inspection goal (15.26, 34.90)
+[cave_explorer-1] [INFO] [1791787437.719531165] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787438.810106897] [cave_explorer_node]: Planning 2 complete; inspected artefact #14; resume exploration
+[cave_explorer-1] [INFO] [1791787438.916729501] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787438.925481444] [cave_explorer_node]: Frontier goal: (18.88, 34.92)
+[cave_explorer-1] [INFO] [1791787438.926571575] [cave_explorer_node]: Sending frontier goal (18.88, 34.92)
+[cave_explorer-1] [INFO] [1791787443.116766874] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787443.125774439] [cave_explorer_node]: Frontier goal: (20.08, 36.42)
+[cave_explorer-1] [INFO] [1791787443.126955147] [cave_explorer_node]: Sending frontier goal (20.08, 36.42)
+[cave_explorer-1] [INFO] [1791787499.912947800] [cave_explorer_node]: New artefact #15: stop exploring
+[cave_explorer-1] [INFO] [1791787499.917371615] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787499.919136633] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [WARN] [1791787500.116499612] [cave_explorer_node]: Inspection timeout or target lost; retry 1/1
+[cave_explorer-1] [INFO] [1791787500.317060276] [cave_explorer_node]: Sending inspection goal (20.36, 37.21)
+[cave_explorer-1] [INFO] [1791787500.317717501] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787500.978063197] [cave_explorer_node]: Planning 2 complete; inspected artefact #15; resume exploration
+[cave_explorer-1] [INFO] [1791787501.116538650] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787501.125491037] [cave_explorer_node]: Frontier goal: (25.18, 27.42)
+[cave_explorer-1] [INFO] [1791787501.126242738] [cave_explorer_node]: Sending frontier goal (25.18, 27.42)
+[cave_explorer-1] [INFO] [1791787504.579346359] [cave_explorer_node]: New artefact #16: stop exploring
+[cave_explorer-1] [INFO] [1791787504.586966313] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787504.717760850] [cave_explorer_node]: Sending inspection goal (20.87, 36.02)
+[cave_explorer-1] [INFO] [1791787504.718795743] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787506.388916255] [cave_explorer_node]: Planning 2 complete; inspected artefact #16; resume exploration
+[cave_explorer-1] [INFO] [1791787506.516664128] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787506.526602892] [cave_explorer_node]: Frontier goal: (26.68, 28.02)
+[cave_explorer-1] [INFO] [1791787506.527572412] [cave_explorer_node]: Sending frontier goal (26.68, 28.02)
+[cave_explorer-1] [INFO] [1791787529.204402306] [cave_explorer_node]: New artefact #17: stop exploring
+[cave_explorer-1] [INFO] [1791787529.209558899] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787529.317093338] [cave_explorer_node]: Sending inspection goal (19.02, 36.60)
+[cave_explorer-1] [INFO] [1791787529.317893000] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [WARN] [1791787574.517518190] [cave_explorer_node]: Inspection timeout or target lost; cancelling goal
+[cave_explorer-1] [INFO] [1791787574.521284243] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [WARN] [1791787574.548701323] [cave_explorer_node]: Inspection Nav2 status 5; retry 1/1
+[cave_explorer-1] [INFO] [1791787574.718016252] [cave_explorer_node]: Sending inspection goal (18.90, 36.87)
+[cave_explorer-1] [INFO] [1791787574.718751367] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [WARN] [1791787619.916703213] [cave_explorer_node]: Inspection timeout or target lost; cancelling goal
+[cave_explorer-1] [INFO] [1791787619.920096739] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [WARN] [1791787619.942592970] [cave_explorer_node]: Inspection Nav2 status 5 twice; abandon #17 and explore
+[cave_explorer-1] [INFO] [1791787620.122682191] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787620.132036127] [cave_explorer_node]: Frontier goal: (28.18, 28.62)
+[cave_explorer-1] [INFO] [1791787620.132611376] [cave_explorer_node]: Sending frontier goal (28.18, 28.62)
+[cave_explorer-1] [INFO] [1791787677.726081474] [cave_explorer_node]: New artefact #18: stop exploring
+[cave_explorer-1] [INFO] [1791787677.732874159] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787677.734734461] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787677.917244039] [cave_explorer_node]: Sending inspection goal (18.99, 38.86)
+[cave_explorer-1] [INFO] [1791787677.918093719] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787678.578403640] [cave_explorer_node]: Planning 2 complete; inspected artefact #18; resume exploration
+[cave_explorer-1] [INFO] [1791787678.744592905] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787678.753829072] [cave_explorer_node]: Frontier goal: (31.18, 26.82)
+[cave_explorer-1] [INFO] [1791787678.754906751] [cave_explorer_node]: Sending frontier goal (31.18, 26.82)
+[cave_explorer-1] [INFO] [1791787682.096961231] [cave_explorer_node]: New artefact #19: stop exploring
+[cave_explorer-1] [INFO] [1791787682.103205805] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787682.119026448] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787682.318019371] [cave_explorer_node]: Sending inspection goal (15.75, 38.28)
+[cave_explorer-1] [INFO] [1791787682.318852190] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787682.979025146] [cave_explorer_node]: Planning 2 complete; inspected artefact #19; resume exploration
+[cave_explorer-1] [INFO] [1791787683.116622970] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787683.126735403] [cave_explorer_node]: Frontier goal: (-2.42, 37.92)
+[cave_explorer-1] [INFO] [1791787683.127643353] [cave_explorer_node]: Sending frontier goal (-2.42, 37.92)
+[cave_explorer-1] [INFO] [1791787685.399080345] [cave_explorer_node]: New artefact #20: stop exploring
+[cave_explorer-1] [INFO] [1791787685.408536317] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787685.517844264] [cave_explorer_node]: Sending inspection goal (13.68, 38.08)
+[cave_explorer-1] [INFO] [1791787685.518801137] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787685.988988667] [cave_explorer_node]: Planning 2 complete; inspected artefact #20; resume exploration
+[cave_explorer-1] [INFO] [1791787686.116549111] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787686.125982233] [cave_explorer_node]: Frontier goal: (1.78, 40.32)
+[cave_explorer-1] [INFO] [1791787686.126699104] [cave_explorer_node]: Sending frontier goal (1.78, 40.32)
+[cave_explorer-1] [INFO] [1791787688.396037992] [cave_explorer_node]: New artefact #21: stop exploring
+[cave_explorer-1] [INFO] [1791787688.401937366] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787688.517325097] [cave_explorer_node]: Sending inspection goal (11.54, 37.50)
+[cave_explorer-1] [INFO] [1791787688.518092604] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787688.988370955] [cave_explorer_node]: Planning 2 complete; inspected artefact #21; resume exploration
+[cave_explorer-1] [INFO] [1791787689.116790163] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787689.126880874] [cave_explorer_node]: Frontier goal: (-3.92, 37.92)
+[cave_explorer-1] [INFO] [1791787689.127803594] [cave_explorer_node]: Sending frontier goal (-3.92, 37.92)
+[cave_explorer-1] [INFO] [1791787709.916348280] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787709.925271868] [cave_explorer_node]: Frontier goal: (-3.62, 20.23)
+[cave_explorer-1] [INFO] [1791787709.926272451] [cave_explorer_node]: Sending frontier goal (-3.62, 20.23)

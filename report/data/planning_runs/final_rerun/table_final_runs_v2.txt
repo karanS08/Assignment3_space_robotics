@@ -1,0 +1,17 @@
+                                                |      Run 1 |      Run 2
+Run length [s]                                  |        720 |        720
+Robot stops moving at [s]                       |        305 |        360
+Distance driven [m]                             |        207 |        227
+Cave mapped at the end [%]                      |        100 |        100
+Time not moving before that [s]                 |          0 |          0
+Longest stop before that [s]                    |          0 |          0
+Frontier goals chosen                           |         21 |         22
+Goals that failed or were cancelled             |          4 |          5
+Goals retried after an instant abort            |          1 |          0
+Stuck events handled by the code                |          0 |          1
+Manual rescues needed                           |          0 |          0
+Artefacts the code reported                     |          6 |          6
+Inspections completed                           |          6 |          6
+Inspection goals within 6 m of a real stop sign |          6 |          6
+Inspections that timed out                      |          0 |          0
+(reference: a fully explored map has 1702 m^2 of free space; the cave has 5 real stop signs)

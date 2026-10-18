@@ -1,0 +1,17 @@
+                                                | main (run 1) | with far-sign approach (run 1)
+Run length [s]                                  |        720 |        720
+Robot stops moving at [s]                       |        290 |        345
+Distance driven [m]                             |        177 |        251
+Cave mapped at the end [%]                      |        100 |        100
+Time not moving before that [s]                 |         10 |          0
+Longest stop before that [s]                    |          5 |          0
+Frontier goals chosen                           |         14 |         23
+Goals that failed or were cancelled             |          0 |          6
+Goals retried after an instant abort            |          0 |          0
+Stuck events handled by the code                |          2 |          0
+Manual rescues needed                           |          0 |          0
+Artefacts the code reported                     |          6 |          8
+Inspections completed                           |          6 |          8
+Inspection goals within 6 m of a real stop sign |          4 |          5
+Inspections that timed out                      |          2 |          2
+(reference: a fully explored map has 1702 m^2 of free space; the cave has 5 real stop signs)

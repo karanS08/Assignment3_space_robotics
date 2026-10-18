@@ -1,0 +1,1037 @@
+[INFO] [launch]: All log files can be found below /home/karan/.ros/log/2026-10-12-17-49-32-717509-rog-18561
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [cave_explorer-1]: process started with pid [18585]
+[cave_explorer-1] 
+[cave_explorer-1] A module that was compiled using NumPy 1.x cannot be run in
+[cave_explorer-1] NumPy 2.2.6 as it may crash. To support both 1.x and 2.x
+[cave_explorer-1] versions of NumPy, modules must be compiled with NumPy 2.0.
+[cave_explorer-1] Some module may need to rebuild instead e.g. with 'pybind11>=2.12'.
+[cave_explorer-1] 
+[cave_explorer-1] If you are a user of the module, the easiest solution will be to
+[cave_explorer-1] downgrade to 'numpy<2' or try to upgrade the affected module.
+[cave_explorer-1] We expect that some modules will need time to support NumPy 2.
+[cave_explorer-1] 
+[cave_explorer-1] Traceback (most recent call last):  File "/home/karan/space_robotics_sim/ws_robust/install/cave_explorer/lib/cave_explorer/cave_explorer", line 33, in <module>
+[cave_explorer-1]     sys.exit(load_entry_point('cave-explorer', 'console_scripts', 'cave_explorer')())
+[cave_explorer-1]   File "/home/karan/space_robotics_sim/ws_robust/install/cave_explorer/lib/cave_explorer/cave_explorer", line 25, in importlib_load_entry_point
+[cave_explorer-1]     return next(matches).load()
+[cave_explorer-1]   File "/usr/lib/python3.10/importlib/metadata/__init__.py", line 171, in load
+[cave_explorer-1]     module = import_module(match.group('module'))
+[cave_explorer-1]   File "/usr/lib/python3.10/importlib/__init__.py", line 126, in import_module
+[cave_explorer-1]     return _bootstrap._gcd_import(name[level:], package, level)
+[cave_explorer-1]   File "/home/karan/space_robotics_sim/ws_robust/build/cave_explorer/cave_explorer/cave_explorer.py", line 10, in <module>
+[cave_explorer-1]     from cv_bridge import CvBridge
+[cave_explorer-1]   File "/opt/ros/humble/local/lib/python3.10/dist-packages/cv_bridge/__init__.py", line 6, in <module>
+[cave_explorer-1]     from cv_bridge.boost.cv_bridge_boost import cvtColorForDisplay, getCvType
+[cave_explorer-1] AttributeError: _ARRAY_API not found
+[cave_explorer-1] [WARN] [1791787774.436559860] [cave_explorer_node]: Waiting for navigate_to_pose action...
+[cave_explorer-1] [WARN] [1791787774.437472768] [cave_explorer_node]: navigate_to_pose connected
+[cave_explorer-1] [INFO] [1791787775.344818370] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787775.358578647] [cave_explorer_node]: Frontier goal: (6.34, 2.97), path 7.5 m, frontier 3.6 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787775.359204860] [cave_explorer_node]: Sending frontier goal (6.34, 2.97)
+[cave_explorer-1] [INFO] [1791787782.447830560] [cave_explorer_node]: New artefact #0: stop exploring
+[cave_explorer-1] [INFO] [1791787782.452178355] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787782.545491316] [cave_explorer_node]: Sending inspection goal (6.38, 2.29)
+[cave_explorer-1] [INFO] [1791787782.546127759] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787783.217466291] [cave_explorer_node]: Planning 2 complete; inspected artefact #0; resume exploration
+[cave_explorer-1] [INFO] [1791787783.344560606] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787783.349003473] [cave_explorer_node]: Frontier goal: (10.48, 4.11), path 6.1 m, frontier 2.1 m, 7 candidates
+[cave_explorer-1] [INFO] [1791787783.349735107] [cave_explorer_node]: Sending frontier goal (10.48, 4.11)
+[cave_explorer-1] [INFO] [1791787787.441347770] [cave_explorer_node]: New artefact #1: stop exploring
+[cave_explorer-1] [INFO] [1791787787.444338281] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787787.544509702] [cave_explorer_node]: Sending inspection goal (10.12, 2.89)
+[cave_explorer-1] [INFO] [1791787787.545359923] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787788.205762869] [cave_explorer_node]: Planning 2 complete; inspected artefact #1; resume exploration
+[cave_explorer-1] [INFO] [1791787788.344666427] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787788.349402827] [cave_explorer_node]: Frontier goal: (18.28, 4.68), path 9.9 m, frontier 7.5 m, 2 candidates
+[cave_explorer-1] [INFO] [1791787788.350083765] [cave_explorer_node]: Sending frontier goal (18.28, 4.68)
+[cave_explorer-1] [INFO] [1791787790.768230071] [cave_explorer_node]: New artefact #2: stop exploring
+[cave_explorer-1] [INFO] [1791787790.771328239] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787790.773956881] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787790.944587813] [cave_explorer_node]: Sending inspection goal (12.43, 2.80)
+[cave_explorer-1] [INFO] [1791787790.945524649] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787791.606368379] [cave_explorer_node]: Planning 2 complete; inspected artefact #2; resume exploration
+[cave_explorer-1] [INFO] [1791787791.751213974] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787791.758161563] [cave_explorer_node]: Frontier goal: (30.58, 1.67), path 19.6 m, frontier 11.1 m, 1 candidates
+[cave_explorer-1] [INFO] [1791787791.759223548] [cave_explorer_node]: Sending frontier goal (30.58, 1.67)
+[cave_explorer-1] [INFO] [1791787793.780307818] [cave_explorer_node]: New artefact #3: stop exploring
+[cave_explorer-1] [INFO] [1791787793.783890120] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787793.786859103] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [INFO] [1791787793.944780434] [cave_explorer_node]: Sending inspection goal (14.45, 2.47)
+[cave_explorer-1] [INFO] [1791787793.945490067] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787794.215678077] [cave_explorer_node]: Planning 2 complete; inspected artefact #3; resume exploration
+[cave_explorer-1] [INFO] [1791787794.344588616] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787794.350707076] [cave_explorer_node]: Frontier goal: (24.85, 8.57), path 13.9 m, frontier 27.6 m, 1 candidates
+[cave_explorer-1] [INFO] [1791787794.351527781] [cave_explorer_node]: Sending frontier goal (24.85, 8.57)
+[cave_explorer-1] [INFO] [1791787796.445620498] [cave_explorer_node]: New artefact #4: stop exploring
+[cave_explorer-1] [INFO] [1791787796.449355092] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787796.544592672] [cave_explorer_node]: Sending inspection goal (16.36, 3.39)
+[cave_explorer-1] [INFO] [1791787796.545232042] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787797.005885813] [cave_explorer_node]: Planning 2 complete; inspected artefact #4; resume exploration
+[cave_explorer-1] [INFO] [1791787797.143962458] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787797.150922846] [cave_explorer_node]: Frontier goal: (13.75, 11.26), path 8.8 m, frontier 6.6 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787797.151595740] [cave_explorer_node]: Sending frontier goal (13.75, 11.26)
+[cave_explorer-1] [INFO] [1791787809.944354182] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787809.952414781] [cave_explorer_node]: Frontier goal: (22.45, 10.65), path 9.1 m, frontier 2.7 m, 6 candidates
+[cave_explorer-1] [INFO] [1791787809.954108725] [cave_explorer_node]: Sending frontier goal (22.45, 10.65)
+[cave_explorer-1] [INFO] [1791787825.343679649] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787825.354594446] [cave_explorer_node]: Frontier goal: (37.75, 7.65), path 16.5 m, frontier 7.2 m, 6 candidates
+[cave_explorer-1] [INFO] [1791787825.355485398] [cave_explorer_node]: Sending frontier goal (37.75, 7.65)
+[cave_explorer-1] [INFO] [1791787842.731968172] [cave_explorer_node]: New artefact #5: stop exploring
+[cave_explorer-1] [INFO] [1791787842.735814488] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787842.746124356] [cave_explorer_node]: Cancel requested: 0 goals cancelling
+[cave_explorer-1] [WARN] [1791787842.944085933] [cave_explorer_node]: Inspection timeout or target lost; retry 1/1
+[cave_explorer-1] [INFO] [1791787843.145135779] [cave_explorer_node]: Sending inspection goal (35.63, 5.41)
+[cave_explorer-1] [INFO] [1791787843.145968983] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787843.807094581] [cave_explorer_node]: Planning 2 complete; inspected artefact #5; resume exploration
+[cave_explorer-1] [INFO] [1791787843.944243565] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787843.957079795] [cave_explorer_node]: Frontier goal: (44.95, 13.05), path 13.6 m, frontier 19.5 m, 8 candidates
+[cave_explorer-1] [INFO] [1791787843.957852764] [cave_explorer_node]: Sending frontier goal (44.95, 13.05)
+[cave_explorer-1] [INFO] [1791787846.394887243] [cave_explorer_node]: New artefact #6: stop exploring
+[cave_explorer-1] [INFO] [1791787846.399382692] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787846.546065368] [cave_explorer_node]: Sending inspection goal (37.47, 6.63)
+[cave_explorer-1] [INFO] [1791787846.546850330] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787847.020230351] [cave_explorer_node]: Planning 2 complete; inspected artefact #6; resume exploration
+[cave_explorer-1] [INFO] [1791787847.144284482] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787847.158768009] [cave_explorer_node]: Frontier goal: (49.15, 4.65), path 12.9 m, frontier 4.2 m, 6 candidates
+[cave_explorer-1] [INFO] [1791787847.159620329] [cave_explorer_node]: Sending frontier goal (49.15, 4.65)
+[cave_explorer-1] [INFO] [1791787863.362386812] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787863.376480972] [cave_explorer_node]: Frontier goal: (42.25, 18.15), path 16.7 m, frontier 18.0 m, 5 candidates
+[cave_explorer-1] [INFO] [1791787863.377304388] [cave_explorer_node]: Sending frontier goal (42.25, 18.15)
+[cave_explorer-1] [INFO] [1791787877.032731074] [cave_explorer_node]: New artefact #7: stop exploring
+[cave_explorer-1] [INFO] [1791787877.036556741] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787877.145534824] [cave_explorer_node]: Sending inspection goal (45.10, 15.29)
+[cave_explorer-1] [INFO] [1791787877.146422153] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787877.636864325] [cave_explorer_node]: Planning 2 complete; inspected artefact #7; resume exploration
+[cave_explorer-1] [INFO] [1791787877.745388138] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787877.757217395] [cave_explorer_node]: Frontier goal: (35.65, 19.35), path 11.6 m, frontier 5.1 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787877.757947853] [cave_explorer_node]: Sending frontier goal (35.65, 19.35)
+[cave_explorer-1] [INFO] [1791787893.345353453] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787893.358679910] [cave_explorer_node]: Frontier goal: (37.45, 28.35), path 10.6 m, frontier 4.2 m, 6 candidates
+[cave_explorer-1] [INFO] [1791787893.359516092] [cave_explorer_node]: Sending frontier goal (37.45, 28.35)
+[cave_explorer-1] [INFO] [1791787908.744188855] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787908.759226053] [cave_explorer_node]: Frontier goal: (45.85, 33.45), path 11.4 m, frontier 2.4 m, 7 candidates
+[cave_explorer-1] [INFO] [1791787908.760009956] [cave_explorer_node]: Sending frontier goal (45.85, 33.45)
+[cave_explorer-1] [INFO] [1791787924.745053050] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787924.762259641] [cave_explorer_node]: Frontier goal: (51.85, 41.25), path 11.1 m, frontier 24.0 m, 5 candidates
+[cave_explorer-1] [INFO] [1791787924.763417843] [cave_explorer_node]: Sending frontier goal (51.85, 41.25)
+[cave_explorer-1] [INFO] [1791787927.304258524] [cave_explorer_node]: New artefact #8: stop exploring
+[cave_explorer-1] [INFO] [1791787927.308543393] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [WARN] [1791787927.346802227] [cave_explorer_node]: Inspection timeout or target lost; retry 1/1
+[cave_explorer-1] [INFO] [1791787927.545131873] [cave_explorer_node]: Sending inspection goal (47.62, 35.11)
+[cave_explorer-1] [INFO] [1791787927.545951405] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787928.407838619] [cave_explorer_node]: Planning 2 complete; inspected artefact #8; resume exploration
+[cave_explorer-1] [INFO] [1791787928.544576011] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787928.561527256] [cave_explorer_node]: Frontier goal: (39.85, 43.65), path 23.7 m, frontier 9.0 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787928.562512716] [cave_explorer_node]: Sending frontier goal (39.85, 43.65)
+[cave_explorer-1] [INFO] [1791787933.296294856] [cave_explorer_node]: New artefact #9: stop exploring
+[cave_explorer-1] [INFO] [1791787933.300419869] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787933.346602695] [cave_explorer_node]: Sending inspection goal (49.15, 36.52)
+[cave_explorer-1] [INFO] [1791787933.347599337] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787934.018085147] [cave_explorer_node]: Planning 2 complete; inspected artefact #9; resume exploration
+[cave_explorer-1] [INFO] [1791787934.144742238] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787934.161480048] [cave_explorer_node]: Frontier goal: (48.55, 44.85), path 9.4 m, frontier 5.7 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787934.162510585] [cave_explorer_node]: Sending frontier goal (48.55, 44.85)
+[cave_explorer-1] [INFO] [1791787936.633951298] [cave_explorer_node]: New artefact #10: stop exploring
+[cave_explorer-1] [INFO] [1791787936.639161414] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791787936.745717732] [cave_explorer_node]: Sending inspection goal (49.46, 38.81)
+[cave_explorer-1] [INFO] [1791787936.746628419] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787937.218179660] [cave_explorer_node]: Planning 2 complete; inspected artefact #10; resume exploration
+[cave_explorer-1] [INFO] [1791787937.345047591] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787937.360736872] [cave_explorer_node]: Frontier goal: (12.85, 25.65), path 42.1 m, frontier 21.3 m, 3 candidates
+[cave_explorer-1] [INFO] [1791787937.361367081] [cave_explorer_node]: Sending frontier goal (12.85, 25.65)
+[cave_explorer-1] [INFO] [1791787991.143994917] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787991.160817243] [cave_explorer_node]: Frontier goal: (7.15, 35.55), path 13.1 m, frontier 6.0 m, 4 candidates
+[cave_explorer-1] [INFO] [1791787991.161449247] [cave_explorer_node]: Sending frontier goal (7.15, 35.55)
+[cave_explorer-1] [INFO] [1791787997.892878072] [cave_explorer_node]: New artefact #11: stop exploring
+[cave_explorer-1] [INFO] [1791787997.898034343] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [WARN] [1791787997.944592902] [cave_explorer_node]: Inspection timeout or target lost; retry 1/1
+[cave_explorer-1] [INFO] [1791787998.144221091] [cave_explorer_node]: Sending inspection goal (9.39, 30.52)
+[cave_explorer-1] [INFO] [1791787998.144950331] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791787999.005215459] [cave_explorer_node]: Planning 2 complete; inspected artefact #11; resume exploration
+[cave_explorer-1] [INFO] [1791787999.143898166] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791787999.160301815] [cave_explorer_node]: Frontier goal: (-1.55, 39.45), path 15.4 m, frontier 1.8 m, 2 candidates
+[cave_explorer-1] [INFO] [1791787999.160958724] [cave_explorer_node]: Sending frontier goal (-1.55, 39.45)
+[cave_explorer-1] [INFO] [1791788001.216627311] [cave_explorer_node]: New artefact #12: stop exploring
+[cave_explorer-1] [INFO] [1791788001.221180428] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791788001.344525202] [cave_explorer_node]: Sending inspection goal (7.81, 32.01)
+[cave_explorer-1] [INFO] [1791788001.345330020] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791788001.815351340] [cave_explorer_node]: Planning 2 complete; inspected artefact #12; resume exploration
+[cave_explorer-1] [INFO] [1791788001.944744841] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788002.143926776] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788002.343945839] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788002.562411711] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788002.744580976] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788002.944022452] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788003.144189819] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788003.161038881] [cave_explorer_node]: Frontier goal: (9.85, 37.95), path 7.6 m, frontier 6.6 m, 1 candidates
+[cave_explorer-1] [INFO] [1791788003.161929605] [cave_explorer_node]: Sending frontier goal (9.85, 37.95)
+[cave_explorer-1] [INFO] [1791788005.225686789] [cave_explorer_node]: New artefact #13: stop exploring
+[cave_explorer-1] [INFO] [1791788005.231217866] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791788005.345055587] [cave_explorer_node]: Sending inspection goal (7.44, 34.02)
+[cave_explorer-1] [INFO] [1791788005.345928619] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791788005.816086646] [cave_explorer_node]: Planning 2 complete; inspected artefact #13; resume exploration
+[cave_explorer-1] [INFO] [1791788005.944634214] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788006.143697952] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788006.343762196] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788006.559125450] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788006.744195446] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788006.943581770] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788007.143724811] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788007.158299634] [cave_explorer_node]: Frontier goal: (15.55, 37.95), path 10.1 m, frontier 41.4 m, 2 candidates
+[cave_explorer-1] [INFO] [1791788007.158871441] [cave_explorer_node]: Sending frontier goal (15.55, 37.95)
+[cave_explorer-1] [INFO] [1791788008.885669701] [cave_explorer_node]: New artefact #14: stop exploring
+[cave_explorer-1] [INFO] [1791788008.890483394] [cave_explorer_node]: Cancel requested: 1 goals cancelling
+[cave_explorer-1] [INFO] [1791788008.944789485] [cave_explorer_node]: Sending inspection goal (8.21, 35.66)
+[cave_explorer-1] [INFO] [1791788008.945781013] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791788009.416311323] [cave_explorer_node]: Planning 2 complete; inspected artefact #14; resume exploration
+[cave_explorer-1] [INFO] [1791788009.552235370] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788009.570838133] [cave_explorer_node]: Frontier goal: (20.65, 38.25), path 14.1 m, frontier 5.7 m, 2 candidates
+[cave_explorer-1] [INFO] [1791788009.571493372] [cave_explorer_node]: Sending frontier goal (20.65, 38.25)
+[cave_explorer-1] [INFO] [1791788025.744591865] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788025.872222775] [cave_explorer_node]: New artefact #15: stop exploring
+[cave_explorer-1] [INFO] [1791788025.945807047] [cave_explorer_node]: Sending inspection goal (21.10, 37.00)
+[cave_explorer-1] [INFO] [1791788025.946683542] [cave_explorer_node]: Planning 2: approaching artefact, facing target
+[cave_explorer-1] [INFO] [1791788027.219119655] [cave_explorer_node]: Planning 2 complete; inspected artefact #15; resume exploration
+[cave_explorer-1] [INFO] [1791788027.344031795] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788027.547910490] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788027.743696368] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788027.945164434] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788028.143773493] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788028.344753049] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788028.546362764] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788028.743849038] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788028.943968107] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788029.144666702] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788029.343890531] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788029.551939626] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788029.743595068] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788029.943887964] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [WARN] [1791788029.956302919] [cave_explorer_node]: No safe, reachable frontier left: exploration finished.
+[cave_explorer-1] [INFO] [1791788030.144403786] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788030.344151098] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788030.544032684] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788030.744385379] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788030.944111212] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788031.143418642] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788031.344264496] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788031.550287564] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788031.743991553] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788031.943962762] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788032.144420919] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788032.346182100] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788032.543918536] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788032.744290114] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788032.945455710] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788033.145755859] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788033.344280740] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788033.547038077] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788033.744876497] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788033.944460830] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788034.143912850] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788034.343899906] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788034.544629495] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788034.744323336] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788034.943996870] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788035.144285034] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788035.344942852] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788035.546034761] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788035.743712293] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788035.944366203] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788036.144392187] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788036.343944537] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788036.543846754] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788036.743898405] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788036.944069853] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788037.144530789] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788037.343864337] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788037.543730287] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788037.743998270] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788037.944538780] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788038.143839646] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788038.344002014] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788038.545835211] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788038.744215958] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788038.944499317] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788039.145463056] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788039.344199239] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788039.544574452] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788039.743780383] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788039.943981028] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788040.144821519] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788040.344349644] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788040.544513870] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788040.743815893] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788040.944312175] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788041.145717385] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788041.343684126] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788041.543915522] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788041.744086337] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788041.944005483] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788042.145844752] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788042.343725723] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788042.544117698] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788042.744022474] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788042.944225675] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788043.144649096] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788043.345307345] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788043.543745459] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788043.743847231] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788043.944115287] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788044.146831893] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788044.344169803] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788044.544006978] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788044.743964393] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788044.943813029] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788045.145436785] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788045.344280501] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788045.545419030] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788045.744190023] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788045.944592697] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788046.144884636] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788046.344019129] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788046.544101784] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788046.744094916] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788046.944279447] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788047.145008230] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788047.344749597] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788047.544506222] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788047.743718271] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788047.944113333] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788048.146804649] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788048.343994436] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788048.544984641] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788048.743934235] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788048.944088332] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788049.144942725] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788049.343742691] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788049.544244197] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788049.743962231] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788049.944333720] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788050.145939463] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788050.344598534] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788050.544538158] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788050.744005899] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788050.943716734] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788051.150779983] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788051.344709930] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788051.544762164] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788051.744001441] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788051.943924589] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788052.173050666] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788052.344397661] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788052.544249693] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788052.743727871] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788052.944624084] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788053.176593226] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788053.343735202] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788053.544011434] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788053.745819018] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788053.944101242] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788054.149722561] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788054.343871744] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788054.547541560] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788054.744188283] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788054.943959986] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788055.151295317] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788055.344312590] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788055.545605831] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788055.743938533] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788055.943752235] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788056.173314892] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788056.343855670] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788056.544088162] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788056.743597310] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788056.944570198] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788057.151499196] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788057.343839141] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788057.544150891] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788057.743652759] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788057.944288833] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788058.149513896] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788058.344477825] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788058.546782308] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788058.744090000] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788058.943766138] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788059.172637966] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788059.344086196] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788059.544334665] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788059.745018272] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788059.944046066] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788060.150774450] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788060.345966008] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788060.544303049] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788060.743969504] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788060.944332035] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788061.166561424] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788061.343803286] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788061.544023167] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788061.743707678] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788061.944253877] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788062.167957747] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788062.343684076] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788062.544229976] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788062.744043124] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788062.944339868] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788063.163486574] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788063.343843374] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788063.544430852] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788063.743819133] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788063.943980911] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788064.172817847] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788064.343901613] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788064.544857989] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788064.744345683] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788064.944502353] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788065.161428122] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788065.344007887] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788065.544608021] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788065.745255421] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788065.944854811] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788066.169904402] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788066.344100078] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788066.544957725] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788066.744207874] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788066.943974371] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788067.144522514] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788067.343903934] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788067.545062785] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788067.743966860] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788067.944326274] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788068.168853262] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788068.343931733] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788068.545079844] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788068.744112054] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788068.944462101] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788069.162218927] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788069.343585386] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788069.543737541] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788069.744054507] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788069.944038834] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788070.143912690] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788070.344310205] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788070.545455120] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788070.745222809] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788070.944804967] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788071.144866187] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788071.345522917] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788071.545456059] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788071.744051445] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788071.946668152] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788072.171123127] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788072.345899212] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788072.544821317] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788072.744346169] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788072.944258732] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788073.155089261] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788073.343885957] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788073.544528389] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788073.744356035] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788073.944631273] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788074.163050328] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788074.344763482] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788074.545270896] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788074.744260282] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788074.944068301] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788075.144623815] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788075.344485030] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788075.545884210] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788075.743966017] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788075.944152731] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788076.167709679] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788076.345146486] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788076.544844180] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788076.745276743] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788076.944072830] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788077.154150072] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788077.344653894] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788077.544647499] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788077.744397477] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788077.944969554] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788078.163740099] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788078.344864414] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788078.544601496] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788078.744973604] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788078.944047407] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788079.154501754] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788079.344823742] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788079.545012772] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788079.744186927] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788079.944348957] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788080.161944378] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788080.344293578] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788080.544457319] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788080.745157786] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788080.944668657] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788081.157896583] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788081.343893550] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788081.544724324] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788081.746566968] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788081.945566586] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788082.161263813] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788082.345685497] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788082.544638196] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788082.745670277] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788082.944501523] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788083.158723067] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788083.344952708] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788083.545593898] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788083.745319474] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788083.944532828] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788084.152808028] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788084.344650042] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788084.544205863] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788084.744534324] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788084.944868977] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788085.157306250] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788085.344592660] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788085.545073198] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788085.745098378] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788085.946821832] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788086.163444885] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788086.344693731] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788086.546015673] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788086.744557430] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788086.944508681] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788087.150442337] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788087.345081530] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788087.544310137] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788087.744102631] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788087.944838180] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788088.155849197] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788088.344480168] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788088.545273149] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788088.744107916] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788088.944232877] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788089.150502246] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788089.344574033] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788089.544419937] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788089.744305443] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788089.944368345] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788090.151357467] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788090.344581096] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788090.545520327] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788090.744256723] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788090.944430235] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788091.146512940] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788091.345313059] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788091.545630500] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788091.744220402] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788091.944476911] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788092.172387567] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788092.345227652] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788092.545066116] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788092.744446587] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788092.944649092] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788093.156452940] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788093.344346724] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788093.544363211] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788093.744823054] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788093.946043969] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788094.158743164] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788094.344456994] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788094.545189283] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788094.745773410] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788094.945336126] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788095.145809088] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788095.345496607] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788095.546599794] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788095.745571105] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788095.944636619] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788096.149901613] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788096.344206570] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788096.543796484] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788096.743768040] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788096.944262240] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788097.144182982] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788097.344594964] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788097.543598000] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788097.743735136] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788097.945334245] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788098.146703030] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788098.343833738] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788098.544149517] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788098.744012331] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788098.943947267] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788099.144027470] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788099.343795953] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788099.544364811] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788099.743702110] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788099.943947462] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788100.146104636] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788100.343647420] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788100.543535497] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788100.743649890] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788100.944025977] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788101.144535477] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788101.343848937] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788101.543930634] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788101.744195639] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788101.944514683] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788102.143834552] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788102.344159390] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788102.543767276] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788102.743957746] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788102.943909626] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788103.143679758] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788103.344448056] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788103.544386153] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788103.744532785] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788103.943916860] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788104.144779500] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788104.343745516] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788104.544097639] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788104.743788853] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788104.943911463] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788105.144286395] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788105.343798130] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788105.543778680] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788105.743661059] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788105.944012072] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788106.144133929] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788106.344000511] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788106.544739131] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788106.743667802] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788106.943866606] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788107.144211968] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788107.344046161] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788107.543799606] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788107.745508588] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788107.944041040] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788108.143860513] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788108.344024185] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788108.544547021] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788108.746723468] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788108.943765901] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788109.144102990] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788109.344717366] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788109.544650845] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788109.745245906] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788109.944018222] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788110.143849830] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788110.344067906] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788110.543927760] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788110.744926557] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788110.943757051] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788111.144214345] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788111.344295819] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788111.544132181] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788111.744626578] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788111.944228397] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788112.145391705] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788112.344080258] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788112.543847213] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788112.744944183] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788112.944944799] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788113.143957707] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788113.344072414] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788113.544689589] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788113.744563932] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788113.944089311] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788114.144441252] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788114.344246648] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788114.544212380] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788114.744706208] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788114.944265028] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788115.144499202] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788115.344404062] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788115.544238081] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788115.744726379] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788115.943911669] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788116.143608380] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788116.344191513] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788116.543799104] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788116.744073346] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788116.943833348] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788117.144149443] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788117.343675402] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788117.544402731] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788117.773635661] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788117.944679042] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788118.144870126] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788118.344059914] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788118.544268173] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788118.751434050] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788118.943905913] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788119.144029962] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788119.343985745] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788119.544436502] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788119.745241644] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788119.943792820] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788120.144400342] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788120.344144623] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788120.543664098] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788120.753843207] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788120.944762034] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788121.143984104] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788121.343849998] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788121.544265378] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788121.748826633] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788121.943957023] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788122.144604537] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788122.343961799] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788122.543833924] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788122.749887067] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788122.943996817] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788123.144176715] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788123.344848326] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788123.544026796] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788123.750597456] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788123.943677560] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788124.143763893] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788124.343854508] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788124.544369559] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788124.748760447] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788124.944814998] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788125.144450727] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788125.343774673] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788125.543769389] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788125.747959956] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788125.944126091] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788126.143898801] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788126.344024237] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788126.544733172] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788126.773749965] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788126.944200124] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788127.144240948] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788127.343989745] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788127.544286426] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788127.743767608] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788127.944296739] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788128.143918485] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788128.343836552] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788128.544296643] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788128.744892846] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788128.944071636] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788129.144813943] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788129.344127359] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788129.545198318] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788129.744383627] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788129.943933681] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788130.143714246] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788130.344257325] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788130.543687154] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788130.745706556] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788130.943805512] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788131.143700866] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788131.343723609] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788131.544090920] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788131.743841620] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788131.944084040] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788132.143883483] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788132.344207090] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788132.543619992] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788132.774430370] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788132.945375067] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788133.144257920] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788133.343808313] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788133.543817775] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788133.743995218] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788133.944084969] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788134.143928858] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788134.343887373] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788134.544553658] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788134.746140938] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788134.943645248] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788135.144198648] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788135.345220357] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788135.544304960] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788135.758830810] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788135.944191174] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788136.144242540] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788136.343857521] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788136.544238600] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788136.767816577] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788136.943898868] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788137.144261367] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788137.343696460] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788137.543570246] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788137.760171850] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788137.944581990] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788138.143881775] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788138.343631407] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788138.543816756] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788138.766239104] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788138.943891355] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788139.144585209] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788139.343935105] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788139.544754434] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788139.749864194] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788139.944209898] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788140.144694710] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788140.344429685] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788140.543858684] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788140.755901698] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788140.945022925] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788141.144289004] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788141.343645633] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788141.544169426] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788141.752461206] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788141.944386502] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788142.144569475] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788142.343944223] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788142.544558479] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788142.756282778] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788142.944243729] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788143.144461332] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788143.343846043] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788143.544203006] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788143.755617609] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788143.944697126] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788144.143866069] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788144.344035750] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788144.544103412] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788144.763786783] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788144.944266728] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788145.143979614] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788145.344765052] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788145.543641199] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788145.758977518] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788145.943558929] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788146.143553511] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788146.343951375] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788146.543783930] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788146.758805533] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788146.944005421] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788147.143896907] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788147.344075067] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788147.544047566] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788147.748377487] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788147.943934195] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788148.144086429] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788148.344827177] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788148.543666808] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788148.753193714] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788148.943837913] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788149.144099694] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788149.343924957] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788149.543724312] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788149.746102642] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788149.943814244] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788150.143858255] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788150.343985332] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788150.543910554] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788150.756476300] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788150.943992219] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788151.143881526] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788151.343637127] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788151.543899529] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788151.744626422] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788151.943799022] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788152.144213497] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788152.344312979] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788152.544257455] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788152.750190814] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788152.945170616] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788153.144136145] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788153.343771209] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788153.544308638] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788153.745393282] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788153.945113434] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788154.143835855] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788154.344195407] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788154.544142322] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788154.758268910] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788154.943968509] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788155.144029968] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788155.343784740] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788155.543972776] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788155.743573612] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788155.943712657] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788156.144262075] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788156.344070269] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788156.544037498] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788156.748242715] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788156.943808622] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788157.143943323] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788157.343633780] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788157.543623854] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788157.743947928] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788157.943927843] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788158.143793977] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788158.343543387] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788158.543951960] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788158.744951561] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788158.943744334] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788159.143727828] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788159.343830405] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788159.543871078] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788159.743423183] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788159.943596261] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788160.143945847] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788160.344224414] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788160.543701361] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788160.744347059] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788160.943709153] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788161.144457011] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788161.343857458] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788161.544055928] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788161.744205226] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788161.943978946] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788162.143920217] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788162.343722983] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788162.543925522] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788162.744420384] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788162.943951656] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788163.144175103] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788163.345372111] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788163.544319238] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788163.743996823] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788163.944134363] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788164.144448570] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788164.344213909] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788164.543842164] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788164.743662736] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788164.944883239] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788165.144343942] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788165.343843568] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788165.543700559] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788165.743802806] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788165.943666108] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788166.144596533] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788166.343708220] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788166.544232101] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788166.745203274] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788166.943885421] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788167.143929129] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788167.343788947] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788167.543753360] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788167.743979318] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788167.944175792] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788168.143881602] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788168.344083046] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788168.543756358] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788168.743795359] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788168.944086510] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788169.144464561] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788169.343906463] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788169.544831252] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788169.744029331] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788169.944201260] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788170.144117443] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788170.344034038] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788170.543987591] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788170.744226646] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788170.943925987] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788171.143634874] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788171.343789162] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788171.544323115] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788171.743890281] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788171.943706108] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788172.144155713] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788172.344116441] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788172.544066368] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788172.744546612] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788172.944412713] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788173.144274966] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788173.344734100] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788173.543675031] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788173.744200038] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788173.948072201] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788174.144709214] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788174.346393277] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788174.544927180] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788174.744557923] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788174.943696541] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788175.144538536] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788175.345485577] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788175.544696940] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788175.744028676] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788175.944035458] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788176.144534664] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788176.345189883] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788176.544054069] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788176.744945266] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788176.944418656] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788177.144592006] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788177.346303710] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788177.543862986] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788177.744297754] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788177.944899061] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788178.144790887] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788178.347263406] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788178.544333881] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788178.743989188] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788178.944194968] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788179.145148789] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788179.345857956] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788179.544585715] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788179.744184545] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788179.944383542] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788180.145274946] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788180.344955927] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788180.543921968] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788180.744373304] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788180.944077839] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788181.145041497] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788181.344471319] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788181.544223001] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788181.744408180] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788181.944764789] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788182.144782103] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788182.345463264] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788182.544391150] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788182.744873111] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788182.944444345] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788183.145204341] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788183.347003733] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788183.544684054] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788183.744513678] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788183.944477883] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788184.144852449] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788184.352319034] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788184.544272858] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788184.744674055] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788184.944363165] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788185.145153995] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788185.346576182] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788185.544100929] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788185.744332237] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788185.944213494] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788186.144786396] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788186.350850958] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788186.544339905] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788186.744319132] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788186.944299120] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788187.144425047] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788187.349864043] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788187.544384498] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788187.744088410] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788187.944251206] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788188.144681398] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788188.353501081] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788188.544187039] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788188.743895717] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788188.944187401] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788189.144490925] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788189.351176520] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788189.544007561] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788189.745520268] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788189.944813259] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788190.144615015] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788190.345070420] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788190.544161892] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788190.744171165] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788190.943839804] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788191.145745918] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788191.380213357] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788191.545705659] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788191.744612465] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788191.943758537] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788192.145178613] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788192.351958600] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788192.544419999] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788192.744476895] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788192.944592290] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788193.145734917] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788193.353037045] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788193.544095956] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788193.744126500] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788193.944254185] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788194.144244099] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788194.369112473] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788194.544076444] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788194.745647377] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788194.945216267] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788195.145819973] [cave_explorer_node]: Planning 1/3: frontier exploration
+[cave_explorer-1] [INFO] [1791788195.393129707] [cave_explorer_node]: Planning 1/3: frontier exploration
