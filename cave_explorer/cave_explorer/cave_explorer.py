@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 
 import math
+import os
 import random
 import threading
 from enum import Enum
@@ -119,6 +120,13 @@ class CaveExplorer(Node):
         self.poster_radius_ = 3.5          # [m] the stop-sign picture has green trees that look like the alien and crystals
         self.announced_ = set()            # artefacts already logged as placed
         self.box_classifier_ = box_classifier.BoxClassifier()   # trained check that rejects poster trees and other false boxes
+        # Perception 1: save a camera frame every few seconds into a folder per artefact type (see save_dataset_image)
+        self.declare_parameter('save_dataset', True)
+        self.declare_parameter('dataset_directory', '~/artifact_dataset')
+        self.dataset_directory_ = os.path.expanduser(self.get_parameter('dataset_directory').value)
+        self.save_interval_ = 3.0          # [s] between saved frames
+        self.last_image_save_at_ = -1e9
+        self.saved_images_ = 0
         # Ice: a per-pixel forest that takes about 0.4 s a frame, so it runs in its own thread every ice_period_ seconds.
         # Off by default (one false ice marker in a 12-minute run); turn on with: ros2 param set /cave_explorer_node detect_ice true
         self.declare_parameter('detect_ice', False)
@@ -428,6 +436,7 @@ class CaveExplorer(Node):
             self.publish_artefact_map()
         if self.now_seconds() - self.ice_boxes_at_ < 3.0:
             others = others + self.ice_boxes_
+        self.save_dataset_image(image, {'stop sign'} if detections else set(), others)
         for x, y, w, h in detections:
             cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 3)
             cv2.putText(image, 'stop sign', (x, max(y - 6, 12)), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
@@ -449,6 +458,27 @@ class CaveExplorer(Node):
                 self.confirm_best_range_ = self.confirm_seen_range_
         if self.state_ == 'EXPLORE' and self.detection_streak_ >= 2:
             self.localise_box(box, image.shape[1])
+
+    def save_dataset_image(self, image, kinds, detections):
+        """Perception 1: every save_interval_ seconds, save the camera frame (before anything is drawn on it) into a folder
+        for each artefact type detected in it, or 'none' when nothing was detected, so the dataset is sorted by class as it is collected."""
+        now = self.now_seconds()
+        if not self.get_parameter('save_dataset').value or now - self.last_image_save_at_ < self.save_interval_:
+            return
+        self.last_image_save_at_ = now
+        kinds = sorted(set(kinds) | {d.kind for d in detections}) or ['none']
+        name = f'image_{int(now * 10):07d}.png'
+        try:
+            for kind in kinds:
+                folder = os.path.join(self.dataset_directory_, kind.replace(' ', '_'))
+                os.makedirs(folder, exist_ok=True)
+                cv2.imwrite(os.path.join(folder, name), image)
+        except OSError as exc:
+            self.get_logger().warn(f'Could not save dataset image: {exc}', throttle_duration_sec=30.0)
+            return
+        self.saved_images_ += 1
+        self.get_logger().info(f'Perception 1: saved image {self.saved_images_} ({", ".join(kinds)}) in {self.dataset_directory_}',
+                               throttle_duration_sec=15.0)
 
     def start_ice_detection(self, image):
         """Every ice_period_ seconds, look for ice in this frame in a background thread"""
