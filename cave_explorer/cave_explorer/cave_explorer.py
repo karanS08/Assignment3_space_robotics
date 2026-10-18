@@ -96,7 +96,14 @@ class CaveExplorer(Node):
         self.confirm_creep_started_at_ = None
         self.confirm_phase_ = ''           # shown on the Detections image
         self.max_inspection_retries_ = 1
-        self.state_ = 'EXPLORE'
+        # At the start the rover turns once on the spot, so anything behind the spawn point (an artefact 5 m behind it, for
+        # example) is seen before it drives away. Turn it off with: initial_scan:=false
+        self.declare_parameter('initial_scan', True)
+        self.scan_speed_ = 0.4             # [rad/s] slow enough that the detectors see each artefact in many frames
+        self.scan_turned_ = 0.0            # [rad] turned so far
+        self.scan_last_yaw_ = None
+        self.scan_started_at_ = None
+        self.state_ = 'SCAN' if self.get_parameter('initial_scan').value else 'EXPLORE'
         self.last_far_hint_at_ = -1e9
         self.far_goals_ = []
         self.artifact_locations_ = []
@@ -373,6 +380,28 @@ class CaveExplorer(Node):
             array.markers.append(sphere(i, 'failed', x, y, 1.0, (1.0, 0.0, 0.0, 0.9), Marker.CYLINDER))
         self.frontier_marker_pub_.publish(array)
 
+    def scan_step(self):
+        """Spawn manoeuvre: turn through one full circle on the spot, then start exploring."""
+        pose = self.robot_pose_quiet()
+        if pose is None:
+            return
+        now = self.now_seconds()
+        if self.scan_started_at_ is None:
+            self.scan_started_at_ = now
+            self.scan_last_yaw_ = pose[2]
+            self.get_logger().info('Planning 1: turning once on the spot to look around before exploring')
+        change = math.atan2(math.sin(pose[2] - self.scan_last_yaw_), math.cos(pose[2] - self.scan_last_yaw_))
+        self.scan_turned_ += max(change, 0.0)
+        self.scan_last_yaw_ = pose[2]
+        if self.scan_turned_ >= 2.0 * math.pi - 0.15 or now - self.scan_started_at_ > 30.0:
+            self.cmd_vel_pub_.publish(Twist())
+            self.state_ = 'EXPLORE'
+            self.get_logger().info(f'Planning 1: look-around done ({math.degrees(self.scan_turned_):.0f} degrees); exploring')
+            return
+        command = Twist()
+        command.angular.z = self.scan_speed_
+        self.cmd_vel_pub_.publish(command)
+
     def recovery_loop(self):
         """Free a stuck robot: reverse for 4 s, then turn right for 2 s"""
         if self.recovery_started_at_ is None:
@@ -600,6 +629,8 @@ class CaveExplorer(Node):
         """What the robot is doing now, in words, for the Detections image"""
         if self.recovery_started_at_ is not None:
             task = 'Stuck: backing up and turning'
+        elif self.state_ == 'SCAN':
+            task = 'Looking around: turning on the spot'
         elif self.state_ == 'PREEMPT':
             task = 'Stop sign found: stopping exploration'
         elif self.state_ == 'INSPECT':
@@ -1091,6 +1122,9 @@ class CaveExplorer(Node):
             return
         if self.now_seconds() < self.nav_retry_after_:
             return                         # Nav2 rejected the last goal; give it a moment
+        if self.state_ == 'SCAN':
+            self.scan_step()
+            return
         if self.state_ == 'CONFIRM':
             return                         # confirm_loop drives the robot
         if self.state_ == 'PREEMPT':
